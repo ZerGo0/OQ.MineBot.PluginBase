@@ -44,6 +44,7 @@ namespace DebugPlugin
         private string _oldclosesttargetloc;
 
         private string _oldWindowTitle;
+        private int _oldWindowSlotsUsed;
 
         public DebugForm(string name, IPlayer player) {
             InitializeComponent();
@@ -429,17 +430,35 @@ namespace DebugPlugin
                         #endregion
 
                         #region Window Stuff
-                        
+
+                        var winSlotsUsed = 0;
+
                         for (int getwindowid = 999; getwindowid > 0; getwindowid--)
                         {
                             if (player.status.containers.GetWindow(getwindowid) != null)
                             {
-                                if (player.status.containers.GetWindow(getwindowid).windowTitle != _oldWindowTitle && player.status.containers.GetWindow(getwindowid).windowType != "Inventory")
+                                var winSlotCount = player.status.containers.GetWindow(getwindowid).slotCount;
+                                
+                                for (var windowslots = 0; windowslots <= winSlotCount + 36; windowslots++)
+                                {
+                                    if (player.status.containers.GetWindow(getwindowid).GetAt(windowslots) == null)
+                                        continue;
+
+                                    if (player.status.containers.GetWindow(getwindowid).GetAt(windowslots).id !=
+                                        -1)
+                                    {
+                                        winSlotsUsed++;
+                                    }
+                                }
+
+                                if (player.status.containers.GetWindow(getwindowid).windowTitle != _oldWindowTitle && 
+                                    player.status.containers.GetWindow(getwindowid).windowType != "Inventory" ||
+                                    player.status.containers.GetWindow(getwindowid).windowType != "Inventory" &&
+                                    winSlotsUsed != _oldWindowSlotsUsed)
                                 {
                                     var winTitle = player.status.containers.GetWindow(getwindowid).windowTitle;
                                     var winType = player.status.containers.GetWindow(getwindowid).windowType;
                                     var winId = player.status.containers.GetWindow(getwindowid).id;
-                                    var winSlotCount = player.status.containers.GetWindow(getwindowid).slotCount;
                                     var winEntityId = player.status.containers.GetWindow(getwindowid).entityId;
                                     var winmActionId = player.status.containers.GetWindow(getwindowid).m_actionId;
                                     
@@ -487,6 +506,7 @@ namespace DebugPlugin
                                     }
 
                                     _oldWindowTitle = winTitle;
+                                    _oldWindowSlotsUsed = winSlotsUsed;
                                 }
 
                                 break;

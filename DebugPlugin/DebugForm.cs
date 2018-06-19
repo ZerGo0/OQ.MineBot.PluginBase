@@ -123,7 +123,7 @@ namespace DebugPlugin
                         #endregion
 
                         #region Bot Dimension
-
+                        
                         //Update it only when needed
                         if (player.status.entity.dimension.ToString() != _oldDimension || string.IsNullOrEmpty(_oldDimension))
                         {
@@ -467,6 +467,20 @@ namespace DebugPlugin
                                             -1)
                                         {
                                             Window_Slotids_Text.AppendText("Slot: " + windowslots + "   |   ItemID: " + 
+                                                                           player.status.containers.GetWindow(getwindowid).GetAt(windowslots).id
+                                                                           + "\n");
+                                        }
+                                    }
+
+                                    for (var windowslots = winSlotCount; windowslots <= winSlotCount + 36; windowslots++)
+                                    {
+                                        if (player.status.containers.GetWindow(getwindowid).GetAt(windowslots) == null)
+                                            continue;
+
+                                        if (player.status.containers.GetWindow(getwindowid).GetAt(windowslots).id !=
+                                            -1)
+                                        {
+                                            Window_Inv_Slotids_Text.AppendText("Slot: " + windowslots + "   |   ItemID: " +
                                                                            player.status.containers.GetWindow(getwindowid).GetAt(windowslots).id
                                                                            + "\n");
                                         }

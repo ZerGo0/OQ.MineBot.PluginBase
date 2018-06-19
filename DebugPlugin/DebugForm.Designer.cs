@@ -97,6 +97,8 @@ namespace DebugPlugin
             this.Window_ActionID = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.Window_Slotids_Text = new System.Windows.Forms.RichTextBox();
+            this.Window_Inv_Slotids = new System.Windows.Forms.Label();
+            this.Window_Inv_Slotids_Text = new System.Windows.Forms.RichTextBox();
             this.SuspendLayout();
             // 
             // Chat_Message
@@ -742,7 +744,7 @@ namespace DebugPlugin
             // Window_ActionID_Text
             // 
             this.Window_ActionID_Text.HideSelection = false;
-            this.Window_ActionID_Text.Location = new System.Drawing.Point(1224, 182);
+            this.Window_ActionID_Text.Location = new System.Drawing.Point(1226, 182);
             this.Window_ActionID_Text.Name = "Window_ActionID_Text";
             this.Window_ActionID_Text.ReadOnly = true;
             this.Window_ActionID_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
@@ -789,13 +791,33 @@ namespace DebugPlugin
             // Window_Slotids_Text
             // 
             this.Window_Slotids_Text.HideSelection = false;
-            this.Window_Slotids_Text.Location = new System.Drawing.Point(1224, 210);
+            this.Window_Slotids_Text.Location = new System.Drawing.Point(1226, 210);
             this.Window_Slotids_Text.Name = "Window_Slotids_Text";
             this.Window_Slotids_Text.ReadOnly = true;
             this.Window_Slotids_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            this.Window_Slotids_Text.Size = new System.Drawing.Size(205, 158);
+            this.Window_Slotids_Text.Size = new System.Drawing.Size(205, 76);
             this.Window_Slotids_Text.TabIndex = 69;
             this.Window_Slotids_Text.Text = "";
+            // 
+            // Window_Inv_Slotids
+            // 
+            this.Window_Inv_Slotids.AutoSize = true;
+            this.Window_Inv_Slotids.Location = new System.Drawing.Point(1121, 295);
+            this.Window_Inv_Slotids.Name = "Window_Inv_Slotids";
+            this.Window_Inv_Slotids.Size = new System.Drawing.Size(101, 13);
+            this.Window_Inv_Slotids.TabIndex = 70;
+            this.Window_Inv_Slotids.Text = "Window Inv Slotids:";
+            // 
+            // Window_Inv_Slotids_Text
+            // 
+            this.Window_Inv_Slotids_Text.HideSelection = false;
+            this.Window_Inv_Slotids_Text.Location = new System.Drawing.Point(1226, 292);
+            this.Window_Inv_Slotids_Text.Name = "Window_Inv_Slotids_Text";
+            this.Window_Inv_Slotids_Text.ReadOnly = true;
+            this.Window_Inv_Slotids_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
+            this.Window_Inv_Slotids_Text.Size = new System.Drawing.Size(205, 76);
+            this.Window_Inv_Slotids_Text.TabIndex = 71;
+            this.Window_Inv_Slotids_Text.Text = "";
             // 
             // DebugForm
             // 
@@ -804,6 +826,8 @@ namespace DebugPlugin
             this.AutoSize = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ClientSize = new System.Drawing.Size(1500, 381);
+            this.Controls.Add(this.Window_Inv_Slotids_Text);
+            this.Controls.Add(this.Window_Inv_Slotids);
             this.Controls.Add(this.Window_Slotids_Text);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.Window_ActionID);
@@ -953,5 +977,7 @@ namespace DebugPlugin
         private Label Window_ActionID;
         private Label label1;
         private RichTextBox Window_Slotids_Text;
+        private Label Window_Inv_Slotids;
+        private RichTextBox Window_Inv_Slotids_Text;
     }
 }

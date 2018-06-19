@@ -95,19 +95,46 @@ namespace DebugPlugin
             this.Window_Slotcount = new System.Windows.Forms.Label();
             this.Window_EntityID = new System.Windows.Forms.Label();
             this.Window_ActionID = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
+            this.Window_Slotids = new System.Windows.Forms.Label();
             this.Window_Slotids_Text = new System.Windows.Forms.RichTextBox();
             this.Window_Inv_Slotids = new System.Windows.Forms.Label();
             this.Window_Inv_Slotids_Text = new System.Windows.Forms.RichTextBox();
+            this.Current_Path_Target_Loc = new System.Windows.Forms.Label();
+            this.Current_Path_Target_Loc_Text = new System.Windows.Forms.RichTextBox();
+            this.Current_Path_Complete = new System.Windows.Forms.Label();
+            this.Current_Path_Complete_Text = new System.Windows.Forms.RichTextBox();
+            this.Current_Path_Disposed_Text = new System.Windows.Forms.RichTextBox();
+            this.Current_Path_Disposed = new System.Windows.Forms.Label();
+            this.Current_Path_Offset_Text = new System.Windows.Forms.RichTextBox();
+            this.Current_Path_Offset = new System.Windows.Forms.Label();
+            this.Current_Path_Options_Text = new System.Windows.Forms.RichTextBox();
+            this.Current_Path_Options = new System.Windows.Forms.Label();
+            this.Current_Path_Searched_Text = new System.Windows.Forms.RichTextBox();
+            this.Current_Path_Searched = new System.Windows.Forms.Label();
+            this.Current_Path_Token_Stopped_Text = new System.Windows.Forms.RichTextBox();
+            this.Current_Path_Token_Stopped = new System.Windows.Forms.Label();
+            this.Current_Path_Valid_Text = new System.Windows.Forms.RichTextBox();
+            this.Current_Path_Valid = new System.Windows.Forms.Label();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.tabPage5 = new System.Windows.Forms.TabPage();
+            this.tabControl1.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            this.tabPage2.SuspendLayout();
+            this.tabPage3.SuspendLayout();
+            this.tabPage4.SuspendLayout();
+            this.tabPage5.SuspendLayout();
             this.SuspendLayout();
             // 
             // Chat_Message
             // 
             this.Chat_Message.AcceptsReturn = true;
             this.Chat_Message.AcceptsTab = true;
-            this.Chat_Message.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.Chat_Message.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.Chat_Message.Location = new System.Drawing.Point(13, 348);
+            this.Chat_Message.Location = new System.Drawing.Point(13, 339);
             this.Chat_Message.MaxLength = 256;
             this.Chat_Message.Name = "Chat_Message";
             this.Chat_Message.Size = new System.Drawing.Size(378, 20);
@@ -116,9 +143,8 @@ namespace DebugPlugin
             // 
             // Chat_Send
             // 
-            this.Chat_Send.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.Chat_Send.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.Chat_Send.Location = new System.Drawing.Point(397, 348);
+            this.Chat_Send.Location = new System.Drawing.Point(397, 339);
             this.Chat_Send.Name = "Chat_Send";
             this.Chat_Send.Size = new System.Drawing.Size(75, 20);
             this.Chat_Send.TabIndex = 2;
@@ -128,13 +154,12 @@ namespace DebugPlugin
             // 
             // Chat_Box
             // 
-            this.Chat_Box.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.Chat_Box.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.Chat_Box.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.Chat_Box.HideSelection = false;
-            this.Chat_Box.Location = new System.Drawing.Point(13, 13);
+            this.Chat_Box.Location = new System.Drawing.Point(13, 7);
             this.Chat_Box.Name = "Chat_Box";
-            this.Chat_Box.Size = new System.Drawing.Size(459, 330);
+            this.Chat_Box.Size = new System.Drawing.Size(459, 326);
             this.Chat_Box.TabIndex = 3;
             this.Chat_Box.Text = "";
             this.Chat_Box.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Chat_Box_KeyDown);
@@ -143,7 +168,7 @@ namespace DebugPlugin
             // Bot_Name
             // 
             this.Bot_Name.AutoSize = true;
-            this.Bot_Name.Location = new System.Drawing.Point(490, 16);
+            this.Bot_Name.Location = new System.Drawing.Point(3, 9);
             this.Bot_Name.Name = "Bot_Name";
             this.Bot_Name.Size = new System.Drawing.Size(52, 13);
             this.Bot_Name.TabIndex = 4;
@@ -152,7 +177,7 @@ namespace DebugPlugin
             // Bot_Name_Text
             // 
             this.Bot_Name_Text.HideSelection = false;
-            this.Bot_Name_Text.Location = new System.Drawing.Point(579, 13);
+            this.Bot_Name_Text.Location = new System.Drawing.Point(92, 6);
             this.Bot_Name_Text.Name = "Bot_Name_Text";
             this.Bot_Name_Text.ReadOnly = true;
             this.Bot_Name_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
@@ -163,7 +188,7 @@ namespace DebugPlugin
             // Bot_Health
             // 
             this.Bot_Health.AutoSize = true;
-            this.Bot_Health.Location = new System.Drawing.Point(490, 82);
+            this.Bot_Health.Location = new System.Drawing.Point(3, 75);
             this.Bot_Health.Name = "Bot_Health";
             this.Bot_Health.Size = new System.Drawing.Size(60, 13);
             this.Bot_Health.TabIndex = 6;
@@ -172,7 +197,7 @@ namespace DebugPlugin
             // Bot_Hunger
             // 
             this.Bot_Hunger.AutoSize = true;
-            this.Bot_Hunger.Location = new System.Drawing.Point(490, 110);
+            this.Bot_Hunger.Location = new System.Drawing.Point(3, 103);
             this.Bot_Hunger.Name = "Bot_Hunger";
             this.Bot_Hunger.Size = new System.Drawing.Size(64, 13);
             this.Bot_Hunger.TabIndex = 7;
@@ -181,7 +206,7 @@ namespace DebugPlugin
             // Bot_Health_Text
             // 
             this.Bot_Health_Text.HideSelection = false;
-            this.Bot_Health_Text.Location = new System.Drawing.Point(579, 79);
+            this.Bot_Health_Text.Location = new System.Drawing.Point(92, 72);
             this.Bot_Health_Text.Name = "Bot_Health_Text";
             this.Bot_Health_Text.ReadOnly = true;
             this.Bot_Health_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
@@ -192,7 +217,7 @@ namespace DebugPlugin
             // Bot_Hunger_Text
             // 
             this.Bot_Hunger_Text.HideSelection = false;
-            this.Bot_Hunger_Text.Location = new System.Drawing.Point(579, 107);
+            this.Bot_Hunger_Text.Location = new System.Drawing.Point(92, 100);
             this.Bot_Hunger_Text.Name = "Bot_Hunger_Text";
             this.Bot_Hunger_Text.ReadOnly = true;
             this.Bot_Hunger_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
@@ -203,7 +228,7 @@ namespace DebugPlugin
             // Bot_Location
             // 
             this.Bot_Location.AutoSize = true;
-            this.Bot_Location.Location = new System.Drawing.Point(490, 138);
+            this.Bot_Location.Location = new System.Drawing.Point(3, 131);
             this.Bot_Location.Name = "Bot_Location";
             this.Bot_Location.Size = new System.Drawing.Size(70, 13);
             this.Bot_Location.TabIndex = 10;
@@ -212,7 +237,7 @@ namespace DebugPlugin
             // Bot_Location_Text
             // 
             this.Bot_Location_Text.HideSelection = false;
-            this.Bot_Location_Text.Location = new System.Drawing.Point(579, 135);
+            this.Bot_Location_Text.Location = new System.Drawing.Point(92, 128);
             this.Bot_Location_Text.Name = "Bot_Location_Text";
             this.Bot_Location_Text.ReadOnly = true;
             this.Bot_Location_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
@@ -223,7 +248,7 @@ namespace DebugPlugin
             // Bot_Dimension
             // 
             this.Bot_Dimension.AutoSize = true;
-            this.Bot_Dimension.Location = new System.Drawing.Point(490, 166);
+            this.Bot_Dimension.Location = new System.Drawing.Point(3, 159);
             this.Bot_Dimension.Name = "Bot_Dimension";
             this.Bot_Dimension.Size = new System.Drawing.Size(78, 13);
             this.Bot_Dimension.TabIndex = 12;
@@ -232,7 +257,7 @@ namespace DebugPlugin
             // Bot_Dimension_Text
             // 
             this.Bot_Dimension_Text.HideSelection = false;
-            this.Bot_Dimension_Text.Location = new System.Drawing.Point(579, 163);
+            this.Bot_Dimension_Text.Location = new System.Drawing.Point(92, 156);
             this.Bot_Dimension_Text.Name = "Bot_Dimension_Text";
             this.Bot_Dimension_Text.ReadOnly = true;
             this.Bot_Dimension_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
@@ -243,7 +268,7 @@ namespace DebugPlugin
             // Bot_Gamemode
             // 
             this.Bot_Gamemode.AutoSize = true;
-            this.Bot_Gamemode.Location = new System.Drawing.Point(490, 194);
+            this.Bot_Gamemode.Location = new System.Drawing.Point(3, 187);
             this.Bot_Gamemode.Name = "Bot_Gamemode";
             this.Bot_Gamemode.Size = new System.Drawing.Size(83, 13);
             this.Bot_Gamemode.TabIndex = 14;
@@ -252,7 +277,7 @@ namespace DebugPlugin
             // Bot_Gamemode_Text
             // 
             this.Bot_Gamemode_Text.HideSelection = false;
-            this.Bot_Gamemode_Text.Location = new System.Drawing.Point(579, 191);
+            this.Bot_Gamemode_Text.Location = new System.Drawing.Point(92, 184);
             this.Bot_Gamemode_Text.Name = "Bot_Gamemode_Text";
             this.Bot_Gamemode_Text.ReadOnly = true;
             this.Bot_Gamemode_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
@@ -263,7 +288,7 @@ namespace DebugPlugin
             // Bot_UUID
             // 
             this.Bot_UUID.AutoSize = true;
-            this.Bot_UUID.Location = new System.Drawing.Point(490, 50);
+            this.Bot_UUID.Location = new System.Drawing.Point(3, 37);
             this.Bot_UUID.Name = "Bot_UUID";
             this.Bot_UUID.Size = new System.Drawing.Size(56, 13);
             this.Bot_UUID.TabIndex = 16;
@@ -272,7 +297,7 @@ namespace DebugPlugin
             // Bot_UUID_Text
             // 
             this.Bot_UUID_Text.HideSelection = false;
-            this.Bot_UUID_Text.Location = new System.Drawing.Point(579, 41);
+            this.Bot_UUID_Text.Location = new System.Drawing.Point(92, 34);
             this.Bot_UUID_Text.Name = "Bot_UUID_Text";
             this.Bot_UUID_Text.ReadOnly = true;
             this.Bot_UUID_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
@@ -283,7 +308,7 @@ namespace DebugPlugin
             // Bot_Alive
             // 
             this.Bot_Alive.AutoSize = true;
-            this.Bot_Alive.Location = new System.Drawing.Point(490, 222);
+            this.Bot_Alive.Location = new System.Drawing.Point(3, 215);
             this.Bot_Alive.Name = "Bot_Alive";
             this.Bot_Alive.Size = new System.Drawing.Size(52, 13);
             this.Bot_Alive.TabIndex = 18;
@@ -292,7 +317,7 @@ namespace DebugPlugin
             // Bot_Alive_Text
             // 
             this.Bot_Alive_Text.HideSelection = false;
-            this.Bot_Alive_Text.Location = new System.Drawing.Point(579, 219);
+            this.Bot_Alive_Text.Location = new System.Drawing.Point(92, 212);
             this.Bot_Alive_Text.Name = "Bot_Alive_Text";
             this.Bot_Alive_Text.ReadOnly = true;
             this.Bot_Alive_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
@@ -303,7 +328,7 @@ namespace DebugPlugin
             // Bot_Inv_Full
             // 
             this.Bot_Inv_Full.AutoSize = true;
-            this.Bot_Inv_Full.Location = new System.Drawing.Point(730, 16);
+            this.Bot_Inv_Full.Location = new System.Drawing.Point(3, 9);
             this.Bot_Inv_Full.Name = "Bot_Inv_Full";
             this.Bot_Inv_Full.Size = new System.Drawing.Size(63, 13);
             this.Bot_Inv_Full.TabIndex = 20;
@@ -312,7 +337,7 @@ namespace DebugPlugin
             // Bot_Inv_FSlots
             // 
             this.Bot_Inv_FSlots.AutoSize = true;
-            this.Bot_Inv_FSlots.Location = new System.Drawing.Point(730, 44);
+            this.Bot_Inv_FSlots.Location = new System.Drawing.Point(3, 37);
             this.Bot_Inv_FSlots.Name = "Bot_Inv_FSlots";
             this.Bot_Inv_FSlots.Size = new System.Drawing.Size(76, 13);
             this.Bot_Inv_FSlots.TabIndex = 21;
@@ -321,7 +346,7 @@ namespace DebugPlugin
             // Bot_Inv_FSlots_Text
             // 
             this.Bot_Inv_FSlots_Text.HideSelection = false;
-            this.Bot_Inv_FSlots_Text.Location = new System.Drawing.Point(816, 41);
+            this.Bot_Inv_FSlots_Text.Location = new System.Drawing.Point(95, 34);
             this.Bot_Inv_FSlots_Text.Name = "Bot_Inv_FSlots_Text";
             this.Bot_Inv_FSlots_Text.ReadOnly = true;
             this.Bot_Inv_FSlots_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
@@ -332,7 +357,7 @@ namespace DebugPlugin
             // Bot_Inv_Full_Text
             // 
             this.Bot_Inv_Full_Text.HideSelection = false;
-            this.Bot_Inv_Full_Text.Location = new System.Drawing.Point(816, 13);
+            this.Bot_Inv_Full_Text.Location = new System.Drawing.Point(95, 6);
             this.Bot_Inv_Full_Text.Name = "Bot_Inv_Full_Text";
             this.Bot_Inv_Full_Text.ReadOnly = true;
             this.Bot_Inv_Full_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
@@ -343,7 +368,7 @@ namespace DebugPlugin
             // Bot_Inv_USlots
             // 
             this.Bot_Inv_USlots.AutoSize = true;
-            this.Bot_Inv_USlots.Location = new System.Drawing.Point(730, 72);
+            this.Bot_Inv_USlots.Location = new System.Drawing.Point(3, 65);
             this.Bot_Inv_USlots.Name = "Bot_Inv_USlots";
             this.Bot_Inv_USlots.Size = new System.Drawing.Size(80, 13);
             this.Bot_Inv_USlots.TabIndex = 24;
@@ -352,7 +377,7 @@ namespace DebugPlugin
             // Bot_Inv_USlots_Text
             // 
             this.Bot_Inv_USlots_Text.HideSelection = false;
-            this.Bot_Inv_USlots_Text.Location = new System.Drawing.Point(816, 69);
+            this.Bot_Inv_USlots_Text.Location = new System.Drawing.Point(95, 62);
             this.Bot_Inv_USlots_Text.Name = "Bot_Inv_USlots_Text";
             this.Bot_Inv_USlots_Text.ReadOnly = true;
             this.Bot_Inv_USlots_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
@@ -363,7 +388,7 @@ namespace DebugPlugin
             // Closest_Player
             // 
             this.Closest_Player.AutoSize = true;
-            this.Closest_Player.Location = new System.Drawing.Point(858, 16);
+            this.Closest_Player.Location = new System.Drawing.Point(3, 9);
             this.Closest_Player.Name = "Closest_Player";
             this.Closest_Player.Size = new System.Drawing.Size(76, 13);
             this.Closest_Player.TabIndex = 26;
@@ -372,7 +397,7 @@ namespace DebugPlugin
             // Closest_Player_UUID
             // 
             this.Closest_Player_UUID.AutoSize = true;
-            this.Closest_Player_UUID.Location = new System.Drawing.Point(858, 50);
+            this.Closest_Player_UUID.Location = new System.Drawing.Point(3, 41);
             this.Closest_Player_UUID.Name = "Closest_Player_UUID";
             this.Closest_Player_UUID.Size = new System.Drawing.Size(106, 13);
             this.Closest_Player_UUID.TabIndex = 27;
@@ -381,7 +406,7 @@ namespace DebugPlugin
             // Closest_Player_Loc
             // 
             this.Closest_Player_Loc.AutoSize = true;
-            this.Closest_Player_Loc.Location = new System.Drawing.Point(858, 82);
+            this.Closest_Player_Loc.Location = new System.Drawing.Point(3, 75);
             this.Closest_Player_Loc.Name = "Closest_Player_Loc";
             this.Closest_Player_Loc.Size = new System.Drawing.Size(97, 13);
             this.Closest_Player_Loc.TabIndex = 28;
@@ -390,7 +415,7 @@ namespace DebugPlugin
             // Closest_Player_Dist
             // 
             this.Closest_Player_Dist.AutoSize = true;
-            this.Closest_Player_Dist.Location = new System.Drawing.Point(858, 110);
+            this.Closest_Player_Dist.Location = new System.Drawing.Point(3, 103);
             this.Closest_Player_Dist.Name = "Closest_Player_Dist";
             this.Closest_Player_Dist.Size = new System.Drawing.Size(97, 13);
             this.Closest_Player_Dist.TabIndex = 29;
@@ -399,7 +424,7 @@ namespace DebugPlugin
             // Closest_Player_Text
             // 
             this.Closest_Player_Text.HideSelection = false;
-            this.Closest_Player_Text.Location = new System.Drawing.Point(970, 13);
+            this.Closest_Player_Text.Location = new System.Drawing.Point(115, 6);
             this.Closest_Player_Text.Name = "Closest_Player_Text";
             this.Closest_Player_Text.ReadOnly = true;
             this.Closest_Player_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
@@ -410,7 +435,7 @@ namespace DebugPlugin
             // Closest_Player_UUID_Text
             // 
             this.Closest_Player_UUID_Text.HideSelection = false;
-            this.Closest_Player_UUID_Text.Location = new System.Drawing.Point(970, 41);
+            this.Closest_Player_UUID_Text.Location = new System.Drawing.Point(115, 34);
             this.Closest_Player_UUID_Text.Name = "Closest_Player_UUID_Text";
             this.Closest_Player_UUID_Text.ReadOnly = true;
             this.Closest_Player_UUID_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
@@ -421,7 +446,7 @@ namespace DebugPlugin
             // Closest_Player_Loc_Text
             // 
             this.Closest_Player_Loc_Text.HideSelection = false;
-            this.Closest_Player_Loc_Text.Location = new System.Drawing.Point(970, 79);
+            this.Closest_Player_Loc_Text.Location = new System.Drawing.Point(115, 72);
             this.Closest_Player_Loc_Text.Name = "Closest_Player_Loc_Text";
             this.Closest_Player_Loc_Text.ReadOnly = true;
             this.Closest_Player_Loc_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
@@ -432,7 +457,7 @@ namespace DebugPlugin
             // Closest_Player_Dist_Text
             // 
             this.Closest_Player_Dist_Text.HideSelection = false;
-            this.Closest_Player_Dist_Text.Location = new System.Drawing.Point(970, 107);
+            this.Closest_Player_Dist_Text.Location = new System.Drawing.Point(115, 100);
             this.Closest_Player_Dist_Text.Name = "Closest_Player_Dist_Text";
             this.Closest_Player_Dist_Text.ReadOnly = true;
             this.Closest_Player_Dist_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
@@ -443,7 +468,7 @@ namespace DebugPlugin
             // Closest_Mob
             // 
             this.Closest_Mob.AutoSize = true;
-            this.Closest_Mob.Location = new System.Drawing.Point(858, 293);
+            this.Closest_Mob.Location = new System.Drawing.Point(3, 271);
             this.Closest_Mob.Name = "Closest_Mob";
             this.Closest_Mob.Size = new System.Drawing.Size(68, 13);
             this.Closest_Mob.TabIndex = 34;
@@ -452,7 +477,7 @@ namespace DebugPlugin
             // Closest_Mob_Text
             // 
             this.Closest_Mob_Text.HideSelection = false;
-            this.Closest_Mob_Text.Location = new System.Drawing.Point(970, 290);
+            this.Closest_Mob_Text.Location = new System.Drawing.Point(115, 268);
             this.Closest_Mob_Text.Name = "Closest_Mob_Text";
             this.Closest_Mob_Text.ReadOnly = true;
             this.Closest_Mob_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
@@ -463,7 +488,7 @@ namespace DebugPlugin
             // Closest_Mob_Loc
             // 
             this.Closest_Mob_Loc.AutoSize = true;
-            this.Closest_Mob_Loc.Location = new System.Drawing.Point(858, 321);
+            this.Closest_Mob_Loc.Location = new System.Drawing.Point(3, 299);
             this.Closest_Mob_Loc.Name = "Closest_Mob_Loc";
             this.Closest_Mob_Loc.Size = new System.Drawing.Size(89, 13);
             this.Closest_Mob_Loc.TabIndex = 36;
@@ -472,7 +497,7 @@ namespace DebugPlugin
             // Closest_Mob_Loc_Text
             // 
             this.Closest_Mob_Loc_Text.HideSelection = false;
-            this.Closest_Mob_Loc_Text.Location = new System.Drawing.Point(970, 318);
+            this.Closest_Mob_Loc_Text.Location = new System.Drawing.Point(115, 296);
             this.Closest_Mob_Loc_Text.Name = "Closest_Mob_Loc_Text";
             this.Closest_Mob_Loc_Text.ReadOnly = true;
             this.Closest_Mob_Loc_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
@@ -483,7 +508,7 @@ namespace DebugPlugin
             // Closest_Mob_Dist
             // 
             this.Closest_Mob_Dist.AutoSize = true;
-            this.Closest_Mob_Dist.Location = new System.Drawing.Point(858, 349);
+            this.Closest_Mob_Dist.Location = new System.Drawing.Point(3, 327);
             this.Closest_Mob_Dist.Name = "Closest_Mob_Dist";
             this.Closest_Mob_Dist.Size = new System.Drawing.Size(89, 13);
             this.Closest_Mob_Dist.TabIndex = 38;
@@ -492,7 +517,7 @@ namespace DebugPlugin
             // Closest_Mob_Dist_Text
             // 
             this.Closest_Mob_Dist_Text.HideSelection = false;
-            this.Closest_Mob_Dist_Text.Location = new System.Drawing.Point(970, 346);
+            this.Closest_Mob_Dist_Text.Location = new System.Drawing.Point(115, 324);
             this.Closest_Mob_Dist_Text.Name = "Closest_Mob_Dist_Text";
             this.Closest_Mob_Dist_Text.ReadOnly = true;
             this.Closest_Mob_Dist_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
@@ -503,7 +528,7 @@ namespace DebugPlugin
             // Targetable_Player_Text
             // 
             this.Targetable_Player_Text.HideSelection = false;
-            this.Targetable_Player_Text.Location = new System.Drawing.Point(970, 147);
+            this.Targetable_Player_Text.Location = new System.Drawing.Point(115, 134);
             this.Targetable_Player_Text.Name = "Targetable_Player_Text";
             this.Targetable_Player_Text.ReadOnly = true;
             this.Targetable_Player_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
@@ -514,7 +539,7 @@ namespace DebugPlugin
             // Targetable_Player_UUID_Text
             // 
             this.Targetable_Player_UUID_Text.HideSelection = false;
-            this.Targetable_Player_UUID_Text.Location = new System.Drawing.Point(970, 175);
+            this.Targetable_Player_UUID_Text.Location = new System.Drawing.Point(115, 162);
             this.Targetable_Player_UUID_Text.Name = "Targetable_Player_UUID_Text";
             this.Targetable_Player_UUID_Text.ReadOnly = true;
             this.Targetable_Player_UUID_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
@@ -525,7 +550,7 @@ namespace DebugPlugin
             // Targetable_Player_Loc_Text
             // 
             this.Targetable_Player_Loc_Text.HideSelection = false;
-            this.Targetable_Player_Loc_Text.Location = new System.Drawing.Point(970, 213);
+            this.Targetable_Player_Loc_Text.Location = new System.Drawing.Point(115, 200);
             this.Targetable_Player_Loc_Text.Name = "Targetable_Player_Loc_Text";
             this.Targetable_Player_Loc_Text.ReadOnly = true;
             this.Targetable_Player_Loc_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
@@ -536,7 +561,7 @@ namespace DebugPlugin
             // Targetable_Player_Dist_Text
             // 
             this.Targetable_Player_Dist_Text.HideSelection = false;
-            this.Targetable_Player_Dist_Text.Location = new System.Drawing.Point(970, 247);
+            this.Targetable_Player_Dist_Text.Location = new System.Drawing.Point(115, 234);
             this.Targetable_Player_Dist_Text.Name = "Targetable_Player_Dist_Text";
             this.Targetable_Player_Dist_Text.ReadOnly = true;
             this.Targetable_Player_Dist_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
@@ -547,7 +572,7 @@ namespace DebugPlugin
             // Targetable_Player
             // 
             this.Targetable_Player.AutoSize = true;
-            this.Targetable_Player.Location = new System.Drawing.Point(858, 150);
+            this.Targetable_Player.Location = new System.Drawing.Point(3, 137);
             this.Targetable_Player.Name = "Targetable_Player";
             this.Targetable_Player.Size = new System.Drawing.Size(93, 13);
             this.Targetable_Player.TabIndex = 44;
@@ -556,7 +581,7 @@ namespace DebugPlugin
             // Targetable_Player_UUID
             // 
             this.Targetable_Player_UUID.AutoSize = true;
-            this.Targetable_Player_UUID.Location = new System.Drawing.Point(858, 178);
+            this.Targetable_Player_UUID.Location = new System.Drawing.Point(3, 165);
             this.Targetable_Player_UUID.Name = "Targetable_Player_UUID";
             this.Targetable_Player_UUID.Size = new System.Drawing.Size(90, 26);
             this.Targetable_Player_UUID.TabIndex = 45;
@@ -565,7 +590,7 @@ namespace DebugPlugin
             // Targetable_Player_Loc
             // 
             this.Targetable_Player_Loc.AutoSize = true;
-            this.Targetable_Player_Loc.Location = new System.Drawing.Point(858, 213);
+            this.Targetable_Player_Loc.Location = new System.Drawing.Point(3, 200);
             this.Targetable_Player_Loc.Name = "Targetable_Player_Loc";
             this.Targetable_Player_Loc.Size = new System.Drawing.Size(90, 26);
             this.Targetable_Player_Loc.TabIndex = 46;
@@ -574,7 +599,7 @@ namespace DebugPlugin
             // Targetable_Player_Dist
             // 
             this.Targetable_Player_Dist.AutoSize = true;
-            this.Targetable_Player_Dist.Location = new System.Drawing.Point(858, 247);
+            this.Targetable_Player_Dist.Location = new System.Drawing.Point(3, 234);
             this.Targetable_Player_Dist.Name = "Targetable_Player_Dist";
             this.Targetable_Player_Dist.Size = new System.Drawing.Size(90, 26);
             this.Targetable_Player_Dist.TabIndex = 47;
@@ -583,7 +608,7 @@ namespace DebugPlugin
             // Held_Item_ID
             // 
             this.Held_Item_ID.AutoSize = true;
-            this.Held_Item_ID.Location = new System.Drawing.Point(730, 110);
+            this.Held_Item_ID.Location = new System.Drawing.Point(3, 103);
             this.Held_Item_ID.Name = "Held_Item_ID";
             this.Held_Item_ID.Size = new System.Drawing.Size(69, 13);
             this.Held_Item_ID.TabIndex = 48;
@@ -592,7 +617,7 @@ namespace DebugPlugin
             // Held_Item_ID_Text
             // 
             this.Held_Item_ID_Text.HideSelection = false;
-            this.Held_Item_ID_Text.Location = new System.Drawing.Point(816, 107);
+            this.Held_Item_ID_Text.Location = new System.Drawing.Point(95, 100);
             this.Held_Item_ID_Text.Name = "Held_Item_ID_Text";
             this.Held_Item_ID_Text.ReadOnly = true;
             this.Held_Item_ID_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
@@ -603,7 +628,7 @@ namespace DebugPlugin
             // Held_Item_Count
             // 
             this.Held_Item_Count.AutoSize = true;
-            this.Held_Item_Count.Location = new System.Drawing.Point(730, 138);
+            this.Held_Item_Count.Location = new System.Drawing.Point(3, 131);
             this.Held_Item_Count.Name = "Held_Item_Count";
             this.Held_Item_Count.Size = new System.Drawing.Size(86, 13);
             this.Held_Item_Count.TabIndex = 50;
@@ -612,7 +637,7 @@ namespace DebugPlugin
             // Held_Item_Count_Text
             // 
             this.Held_Item_Count_Text.HideSelection = false;
-            this.Held_Item_Count_Text.Location = new System.Drawing.Point(816, 135);
+            this.Held_Item_Count_Text.Location = new System.Drawing.Point(95, 128);
             this.Held_Item_Count_Text.Name = "Held_Item_Count_Text";
             this.Held_Item_Count_Text.ReadOnly = true;
             this.Held_Item_Count_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
@@ -623,7 +648,7 @@ namespace DebugPlugin
             // Held_Item_Slot
             // 
             this.Held_Item_Slot.AutoSize = true;
-            this.Held_Item_Slot.Location = new System.Drawing.Point(730, 166);
+            this.Held_Item_Slot.Location = new System.Drawing.Point(3, 159);
             this.Held_Item_Slot.Name = "Held_Item_Slot";
             this.Held_Item_Slot.Size = new System.Drawing.Size(76, 13);
             this.Held_Item_Slot.TabIndex = 52;
@@ -632,7 +657,7 @@ namespace DebugPlugin
             // Held_Item_Slot_Text
             // 
             this.Held_Item_Slot_Text.HideSelection = false;
-            this.Held_Item_Slot_Text.Location = new System.Drawing.Point(816, 163);
+            this.Held_Item_Slot_Text.Location = new System.Drawing.Point(95, 156);
             this.Held_Item_Slot_Text.Name = "Held_Item_Slot_Text";
             this.Held_Item_Slot_Text.ReadOnly = true;
             this.Held_Item_Slot_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
@@ -643,7 +668,7 @@ namespace DebugPlugin
             // Held_Item_NBT
             // 
             this.Held_Item_NBT.AutoSize = true;
-            this.Held_Item_NBT.Location = new System.Drawing.Point(644, 250);
+            this.Held_Item_NBT.Location = new System.Drawing.Point(200, 182);
             this.Held_Item_NBT.Name = "Held_Item_NBT";
             this.Held_Item_NBT.Size = new System.Drawing.Size(80, 13);
             this.Held_Item_NBT.TabIndex = 54;
@@ -652,17 +677,17 @@ namespace DebugPlugin
             // Held_Item_NBT_Text
             // 
             this.Held_Item_NBT_Text.HideSelection = false;
-            this.Held_Item_NBT_Text.Location = new System.Drawing.Point(493, 266);
+            this.Held_Item_NBT_Text.Location = new System.Drawing.Point(6, 198);
             this.Held_Item_NBT_Text.Name = "Held_Item_NBT_Text";
             this.Held_Item_NBT_Text.ReadOnly = true;
-            this.Held_Item_NBT_Text.Size = new System.Drawing.Size(359, 102);
+            this.Held_Item_NBT_Text.Size = new System.Drawing.Size(439, 126);
             this.Held_Item_NBT_Text.TabIndex = 55;
             this.Held_Item_NBT_Text.Text = "";
             // 
             // Window_Title
             // 
             this.Window_Title.AutoSize = true;
-            this.Window_Title.Location = new System.Drawing.Point(1121, 16);
+            this.Window_Title.Location = new System.Drawing.Point(3, 9);
             this.Window_Title.Name = "Window_Title";
             this.Window_Title.Size = new System.Drawing.Size(72, 13);
             this.Window_Title.TabIndex = 56;
@@ -671,7 +696,7 @@ namespace DebugPlugin
             // Window_Title_Text
             // 
             this.Window_Title_Text.HideSelection = false;
-            this.Window_Title_Text.Location = new System.Drawing.Point(1226, 13);
+            this.Window_Title_Text.Location = new System.Drawing.Point(108, 6);
             this.Window_Title_Text.Name = "Window_Title_Text";
             this.Window_Title_Text.ReadOnly = true;
             this.Window_Title_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
@@ -682,7 +707,7 @@ namespace DebugPlugin
             // Window_Type
             // 
             this.Window_Type.AutoSize = true;
-            this.Window_Type.Location = new System.Drawing.Point(1121, 73);
+            this.Window_Type.Location = new System.Drawing.Point(3, 66);
             this.Window_Type.Name = "Window_Type";
             this.Window_Type.Size = new System.Drawing.Size(76, 13);
             this.Window_Type.TabIndex = 58;
@@ -691,7 +716,7 @@ namespace DebugPlugin
             // Window_ID
             // 
             this.Window_ID.AutoSize = true;
-            this.Window_ID.Location = new System.Drawing.Point(1121, 101);
+            this.Window_ID.Location = new System.Drawing.Point(3, 94);
             this.Window_ID.Name = "Window_ID";
             this.Window_ID.Size = new System.Drawing.Size(63, 13);
             this.Window_ID.TabIndex = 59;
@@ -700,7 +725,7 @@ namespace DebugPlugin
             // Window_Type_Text
             // 
             this.Window_Type_Text.HideSelection = false;
-            this.Window_Type_Text.Location = new System.Drawing.Point(1226, 70);
+            this.Window_Type_Text.Location = new System.Drawing.Point(108, 63);
             this.Window_Type_Text.Name = "Window_Type_Text";
             this.Window_Type_Text.ReadOnly = true;
             this.Window_Type_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
@@ -711,7 +736,7 @@ namespace DebugPlugin
             // Window_ID_Text
             // 
             this.Window_ID_Text.HideSelection = false;
-            this.Window_ID_Text.Location = new System.Drawing.Point(1226, 98);
+            this.Window_ID_Text.Location = new System.Drawing.Point(108, 91);
             this.Window_ID_Text.Name = "Window_ID_Text";
             this.Window_ID_Text.ReadOnly = true;
             this.Window_ID_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
@@ -722,7 +747,7 @@ namespace DebugPlugin
             // Window_Slotcount_Text
             // 
             this.Window_Slotcount_Text.HideSelection = false;
-            this.Window_Slotcount_Text.Location = new System.Drawing.Point(1226, 126);
+            this.Window_Slotcount_Text.Location = new System.Drawing.Point(108, 119);
             this.Window_Slotcount_Text.Name = "Window_Slotcount_Text";
             this.Window_Slotcount_Text.ReadOnly = true;
             this.Window_Slotcount_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
@@ -733,7 +758,7 @@ namespace DebugPlugin
             // Window_EntityID_Text
             // 
             this.Window_EntityID_Text.HideSelection = false;
-            this.Window_EntityID_Text.Location = new System.Drawing.Point(1226, 154);
+            this.Window_EntityID_Text.Location = new System.Drawing.Point(108, 147);
             this.Window_EntityID_Text.Name = "Window_EntityID_Text";
             this.Window_EntityID_Text.ReadOnly = true;
             this.Window_EntityID_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
@@ -744,7 +769,7 @@ namespace DebugPlugin
             // Window_ActionID_Text
             // 
             this.Window_ActionID_Text.HideSelection = false;
-            this.Window_ActionID_Text.Location = new System.Drawing.Point(1226, 182);
+            this.Window_ActionID_Text.Location = new System.Drawing.Point(108, 175);
             this.Window_ActionID_Text.Name = "Window_ActionID_Text";
             this.Window_ActionID_Text.ReadOnly = true;
             this.Window_ActionID_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
@@ -755,7 +780,7 @@ namespace DebugPlugin
             // Window_Slotcount
             // 
             this.Window_Slotcount.AutoSize = true;
-            this.Window_Slotcount.Location = new System.Drawing.Point(1121, 129);
+            this.Window_Slotcount.Location = new System.Drawing.Point(3, 122);
             this.Window_Slotcount.Name = "Window_Slotcount";
             this.Window_Slotcount.Size = new System.Drawing.Size(97, 13);
             this.Window_Slotcount.TabIndex = 65;
@@ -764,7 +789,7 @@ namespace DebugPlugin
             // Window_EntityID
             // 
             this.Window_EntityID.AutoSize = true;
-            this.Window_EntityID.Location = new System.Drawing.Point(1121, 157);
+            this.Window_EntityID.Location = new System.Drawing.Point(3, 150);
             this.Window_EntityID.Name = "Window_EntityID";
             this.Window_EntityID.Size = new System.Drawing.Size(89, 13);
             this.Window_EntityID.TabIndex = 66;
@@ -773,25 +798,25 @@ namespace DebugPlugin
             // Window_ActionID
             // 
             this.Window_ActionID.AutoSize = true;
-            this.Window_ActionID.Location = new System.Drawing.Point(1121, 185);
+            this.Window_ActionID.Location = new System.Drawing.Point(3, 178);
             this.Window_ActionID.Name = "Window_ActionID";
             this.Window_ActionID.Size = new System.Drawing.Size(93, 13);
             this.Window_ActionID.TabIndex = 67;
             this.Window_ActionID.Text = "Window ActionID:";
             // 
-            // label1
+            // Window_Slotids
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(1121, 213);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(83, 13);
-            this.label1.TabIndex = 68;
-            this.label1.Text = "Window Slotids:";
+            this.Window_Slotids.AutoSize = true;
+            this.Window_Slotids.Location = new System.Drawing.Point(3, 206);
+            this.Window_Slotids.Name = "Window_Slotids";
+            this.Window_Slotids.Size = new System.Drawing.Size(83, 13);
+            this.Window_Slotids.TabIndex = 68;
+            this.Window_Slotids.Text = "Window Slotids:";
             // 
             // Window_Slotids_Text
             // 
             this.Window_Slotids_Text.HideSelection = false;
-            this.Window_Slotids_Text.Location = new System.Drawing.Point(1226, 210);
+            this.Window_Slotids_Text.Location = new System.Drawing.Point(108, 203);
             this.Window_Slotids_Text.Name = "Window_Slotids_Text";
             this.Window_Slotids_Text.ReadOnly = true;
             this.Window_Slotids_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
@@ -802,7 +827,7 @@ namespace DebugPlugin
             // Window_Inv_Slotids
             // 
             this.Window_Inv_Slotids.AutoSize = true;
-            this.Window_Inv_Slotids.Location = new System.Drawing.Point(1121, 295);
+            this.Window_Inv_Slotids.Location = new System.Drawing.Point(3, 288);
             this.Window_Inv_Slotids.Name = "Window_Inv_Slotids";
             this.Window_Inv_Slotids.Size = new System.Drawing.Size(101, 13);
             this.Window_Inv_Slotids.TabIndex = 70;
@@ -811,7 +836,7 @@ namespace DebugPlugin
             // Window_Inv_Slotids_Text
             // 
             this.Window_Inv_Slotids_Text.HideSelection = false;
-            this.Window_Inv_Slotids_Text.Location = new System.Drawing.Point(1226, 292);
+            this.Window_Inv_Slotids_Text.Location = new System.Drawing.Point(108, 285);
             this.Window_Inv_Slotids_Text.Name = "Window_Inv_Slotids_Text";
             this.Window_Inv_Slotids_Text.ReadOnly = true;
             this.Window_Inv_Slotids_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
@@ -819,81 +844,326 @@ namespace DebugPlugin
             this.Window_Inv_Slotids_Text.TabIndex = 71;
             this.Window_Inv_Slotids_Text.Text = "";
             // 
+            // Current_Path_Target_Loc
+            // 
+            this.Current_Path_Target_Loc.AutoSize = true;
+            this.Current_Path_Target_Loc.Location = new System.Drawing.Point(3, 9);
+            this.Current_Path_Target_Loc.Name = "Current_Path_Target_Loc";
+            this.Current_Path_Target_Loc.Size = new System.Drawing.Size(124, 13);
+            this.Current_Path_Target_Loc.TabIndex = 72;
+            this.Current_Path_Target_Loc.Text = "Current Path Target Loc:";
+            // 
+            // Current_Path_Target_Loc_Text
+            // 
+            this.Current_Path_Target_Loc_Text.HideSelection = false;
+            this.Current_Path_Target_Loc_Text.Location = new System.Drawing.Point(156, 6);
+            this.Current_Path_Target_Loc_Text.Name = "Current_Path_Target_Loc_Text";
+            this.Current_Path_Target_Loc_Text.ReadOnly = true;
+            this.Current_Path_Target_Loc_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
+            this.Current_Path_Target_Loc_Text.Size = new System.Drawing.Size(145, 22);
+            this.Current_Path_Target_Loc_Text.TabIndex = 73;
+            this.Current_Path_Target_Loc_Text.Text = "";
+            // 
+            // Current_Path_Complete
+            // 
+            this.Current_Path_Complete.AutoSize = true;
+            this.Current_Path_Complete.Location = new System.Drawing.Point(3, 37);
+            this.Current_Path_Complete.Name = "Current_Path_Complete";
+            this.Current_Path_Complete.Size = new System.Drawing.Size(116, 13);
+            this.Current_Path_Complete.TabIndex = 74;
+            this.Current_Path_Complete.Text = "Current Path Complete:";
+            // 
+            // Current_Path_Complete_Text
+            // 
+            this.Current_Path_Complete_Text.HideSelection = false;
+            this.Current_Path_Complete_Text.Location = new System.Drawing.Point(156, 34);
+            this.Current_Path_Complete_Text.Name = "Current_Path_Complete_Text";
+            this.Current_Path_Complete_Text.ReadOnly = true;
+            this.Current_Path_Complete_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
+            this.Current_Path_Complete_Text.Size = new System.Drawing.Size(145, 22);
+            this.Current_Path_Complete_Text.TabIndex = 75;
+            this.Current_Path_Complete_Text.Text = "";
+            // 
+            // Current_Path_Disposed_Text
+            // 
+            this.Current_Path_Disposed_Text.HideSelection = false;
+            this.Current_Path_Disposed_Text.Location = new System.Drawing.Point(156, 62);
+            this.Current_Path_Disposed_Text.Name = "Current_Path_Disposed_Text";
+            this.Current_Path_Disposed_Text.ReadOnly = true;
+            this.Current_Path_Disposed_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
+            this.Current_Path_Disposed_Text.Size = new System.Drawing.Size(145, 22);
+            this.Current_Path_Disposed_Text.TabIndex = 76;
+            this.Current_Path_Disposed_Text.Text = "";
+            // 
+            // Current_Path_Disposed
+            // 
+            this.Current_Path_Disposed.AutoSize = true;
+            this.Current_Path_Disposed.Location = new System.Drawing.Point(3, 65);
+            this.Current_Path_Disposed.Name = "Current_Path_Disposed";
+            this.Current_Path_Disposed.Size = new System.Drawing.Size(116, 13);
+            this.Current_Path_Disposed.TabIndex = 77;
+            this.Current_Path_Disposed.Text = "Current Path Disposed:";
+            // 
+            // Current_Path_Offset_Text
+            // 
+            this.Current_Path_Offset_Text.HideSelection = false;
+            this.Current_Path_Offset_Text.Location = new System.Drawing.Point(156, 90);
+            this.Current_Path_Offset_Text.Name = "Current_Path_Offset_Text";
+            this.Current_Path_Offset_Text.ReadOnly = true;
+            this.Current_Path_Offset_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
+            this.Current_Path_Offset_Text.Size = new System.Drawing.Size(145, 22);
+            this.Current_Path_Offset_Text.TabIndex = 78;
+            this.Current_Path_Offset_Text.Text = "";
+            // 
+            // Current_Path_Offset
+            // 
+            this.Current_Path_Offset.AutoSize = true;
+            this.Current_Path_Offset.Location = new System.Drawing.Point(3, 93);
+            this.Current_Path_Offset.Name = "Current_Path_Offset";
+            this.Current_Path_Offset.Size = new System.Drawing.Size(100, 13);
+            this.Current_Path_Offset.TabIndex = 79;
+            this.Current_Path_Offset.Text = "Current Path Offset:";
+            // 
+            // Current_Path_Options_Text
+            // 
+            this.Current_Path_Options_Text.HideSelection = false;
+            this.Current_Path_Options_Text.Location = new System.Drawing.Point(156, 202);
+            this.Current_Path_Options_Text.Name = "Current_Path_Options_Text";
+            this.Current_Path_Options_Text.ReadOnly = true;
+            this.Current_Path_Options_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
+            this.Current_Path_Options_Text.Size = new System.Drawing.Size(145, 186);
+            this.Current_Path_Options_Text.TabIndex = 80;
+            this.Current_Path_Options_Text.Text = "";
+            // 
+            // Current_Path_Options
+            // 
+            this.Current_Path_Options.AutoSize = true;
+            this.Current_Path_Options.Location = new System.Drawing.Point(3, 205);
+            this.Current_Path_Options.Name = "Current_Path_Options";
+            this.Current_Path_Options.Size = new System.Drawing.Size(108, 13);
+            this.Current_Path_Options.TabIndex = 81;
+            this.Current_Path_Options.Text = "Current Path Options:";
+            // 
+            // Current_Path_Searched_Text
+            // 
+            this.Current_Path_Searched_Text.HideSelection = false;
+            this.Current_Path_Searched_Text.Location = new System.Drawing.Point(156, 118);
+            this.Current_Path_Searched_Text.Name = "Current_Path_Searched_Text";
+            this.Current_Path_Searched_Text.ReadOnly = true;
+            this.Current_Path_Searched_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
+            this.Current_Path_Searched_Text.Size = new System.Drawing.Size(145, 22);
+            this.Current_Path_Searched_Text.TabIndex = 82;
+            this.Current_Path_Searched_Text.Text = "";
+            // 
+            // Current_Path_Searched
+            // 
+            this.Current_Path_Searched.AutoSize = true;
+            this.Current_Path_Searched.Location = new System.Drawing.Point(3, 121);
+            this.Current_Path_Searched.Name = "Current_Path_Searched";
+            this.Current_Path_Searched.Size = new System.Drawing.Size(118, 13);
+            this.Current_Path_Searched.TabIndex = 83;
+            this.Current_Path_Searched.Text = "Current Path Searched:";
+            // 
+            // Current_Path_Token_Stopped_Text
+            // 
+            this.Current_Path_Token_Stopped_Text.HideSelection = false;
+            this.Current_Path_Token_Stopped_Text.Location = new System.Drawing.Point(156, 146);
+            this.Current_Path_Token_Stopped_Text.Name = "Current_Path_Token_Stopped_Text";
+            this.Current_Path_Token_Stopped_Text.ReadOnly = true;
+            this.Current_Path_Token_Stopped_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
+            this.Current_Path_Token_Stopped_Text.Size = new System.Drawing.Size(145, 22);
+            this.Current_Path_Token_Stopped_Text.TabIndex = 84;
+            this.Current_Path_Token_Stopped_Text.Text = "";
+            // 
+            // Current_Path_Token_Stopped
+            // 
+            this.Current_Path_Token_Stopped.AutoSize = true;
+            this.Current_Path_Token_Stopped.Location = new System.Drawing.Point(3, 149);
+            this.Current_Path_Token_Stopped.Name = "Current_Path_Token_Stopped";
+            this.Current_Path_Token_Stopped.Size = new System.Drawing.Size(146, 13);
+            this.Current_Path_Token_Stopped.TabIndex = 85;
+            this.Current_Path_Token_Stopped.Text = "Current Path Token Stopped:";
+            // 
+            // Current_Path_Valid_Text
+            // 
+            this.Current_Path_Valid_Text.HideSelection = false;
+            this.Current_Path_Valid_Text.Location = new System.Drawing.Point(156, 174);
+            this.Current_Path_Valid_Text.Name = "Current_Path_Valid_Text";
+            this.Current_Path_Valid_Text.ReadOnly = true;
+            this.Current_Path_Valid_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
+            this.Current_Path_Valid_Text.Size = new System.Drawing.Size(145, 22);
+            this.Current_Path_Valid_Text.TabIndex = 86;
+            this.Current_Path_Valid_Text.Text = "";
+            // 
+            // Current_Path_Valid
+            // 
+            this.Current_Path_Valid.AutoSize = true;
+            this.Current_Path_Valid.Location = new System.Drawing.Point(3, 177);
+            this.Current_Path_Valid.Name = "Current_Path_Valid";
+            this.Current_Path_Valid.Size = new System.Drawing.Size(95, 13);
+            this.Current_Path_Valid.TabIndex = 87;
+            this.Current_Path_Valid.Text = "Current Path Valid:";
+            // 
+            // tabControl1
+            // 
+            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tabPage3);
+            this.tabControl1.Controls.Add(this.tabPage4);
+            this.tabControl1.Controls.Add(this.tabPage5);
+            this.tabControl1.Location = new System.Drawing.Point(478, 7);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(459, 352);
+            this.tabControl1.TabIndex = 88;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.AutoScroll = true;
+            this.tabPage1.Controls.Add(this.Bot_Name_Text);
+            this.tabPage1.Controls.Add(this.Bot_UUID_Text);
+            this.tabPage1.Controls.Add(this.Bot_Health_Text);
+            this.tabPage1.Controls.Add(this.Bot_Hunger_Text);
+            this.tabPage1.Controls.Add(this.Bot_Location_Text);
+            this.tabPage1.Controls.Add(this.Bot_Dimension_Text);
+            this.tabPage1.Controls.Add(this.Bot_Gamemode_Text);
+            this.tabPage1.Controls.Add(this.Bot_Alive_Text);
+            this.tabPage1.Controls.Add(this.Bot_Name);
+            this.tabPage1.Controls.Add(this.Bot_Health);
+            this.tabPage1.Controls.Add(this.Bot_Hunger);
+            this.tabPage1.Controls.Add(this.Bot_Location);
+            this.tabPage1.Controls.Add(this.Bot_Dimension);
+            this.tabPage1.Controls.Add(this.Bot_Gamemode);
+            this.tabPage1.Controls.Add(this.Bot_UUID);
+            this.tabPage1.Controls.Add(this.Bot_Alive);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(451, 326);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "General";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.AutoScroll = true;
+            this.tabPage2.Controls.Add(this.Bot_Inv_Full_Text);
+            this.tabPage2.Controls.Add(this.Bot_Inv_Full);
+            this.tabPage2.Controls.Add(this.Bot_Inv_FSlots);
+            this.tabPage2.Controls.Add(this.Bot_Inv_FSlots_Text);
+            this.tabPage2.Controls.Add(this.Bot_Inv_USlots);
+            this.tabPage2.Controls.Add(this.Bot_Inv_USlots_Text);
+            this.tabPage2.Controls.Add(this.Held_Item_ID);
+            this.tabPage2.Controls.Add(this.Held_Item_ID_Text);
+            this.tabPage2.Controls.Add(this.Held_Item_Count);
+            this.tabPage2.Controls.Add(this.Held_Item_Count_Text);
+            this.tabPage2.Controls.Add(this.Held_Item_Slot);
+            this.tabPage2.Controls.Add(this.Held_Item_Slot_Text);
+            this.tabPage2.Controls.Add(this.Held_Item_NBT);
+            this.tabPage2.Controls.Add(this.Held_Item_NBT_Text);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(451, 326);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Inventory";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // tabPage3
+            // 
+            this.tabPage3.AutoScroll = true;
+            this.tabPage3.Controls.Add(this.Closest_Player_Text);
+            this.tabPage3.Controls.Add(this.Closest_Player);
+            this.tabPage3.Controls.Add(this.Closest_Player_UUID);
+            this.tabPage3.Controls.Add(this.Closest_Player_Loc);
+            this.tabPage3.Controls.Add(this.Closest_Player_Dist);
+            this.tabPage3.Controls.Add(this.Closest_Player_UUID_Text);
+            this.tabPage3.Controls.Add(this.Closest_Player_Loc_Text);
+            this.tabPage3.Controls.Add(this.Closest_Player_Dist_Text);
+            this.tabPage3.Controls.Add(this.Targetable_Player_Text);
+            this.tabPage3.Controls.Add(this.Targetable_Player_UUID_Text);
+            this.tabPage3.Controls.Add(this.Targetable_Player_Loc_Text);
+            this.tabPage3.Controls.Add(this.Targetable_Player_Dist_Text);
+            this.tabPage3.Controls.Add(this.Targetable_Player);
+            this.tabPage3.Controls.Add(this.Targetable_Player_UUID);
+            this.tabPage3.Controls.Add(this.Targetable_Player_Loc);
+            this.tabPage3.Controls.Add(this.Targetable_Player_Dist);
+            this.tabPage3.Controls.Add(this.Closest_Mob_Text);
+            this.tabPage3.Controls.Add(this.Closest_Mob);
+            this.tabPage3.Controls.Add(this.Closest_Mob_Loc);
+            this.tabPage3.Controls.Add(this.Closest_Mob_Loc_Text);
+            this.tabPage3.Controls.Add(this.Closest_Mob_Dist);
+            this.tabPage3.Controls.Add(this.Closest_Mob_Dist_Text);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Size = new System.Drawing.Size(451, 326);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "Closest Stuff";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // tabPage4
+            // 
+            this.tabPage4.AutoScroll = true;
+            this.tabPage4.Controls.Add(this.Window_Title_Text);
+            this.tabPage4.Controls.Add(this.Window_Title);
+            this.tabPage4.Controls.Add(this.Window_Type);
+            this.tabPage4.Controls.Add(this.Window_ID);
+            this.tabPage4.Controls.Add(this.Window_Type_Text);
+            this.tabPage4.Controls.Add(this.Window_ID_Text);
+            this.tabPage4.Controls.Add(this.Window_Slotcount_Text);
+            this.tabPage4.Controls.Add(this.Window_EntityID_Text);
+            this.tabPage4.Controls.Add(this.Window_ActionID_Text);
+            this.tabPage4.Controls.Add(this.Window_Slotcount);
+            this.tabPage4.Controls.Add(this.Window_EntityID);
+            this.tabPage4.Controls.Add(this.Window_ActionID);
+            this.tabPage4.Controls.Add(this.Window_Slotids);
+            this.tabPage4.Controls.Add(this.Window_Slotids_Text);
+            this.tabPage4.Controls.Add(this.Window_Inv_Slotids);
+            this.tabPage4.Controls.Add(this.Window_Inv_Slotids_Text);
+            this.tabPage4.Location = new System.Drawing.Point(4, 22);
+            this.tabPage4.Name = "tabPage4";
+            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage4.Size = new System.Drawing.Size(451, 326);
+            this.tabPage4.TabIndex = 3;
+            this.tabPage4.Text = "Window/Container";
+            this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // tabPage5
+            // 
+            this.tabPage5.AutoScroll = true;
+            this.tabPage5.Controls.Add(this.Current_Path_Target_Loc_Text);
+            this.tabPage5.Controls.Add(this.Current_Path_Options);
+            this.tabPage5.Controls.Add(this.Current_Path_Options_Text);
+            this.tabPage5.Controls.Add(this.Current_Path_Valid);
+            this.tabPage5.Controls.Add(this.Current_Path_Target_Loc);
+            this.tabPage5.Controls.Add(this.Current_Path_Valid_Text);
+            this.tabPage5.Controls.Add(this.Current_Path_Complete);
+            this.tabPage5.Controls.Add(this.Current_Path_Token_Stopped);
+            this.tabPage5.Controls.Add(this.Current_Path_Complete_Text);
+            this.tabPage5.Controls.Add(this.Current_Path_Token_Stopped_Text);
+            this.tabPage5.Controls.Add(this.Current_Path_Disposed_Text);
+            this.tabPage5.Controls.Add(this.Current_Path_Searched);
+            this.tabPage5.Controls.Add(this.Current_Path_Disposed);
+            this.tabPage5.Controls.Add(this.Current_Path_Searched_Text);
+            this.tabPage5.Controls.Add(this.Current_Path_Offset_Text);
+            this.tabPage5.Controls.Add(this.Current_Path_Offset);
+            this.tabPage5.Location = new System.Drawing.Point(4, 22);
+            this.tabPage5.Name = "tabPage5";
+            this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage5.Size = new System.Drawing.Size(451, 326);
+            this.tabPage5.TabIndex = 4;
+            this.tabPage5.Text = "Current Path";
+            this.tabPage5.UseVisualStyleBackColor = true;
+            // 
             // DebugForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ClientSize = new System.Drawing.Size(1500, 381);
-            this.Controls.Add(this.Window_Inv_Slotids_Text);
-            this.Controls.Add(this.Window_Inv_Slotids);
-            this.Controls.Add(this.Window_Slotids_Text);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.Window_ActionID);
-            this.Controls.Add(this.Window_EntityID);
-            this.Controls.Add(this.Window_Slotcount);
-            this.Controls.Add(this.Window_ActionID_Text);
-            this.Controls.Add(this.Window_EntityID_Text);
-            this.Controls.Add(this.Window_Slotcount_Text);
-            this.Controls.Add(this.Window_ID_Text);
-            this.Controls.Add(this.Window_Type_Text);
-            this.Controls.Add(this.Window_ID);
-            this.Controls.Add(this.Window_Type);
-            this.Controls.Add(this.Window_Title_Text);
-            this.Controls.Add(this.Window_Title);
-            this.Controls.Add(this.Held_Item_NBT_Text);
-            this.Controls.Add(this.Held_Item_NBT);
-            this.Controls.Add(this.Held_Item_Slot_Text);
-            this.Controls.Add(this.Held_Item_Slot);
-            this.Controls.Add(this.Held_Item_Count_Text);
-            this.Controls.Add(this.Held_Item_Count);
-            this.Controls.Add(this.Held_Item_ID_Text);
-            this.Controls.Add(this.Held_Item_ID);
-            this.Controls.Add(this.Targetable_Player_Dist);
-            this.Controls.Add(this.Targetable_Player_Loc);
-            this.Controls.Add(this.Targetable_Player_UUID);
-            this.Controls.Add(this.Targetable_Player);
-            this.Controls.Add(this.Targetable_Player_Dist_Text);
-            this.Controls.Add(this.Targetable_Player_Loc_Text);
-            this.Controls.Add(this.Targetable_Player_UUID_Text);
-            this.Controls.Add(this.Targetable_Player_Text);
-            this.Controls.Add(this.Closest_Mob_Dist_Text);
-            this.Controls.Add(this.Closest_Mob_Dist);
-            this.Controls.Add(this.Closest_Mob_Loc_Text);
-            this.Controls.Add(this.Closest_Mob_Loc);
-            this.Controls.Add(this.Closest_Mob_Text);
-            this.Controls.Add(this.Closest_Mob);
-            this.Controls.Add(this.Closest_Player_Dist_Text);
-            this.Controls.Add(this.Closest_Player_Loc_Text);
-            this.Controls.Add(this.Closest_Player_UUID_Text);
-            this.Controls.Add(this.Closest_Player_Text);
-            this.Controls.Add(this.Closest_Player_Dist);
-            this.Controls.Add(this.Closest_Player_Loc);
-            this.Controls.Add(this.Closest_Player_UUID);
-            this.Controls.Add(this.Closest_Player);
-            this.Controls.Add(this.Bot_Inv_USlots_Text);
-            this.Controls.Add(this.Bot_Inv_USlots);
-            this.Controls.Add(this.Bot_Inv_Full_Text);
-            this.Controls.Add(this.Bot_Inv_FSlots_Text);
-            this.Controls.Add(this.Bot_Inv_FSlots);
-            this.Controls.Add(this.Bot_Inv_Full);
-            this.Controls.Add(this.Bot_Alive_Text);
-            this.Controls.Add(this.Bot_Alive);
-            this.Controls.Add(this.Bot_UUID_Text);
-            this.Controls.Add(this.Bot_UUID);
-            this.Controls.Add(this.Bot_Gamemode_Text);
-            this.Controls.Add(this.Bot_Gamemode);
-            this.Controls.Add(this.Bot_Dimension_Text);
-            this.Controls.Add(this.Bot_Dimension);
-            this.Controls.Add(this.Bot_Location_Text);
-            this.Controls.Add(this.Bot_Location);
-            this.Controls.Add(this.Bot_Hunger_Text);
-            this.Controls.Add(this.Bot_Health_Text);
-            this.Controls.Add(this.Bot_Hunger);
-            this.Controls.Add(this.Bot_Health);
-            this.Controls.Add(this.Bot_Name_Text);
-            this.Controls.Add(this.Bot_Name);
+            this.ClientSize = new System.Drawing.Size(991, 383);
+            this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.Chat_Box);
             this.Controls.Add(this.Chat_Send);
             this.Controls.Add(this.Chat_Message);
@@ -902,6 +1172,17 @@ namespace DebugPlugin
             this.Name = "DebugForm";
             this.Padding = new System.Windows.Forms.Padding(10);
             this.ShowIcon = false;
+            this.tabControl1.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage1.PerformLayout();
+            this.tabPage2.ResumeLayout(false);
+            this.tabPage2.PerformLayout();
+            this.tabPage3.ResumeLayout(false);
+            this.tabPage3.PerformLayout();
+            this.tabPage4.ResumeLayout(false);
+            this.tabPage4.PerformLayout();
+            this.tabPage5.ResumeLayout(false);
+            this.tabPage5.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -975,9 +1256,31 @@ namespace DebugPlugin
         private Label Window_Slotcount;
         private Label Window_EntityID;
         private Label Window_ActionID;
-        private Label label1;
+        private Label Window_Slotids;
         private RichTextBox Window_Slotids_Text;
         private Label Window_Inv_Slotids;
         private RichTextBox Window_Inv_Slotids_Text;
+        private Label Current_Path_Target_Loc;
+        private RichTextBox Current_Path_Target_Loc_Text;
+        private Label Current_Path_Complete;
+        private RichTextBox Current_Path_Complete_Text;
+        private RichTextBox Current_Path_Disposed_Text;
+        private Label Current_Path_Disposed;
+        private RichTextBox Current_Path_Offset_Text;
+        private Label Current_Path_Offset;
+        private RichTextBox Current_Path_Options_Text;
+        private Label Current_Path_Options;
+        private RichTextBox Current_Path_Searched_Text;
+        private Label Current_Path_Searched;
+        private RichTextBox Current_Path_Token_Stopped_Text;
+        private Label Current_Path_Token_Stopped;
+        private RichTextBox Current_Path_Valid_Text;
+        private Label Current_Path_Valid;
+        private TabControl tabControl1;
+        private TabPage tabPage1;
+        private TabPage tabPage2;
+        private TabPage tabPage3;
+        private TabPage tabPage4;
+        private TabPage tabPage5;
     }
 }

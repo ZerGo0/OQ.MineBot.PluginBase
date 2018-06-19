@@ -46,6 +46,13 @@ namespace DebugPlugin
         private string _oldWindowTitle;
         private int _oldWindowSlotsUsed;
 
+        private String _oldPathTarget;
+        private bool? _oldPathComplete;
+        private bool? _oldPathDisposed;
+        private bool? _oldPathSearched;
+        private bool? _oldPathStopped;
+        private bool? _oldPathValid;
+
         public DebugForm(string name, IPlayer player) {
             InitializeComponent();
             
@@ -78,6 +85,13 @@ namespace DebugPlugin
             Bot_UUID_Text.AppendText(player.status.uuid);
 
             Bot_Health_Text.AppendText(player.status.entity.health.ToString(CultureInfo.InvariantCulture));
+            
+            _oldPathTarget = null;
+            _oldPathComplete = null;
+            _oldPathDisposed = null;
+            _oldPathSearched = null;
+            _oldPathStopped = null;
+            _oldPathValid = null;
 
             Text = "[Bot: " + name + "] Debug Menu";
         }
@@ -157,7 +171,7 @@ namespace DebugPlugin
                             Bot_Alive_Text.Clear();
                             Bot_Alive_Text.SelectionFont = new Font(Bot_Alive_Text.Font, FontStyle.Bold);
                             Bot_Alive_Text.SelectionColor = Color.DarkRed;
-                            Bot_Alive_Text.AppendText("NO");
+                            Bot_Alive_Text.AppendText(player.status.entity.isDead.ToString());
                             _setAlive = false;
                         }
                         else if (!player.status.entity.isDead && !_setAlive)
@@ -165,7 +179,7 @@ namespace DebugPlugin
                             Bot_Alive_Text.Clear();
                             Bot_Alive_Text.SelectionFont = new Font(Bot_Alive_Text.Font, FontStyle.Regular);
                             Bot_Alive_Text.SelectionColor = Color.Black;
-                            Bot_Alive_Text.AppendText("YES");
+                            Bot_Alive_Text.AppendText(player.status.entity.isDead.ToString());
                             _setAlive = true;
                         }
 
@@ -182,7 +196,7 @@ namespace DebugPlugin
                             Bot_Inv_Full_Text.Clear();
                             Bot_Inv_Full_Text.SelectionFont = new Font(Bot_Alive_Text.Font, FontStyle.Bold);
                             Bot_Inv_Full_Text.SelectionColor = Color.DarkRed;
-                            Bot_Inv_Full_Text.AppendText("YES");
+                            Bot_Inv_Full_Text.AppendText(player.status.containers.inventory.IsFull().ToString());
                             _oldInvFull = false;
                             _oldInvFullFirstTime = true;
                         }
@@ -191,7 +205,7 @@ namespace DebugPlugin
                             Bot_Inv_Full_Text.Clear();
                             Bot_Inv_Full_Text.SelectionFont = new Font(Bot_Alive_Text.Font, FontStyle.Regular);
                             Bot_Inv_Full_Text.SelectionColor = Color.Black;
-                            Bot_Inv_Full_Text.AppendText("NO");
+                            Bot_Inv_Full_Text.AppendText(player.status.containers.inventory.IsFull().ToString());
                             _oldInvFull = true;
                         }
 
@@ -477,7 +491,7 @@ namespace DebugPlugin
                                     Window_EntityID_Text.AppendText(winEntityId.ToString());
                                     Window_ActionID_Text.AppendText(winmActionId.ToString());
 
-                                    for (var windowslots = 0; windowslots <= winSlotCount; windowslots++)
+                                    for (var windowslots = 0; windowslots <= winSlotCount - 1; windowslots++)
                                     {
                                         if (player.status.containers.GetWindow(getwindowid).GetAt(windowslots) == null)
                                             continue;
@@ -491,7 +505,7 @@ namespace DebugPlugin
                                         }
                                     }
 
-                                    for (var windowslots = winSlotCount; windowslots <= winSlotCount + 36; windowslots++)
+                                    for (var windowslots = winSlotCount; windowslots <= winSlotCount + 35; windowslots++)
                                     {
                                         if (player.status.containers.GetWindow(getwindowid).GetAt(windowslots) == null)
                                             continue;
@@ -510,6 +524,67 @@ namespace DebugPlugin
                                 }
 
                                 break;
+                            }
+                        }
+
+                        #endregion
+
+                        #region Path Stuff
+
+                        if (player.physicsEngine.path != null)
+                        {
+                            if (player.physicsEngine.path.Target.ToString() != _oldPathTarget ||
+                                player.physicsEngine.path.Complete != _oldPathComplete || 
+                                player.physicsEngine.path.Disposed != _oldPathDisposed ||
+                                player.physicsEngine.path.Searched != _oldPathSearched ||
+                                player.physicsEngine.path.Token.stopped != _oldPathStopped ||
+                                player.physicsEngine.path.Valid != _oldPathValid)
+                            {
+                                Current_Path_Target_Loc_Text.Clear();
+                                Current_Path_Complete_Text.Clear();
+                                Current_Path_Disposed_Text.Clear();
+                                Current_Path_Offset_Text.Clear();
+                                Current_Path_Options_Text.Clear();
+                                Current_Path_Searched_Text.Clear();
+                                Current_Path_Token_Stopped_Text.Clear();
+                                Current_Path_Valid_Text.Clear();
+
+
+                                Current_Path_Target_Loc_Text.AppendText(player.physicsEngine.path.Target.ToString());
+                                Current_Path_Complete_Text.AppendText(player.physicsEngine.path.Complete.ToString());
+                                Current_Path_Disposed_Text.AppendText(player.physicsEngine.path.Disposed.ToString());
+
+                                if (player.physicsEngine.path.Offset != null)
+                                    Current_Path_Offset_Text.AppendText(player.physicsEngine.path.Offset.ToString());
+
+                                Current_Path_Searched_Text.AppendText(player.physicsEngine.path.Searched.ToString());
+                                Current_Path_Token_Stopped_Text.AppendText(player.physicsEngine.path.Token.stopped.ToString());
+                                Current_Path_Valid_Text.AppendText(player.physicsEngine.path.Valid.ToString());
+
+                                Current_Path_Options_Text.AppendText("AntiStuck: " + player.physicsEngine.path.Options.AntiStuck + "\n");
+                                Current_Path_Options_Text.AppendText("Climb: " + player.physicsEngine.path.Options.Climb + "\n");
+                                Current_Path_Options_Text.AppendText("EdgeStick: " + player.physicsEngine.path.Options.EdgeStick + "\n");
+                                Current_Path_Options_Text.AppendText("Fly: " + player.physicsEngine.path.Options.Fly + "\n");
+                                Current_Path_Options_Text.AppendText("Look: " + player.physicsEngine.path.Options.Look + "\n");
+                                Current_Path_Options_Text.AppendText("Mine: " + player.physicsEngine.path.Options.Mine + "\n");
+                                Current_Path_Options_Text.AppendText("NoCost: " + player.physicsEngine.path.Options.NoCost + "\n");
+                                Current_Path_Options_Text.AppendText("NoSlowdown: " + player.physicsEngine.path.Options.NoSlowdown + "\n");
+                                Current_Path_Options_Text.AppendText("PauseOnNext: " + player.physicsEngine.path.Options.PauseOnNext + "\n");
+                                Current_Path_Options_Text.AppendText("Quality: " + player.physicsEngine.path.Options.Quality + "\n");
+                                Current_Path_Options_Text.AppendText("SafeMine: " + player.physicsEngine.path.Options.SafeMine + "\n");
+                                Current_Path_Options_Text.AppendText("Sprint: " + player.physicsEngine.path.Options.Sprint + "\n");
+                                Current_Path_Options_Text.AppendText("SprintVisuals: " + player.physicsEngine.path.Options.SprintVisuals + "\n");
+                                Current_Path_Options_Text.AppendText("Strict: " + player.physicsEngine.path.Options.Strict + "\n");
+                                Current_Path_Options_Text.AppendText("Swim: " + player.physicsEngine.path.Options.Swim + "\n");
+
+
+
+                                _oldPathTarget = player.physicsEngine.path.Target.ToString();
+                                _oldPathComplete = player.physicsEngine.path.Complete;
+                                _oldPathDisposed = player.physicsEngine.path.Disposed;
+                                _oldPathSearched = player.physicsEngine.path.Searched;
+                                _oldPathStopped = player.physicsEngine.path.Token.stopped;
+                                _oldPathValid = player.physicsEngine.path.Valid;
                             }
                         }
 

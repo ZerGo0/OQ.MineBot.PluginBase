@@ -1,5 +1,4 @@
-﻿using System;
-using OQ.MineBot.PluginBase.Base.Plugin.Tasks;
+﻿using OQ.MineBot.PluginBase.Base.Plugin.Tasks;
 
 namespace CactusFarmBuilder.Tasks
 {
@@ -26,7 +25,7 @@ namespace CactusFarmBuilder.Tasks
             //{
             //    Console.WriteLine("[Bot: " + player.status.username + "] Inv FULL!");
             //}
-            
+
             //if (inventory.FindId(_fillerId) < 1)
             //    _fillermacro.Run(player, _fillername);
         }

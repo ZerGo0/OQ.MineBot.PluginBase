@@ -14,14 +14,13 @@ namespace AreaFiller
     {
         public override void OnLoad(int version, int subversion, int buildversion)
         {
-            Setting = new IPluginSetting[5];
-            Setting[0] = new StringSetting("Macro on inventory full",
-                "Starts the macro when the bots inventory is full.", "");
-            Setting[1] = new StringSetting("Start x y z", "(x y z) [Split by space]", "");
-            Setting[2] = new StringSetting("End x y z", "(x y z) [Split by space]", "");
-            Setting[3] = new StringSetting("Filler Block ID", "The block which is used to fill the area.", "");
-            Setting[4] = new StringSetting("Macro if no Filler Block",
-                "Starts the macro when the bots has no filler block left.", "");
+            Setting.Add(new StringSetting("Macro on inventory full",
+                "Starts the macro when the bots inventory is full.", ""));
+            Setting.Add(new StringSetting("Start x y z", "(x y z) [Split by space]", ""));
+            Setting.Add(new StringSetting("End x y z", "(x y z) [Split by space]", ""));
+            Setting.Add(new StringSetting("Filler Block ID", "The block which is used to fill the area.", ""));
+            Setting.Add(new StringSetting("Macro if no Filler Block",
+                "Starts the macro when the bots has no filler block left.", ""));
         }
 
         public override PluginResponse OnEnable(IBotSettings botSettings)
@@ -30,20 +29,20 @@ namespace AreaFiller
 
             if (botSettings.staticWorlds) return new PluginResponse(false, "'Shared worlds' should be disabled.");
 
-            if (string.IsNullOrWhiteSpace(Setting[1].Get<string>()) &&
-                string.IsNullOrWhiteSpace(Setting[2].Get<string>()))
+            if (string.IsNullOrWhiteSpace(Setting.At(1).Get<string>()) &&
+                string.IsNullOrWhiteSpace(Setting.At(2).Get<string>()))
                 return new PluginResponse(false, "Invalid coordinates (does not contain ' ').");
 
-            if (string.IsNullOrWhiteSpace(Setting[3].Get<string>()))
+            if (string.IsNullOrWhiteSpace(Setting.At(3).Get<string>()))
                 return new PluginResponse(false, "Invalid Block ID.");
 
-            if (!Setting[1].Get<string>().Contains(' ') || !Setting[2].Get<string>().Contains(' '))
+            if (!Setting.At(1).Get<string>().Contains(' ') || !Setting.At(2).Get<string>().Contains(' '))
                 return new PluginResponse(false, "Invalid coordinates (does not contain ' ').");
 
-            if (!Setting[3].Get<string>().All(char.IsDigit)) return new PluginResponse(false, "Invalid Block ID!");
+            if (!Setting.At(3).Get<string>().All(char.IsDigit)) return new PluginResponse(false, "Invalid Block ID!");
 
-            var startSplit = Setting[1].Get<string>().Split(' ');
-            var endSplit = Setting[2].Get<string>().Split(' ');
+            var startSplit = Setting.At(1).Get<string>().Split(' ');
+            var endSplit = Setting.At(2).Get<string>().Split(' ');
             if (startSplit.Length != 3 || endSplit.Length != 3)
                 return new PluginResponse(false, "Invalid coordinates (must be x y z).");
 
@@ -55,13 +54,13 @@ namespace AreaFiller
             var macro = new MacroSync();
             var fillermacro = new MacroSync();
 
-            var startSplit = Setting[1].Get<string>().Split(' ');
-            var endSplit = Setting[2].Get<string>().Split(' ');
+            var startSplit = Setting.At(1).Get<string>().Split(' ');
+            var endSplit = Setting.At(2).Get<string>().Split(' ');
 
-            RegisterTask(new FillerArea(Setting[3].Get<string>(),
+            RegisterTask(new FillerArea(Setting.At(3).Get<string>(),
                 new Location(int.Parse(startSplit[0]), int.Parse(startSplit[1]), int.Parse(startSplit[2])),
                 new Location(int.Parse(endSplit[0]), int.Parse(endSplit[1]), int.Parse(endSplit[2])), macro, fillermacro));
-            RegisterTask(new InventoryMonitor(Setting[3].Get<string>(), Setting[0].Get<string>(), macro, Setting[4].Get<string>(), fillermacro));
+            RegisterTask(new InventoryMonitor(Setting.At(3).Get<string>(), Setting.At(0).Get<string>(), macro, Setting.At(4).Get<string>(), fillermacro));
         }
 
         public override void OnStop()

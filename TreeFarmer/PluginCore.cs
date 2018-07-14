@@ -15,12 +15,11 @@ namespace TreeFarmerPlugin
     {
         public override void OnLoad(int version, int subversion, int buildversion)
         {
-            Setting = new IPluginSetting[4];
-            Setting[0] = new StringSetting("Macro on inventory full",
-                "Starts the macro when the bots inventory is full.", "");
-            Setting[1] = new BoolSetting("Replant", "Check this if you want to replant trees (type ignored)", false);
-            Setting[2] = new StringSetting("Start x y z", "Leave emtpy if you want to farm infinitely. (0 0 0)", "");
-            Setting[3] = new StringSetting("End x y z", "Leave emtpy if you want to farm infinitely. (0 0 0)", "");
+            Setting.Add(new StringSetting("Macro on inventory full",
+                "Starts the macro when the bots inventory is full.", ""));
+            Setting.Add(new BoolSetting("Replant", "Check this if you want to replant trees (type ignored)", false));
+            Setting.Add(new StringSetting("Start x y z", "Leave emtpy if you want to farm infinitely. (0 0 0)", ""));
+            Setting.Add(new StringSetting("End x y z", "Leave emtpy if you want to farm infinitely. (0 0 0)", ""));
         }
 
         public override PluginResponse OnEnable(IBotSettings botSettings)
@@ -29,14 +28,14 @@ namespace TreeFarmerPlugin
 
             if (botSettings.staticWorlds) return new PluginResponse(false, "'Shared worlds' should be disabled.");
 
-            if (string.IsNullOrWhiteSpace(Setting[2].Get<string>()) &&
-                string.IsNullOrWhiteSpace(Setting[3].Get<string>())) return new PluginResponse(true);
+            if (string.IsNullOrWhiteSpace(Setting.At(2).Get<string>()) &&
+                string.IsNullOrWhiteSpace(Setting.At(3).Get<string>())) return new PluginResponse(true);
 
-            if (!Setting[2].Get<string>().Contains(' ') || !Setting[3].Get<string>().Contains(' '))
+            if (!Setting.At(2).Get<string>().Contains(' ') || !Setting.At(3).Get<string>().Contains(' '))
                 return new PluginResponse(false, "Invalid coordinates (does not contain ' ').");
 
-            var startSplit = Setting[2].Get<string>().Split(' ');
-            var endSplit = Setting[3].Get<string>().Split(' ');
+            var startSplit = Setting.At(2).Get<string>().Split(' ');
+            var endSplit = Setting.At(3).Get<string>().Split(' ');
             if (startSplit.Length != 3 || endSplit.Length != 3)
                 return new PluginResponse(false, "Invalid coordinates (must be x y z).");
 
@@ -47,24 +46,24 @@ namespace TreeFarmerPlugin
         {
             var macro = new MacroSync();
 
-            if (!string.IsNullOrWhiteSpace(Setting[2].Get<string>()) &&
-                !string.IsNullOrWhiteSpace(Setting[3].Get<string>()))
+            if (!string.IsNullOrWhiteSpace(Setting.At(2).Get<string>()) &&
+                !string.IsNullOrWhiteSpace(Setting.At(3).Get<string>()))
             {
 #if (DEBUG)
                 Console.WriteLine("Got coords");
 #endif
-                var startSplit = Setting[2].Get<string>().Split(' ');
-                var endSplit = Setting[3].Get<string>().Split(' ');
+                var startSplit = Setting.At(2).Get<string>().Split(' ');
+                var endSplit = Setting.At(3).Get<string>().Split(' ');
 
-                RegisterTask(new MineArea(Setting[1].Get<bool>(),
+                RegisterTask(new MineArea(Setting.At(1).Get<bool>(),
                     new Location(int.Parse(startSplit[0]), int.Parse(startSplit[1]), int.Parse(startSplit[2])),
                     new Location(int.Parse(endSplit[0]), int.Parse(endSplit[1]), int.Parse(endSplit[2])), macro));
-                RegisterTask(new InventoryMonitor(Setting[0].Get<string>(), macro));
+                RegisterTask(new InventoryMonitor(Setting.At(0).Get<string>(), macro));
             }
             else
             {
-                RegisterTask(new Mine(Setting[1].Get<bool>(), macro));
-                RegisterTask(new InventoryMonitor(Setting[0].Get<string>(), macro));
+                RegisterTask(new Mine(Setting.At(1).Get<bool>(), macro));
+                RegisterTask(new InventoryMonitor(Setting.At(0).Get<string>(), macro));
             }
         }
 

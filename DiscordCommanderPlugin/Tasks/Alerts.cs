@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading;
 using OQ.MineBot.PluginBase;
 using OQ.MineBot.PluginBase.Base.Plugin.Tasks;
 using OQ.MineBot.PluginBase.Classes.Base;
@@ -13,15 +15,15 @@ namespace DiscordCommander.Tasks
     {
         private static readonly ConcurrentDictionary<int, DateTime> Idlimit = new ConcurrentDictionary<int, DateTime>();
         private readonly ulong _discord;
-        private readonly string _keyword;
+        private readonly string _keywords;
         private readonly DiscordHelper.Mode _mode;
 
         private string _chattext;
 
-        public Alerts(ulong discord, string keyword, DiscordHelper.Mode mode)
+        public Alerts(ulong discord, string keywordses, DiscordHelper.Mode mode)
         {
             _discord = discord;
-            _keyword = keyword;
+            _keywords = keywordses;
             _mode = mode;
         }
 
@@ -44,16 +46,25 @@ namespace DiscordCommander.Tasks
         {
             _chattext = message.Parsed;
 
-            if (!_chattext.Contains(_keyword)) return;
-            //Get everything after the keyword
-            var textmessage =
-                message.Parsed.Substring(_chattext.LastIndexOf(_keyword, StringComparison.Ordinal) + _keyword.Length);
+            // Split keywords here
+            var splittedkeywords = _keywords.Split(',');
 
-            //To remove the space after the keyword
-            var textmessagetrimmed = textmessage.TrimStart(' ');
+            // check for all keywords
+            foreach (var keyword in splittedkeywords)
+            {
+                if (!_chattext.Contains(keyword)) continue;
 
-            //Checking if message is empty so that we don't pass empty messages to discord
-            if (textmessagetrimmed.Length > 0) NotifyUser(ApplyVariables(textmessagetrimmed), 10, 0);
+                //Get everything after the keyword
+                var textmessage =
+                    message.Parsed.Substring(_chattext.LastIndexOf(keyword, StringComparison.Ordinal) +
+                                             keyword.Length);
+
+                //To remove the space after the keyword
+                var textmessagetrimmed = textmessage.TrimStart(' ');
+
+                //Checking if message is empty so that we don't pass empty messages to discord
+                if (textmessagetrimmed.Length > 0) NotifyUser(ApplyVariables(textmessagetrimmed), 10, 0);
+            }
         }
 
         private void NotifyUser(IReadOnlyList<string> body, int priority, int id)

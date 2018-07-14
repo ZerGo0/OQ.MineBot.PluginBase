@@ -178,9 +178,12 @@ namespace TreeFarmerPlugin.Tasks
         private void MineBlock(ILocation location)
         {
             // Break the block.
-            actions.LookAtBlock(location, true);
-            actions.SelectBestTool(location);
-            player.tickManager.Register(1, () => { actions.BlockDig(location, action => { }); });
+            player.tickManager.Register(3, () =>
+            {
+                actions.LookAtBlock(location, true);
+                actions.SelectBestTool(location);
+                player.tickManager.Register(1, () => { actions.BlockDig(location, action => { }); });
+            });
         }
 
         private void FindClosestBlock()

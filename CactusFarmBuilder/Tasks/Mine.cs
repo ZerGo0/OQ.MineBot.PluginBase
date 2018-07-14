@@ -41,15 +41,24 @@ namespace CactusFarmBuilder.Tasks
         private readonly bool _gamemode;
         private readonly int _tickDelay;
         private readonly bool _linearmode;
+        private readonly bool _vanillamode;
         private bool _linearmodepos;
 
         private bool _busy;
 
         private ILocation _currentbuildingloc;
 
-        private bool _firstLayer;
-        private bool _firstLayerCactus;
+        private bool _vanillaFirstLayerSand;
+        private bool _vanillaFirstLayerCactus;
+        private bool _vanillaFirstLayerString;
 
+        private bool _vanillaSecondLayerSand;
+        private bool _vanillaSecondLayerString;
+        private bool _vanillaSecondLayerGoToFirst;
+
+        private bool _firstLayer;
+
+        private bool _firstLayerCactus;
         private bool _firstLayerSand;
         private bool _firstLayerString;
         private bool _firstLayerStringEast;
@@ -61,17 +70,17 @@ namespace CactusFarmBuilder.Tasks
         private bool _firstLayerCactusInside;
         private bool _firstLayerStringInside;
 
+        private bool _activateLayerCount;
         private int _layerCount;
         private bool _needToMoveToEast;
         private bool _needToMoveToMiddle;
         private bool _needToMoveToSouth;
         private bool _needToMoveToWest;
         private ILocation _nextLocation;
-
-
+        
         private bool _secondLayer;
-        private bool _secondLayerCactus;
 
+        private bool _secondLayerCactus;
         private bool _secondLayerSand;
         private bool _secondLayerSandEast;
         private bool _secondLayerSandNorth;
@@ -89,7 +98,7 @@ namespace CactusFarmBuilder.Tasks
         private ILocation _target;
         private IAsyncMap _targetblock;
 
-        public CactusFarmBuilder(int speedmode, bool gamemode, int maxlayers, int direction, bool linearmode, MacroSync macro)
+        public CactusFarmBuilder(int speedmode, bool gamemode, int maxlayers, int direction, bool linearmode, bool vanillamode, MacroSync macro)
         {
             _macro = macro;
             _speedmode = speedmode;
@@ -97,12 +106,11 @@ namespace CactusFarmBuilder.Tasks
             _maxlayers = maxlayers;
             _direction = direction;
             _linearmode = linearmode;
+            _vanillamode = vanillamode;
 
             //_fillermacro = fillerMacro;
 
-            var split = new[] {"12"};
-
-            var blocks = split.Select(ushort.Parse).ToArray();
+            var blocks = new[] {(ushort)12};
 
             BlocksGlobal.BUILDING_BLOCKS = blocks;
 
@@ -124,209 +132,16 @@ namespace CactusFarmBuilder.Tasks
                     _tickDelay = 1;
                     break;
             }
-
-            //_radius = new IRadius(startLocation, endLocation);
         }
 
         public void OnTick()
         {
-#if (DEBUG)
-            Console.WriteLine("Tick Start");
-#endif
-
-            if (_layerCount >= _maxlayers)
-            {
-                var currentloc = player.status.entity.location.ToLocation();
-                
-                if (_startLocation.Offset(-1).Distance(currentloc.Offset(-1)) < 1)
-                {
-                    _nextLocation = new Location(currentloc.x, currentloc.y - 1, currentloc.z - 8);
-                    if (_gamemode)
-                    {
-                        if (_linearmode)
-                        {
-                            if (!_linearmodepos)
-                            {
-                                switch (_direction)
-                                {
-                                    case 0:
-                                        _nextLocation = new Location(currentloc.x + 1, currentloc.y - 1, currentloc.z - 7);
-                                        break;
-                                    case 1:
-                                        _nextLocation = new Location(currentloc.x + 7, currentloc.y - 1, currentloc.z - 1);
-                                        break;
-                                    case 2:
-                                        _nextLocation = new Location(currentloc.x - 1, currentloc.y - 1, currentloc.z + 7);
-                                        break;
-                                    case 3:
-                                        _nextLocation = new Location(currentloc.x - 7, currentloc.y - 1, currentloc.z + 1);
-                                        break;
-                                }
-
-                                _linearmodepos = true;
-                            }
-                            else
-                            {
-                                switch (_direction)
-                                {
-                                    case 0:
-                                        _nextLocation = new Location(currentloc.x - 1, currentloc.y - 1, currentloc.z - 7);
-                                        break;
-                                    case 1:
-                                        _nextLocation = new Location(currentloc.x + 7, currentloc.y - 1, currentloc.z + 1);
-                                        break;
-                                    case 2:
-                                        _nextLocation = new Location(currentloc.x + 1, currentloc.y - 1, currentloc.z + 7);
-                                        break;
-                                    case 3:
-                                        _nextLocation = new Location(currentloc.x - 7, currentloc.y - 1, currentloc.z - 1);
-                                        break;
-                                }
-
-                                _linearmodepos = false;
-                            }
-                        }
-                        else
-                        {
-                            switch (_direction)
-                            {
-                                case 0:
-                                    _nextLocation = new Location(currentloc.x, currentloc.y - 1, currentloc.z - 8);
-                                    break;
-                                case 1:
-                                    _nextLocation = new Location(currentloc.x + 8, currentloc.y - 1, currentloc.z);
-                                    break;
-                                case 2:
-                                    _nextLocation = new Location(currentloc.x, currentloc.y - 1, currentloc.z + 8);
-                                    break;
-                                case 3:
-                                    _nextLocation = new Location(currentloc.x - 8, currentloc.y - 1, currentloc.z);
-                                    break;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (_linearmode)
-                        {
-                            if (!_linearmodepos)
-                            {
-                                switch (_direction)
-                                {
-                                    case 0:
-                                        _nextLocation = new Location(currentloc.x + 1, currentloc.y - 1, currentloc.z - 5);
-                                        break;
-                                    case 1:
-                                        _nextLocation = new Location(currentloc.x + 5, currentloc.y - 1, currentloc.z - 1);
-                                        break;
-                                    case 2:
-                                        _nextLocation = new Location(currentloc.x - 1, currentloc.y - 1, currentloc.z + 5);
-                                        break;
-                                    case 3:
-                                        _nextLocation = new Location(currentloc.x - 5, currentloc.y - 1, currentloc.z + 1);
-                                        break;
-                                }
-
-                                _linearmodepos = true;
-                            }
-                            else
-                            {
-                                switch (_direction)
-                                {
-                                    case 0:
-                                        _nextLocation = new Location(currentloc.x - 1, currentloc.y - 1, currentloc.z - 5);
-                                        break;
-                                    case 1:
-                                        _nextLocation = new Location(currentloc.x + 5, currentloc.y - 1, currentloc.z + 1);
-                                        break;
-                                    case 2:
-                                        _nextLocation = new Location(currentloc.x + 1, currentloc.y - 1, currentloc.z + 5);
-                                        break;
-                                    case 3:
-                                        _nextLocation = new Location(currentloc.x - 5, currentloc.y - 1, currentloc.z - 1);
-                                        break;
-                                }
-
-                                _linearmodepos = false;
-                            }
-                        }
-                        else
-                        {
-                            switch (_direction)
-                            {
-                                case 0:
-                                    _nextLocation = new Location(currentloc.x, currentloc.y - 1, currentloc.z - 6);
-                                    break;
-                                case 1:
-                                    _nextLocation = new Location(currentloc.x + 6, currentloc.y - 1, currentloc.z);
-                                    break;
-                                case 2:
-                                    _nextLocation = new Location(currentloc.x, currentloc.y - 1, currentloc.z + 6);
-                                    break;
-                                case 3:
-                                    _nextLocation = new Location(currentloc.x - 6, currentloc.y - 1, currentloc.z);
-                                    break;
-                            }
-                        }
-                    }
-
-                    GoToLocation(_nextLocation, () =>
-                    {
-                        TaskCompleted();
-
-                        _secondLayerString = false;
-
-                        _secondLayer = true;
-                        _firstLayer = false;
-
-                        _secondLayerStringEast = false;
-                        _secondLayerStringSouth = false;
-                        _secondLayerStringWest = false;
-
-                        _firstLayerSand = false;
-                        _firstLayerCactus = false;
-                        _firstLayerString = false;
-                        _secondLayerSand = false;
-
-                        _secondLayerSandEast = false;
-                        _firstLayerStringEast = false;
-                        _secondLayerSandSouth = false;
-                        _firstLayerStringSouth = false;
-                        _secondLayerSandWest = false;
-                        _firstLayerStringWest = false;
-                        _secondLayerSandNorth = false;
-                        _firstLayerStringNorth = false;
-
-                        _firstLayerCactusOutside = false;
-                        _firstLayerStringOutside = false;
-                        _firstLayerCactusInside = false;
-                        _firstLayerStringInside = false;
-
-                        _layerCount = 0;
-                        _startloc = false;
-                    });
-                }
-
-                if (!Sandblocks(currentloc)) return;
-#if DEBUG
-                Console.WriteLine("Sandblocks(currentloc)");
-#endif
-                MineBlock(currentloc.Offset(-1));
-
-                return;
-            }
-
-#if DEBUG
-            Console.WriteLine("Layercount: " + _layerCount);
-#endif
-
-            if (!_startloc)
-            {
-                _startLocation = player.status.entity.location.ToLocation();
-                _startloc = true;
-            }
-
+            DebugMessage("Tick START");
+            
+            //TODO: Add Inv-Management
+            //TODO: When height is an uneven number then don't build cactus on the top layer
             //TODO: Add wait for world here
+
             if (!player.physicsEngine.isGrounded) return;
 
             if (inventory.FindId(12) < 1)
@@ -347,213 +162,579 @@ namespace CactusFarmBuilder.Tasks
                 return;
             }
 
-            if (!_firstLayer)
+            DebugMessage("Layercount: " + _layerCount);
+
+            if (_layerCount >= _maxlayers)
             {
-                if (!_firstLayerSand)
+                if (_vanillamode)
                 {
-                    MakeFirstLayerSand();
+                    var currentloc = player.status.entity.location.ToLocation();
+
+                    if (_startLocation.Offset(-1).Distance(currentloc.Offset(-1)) < 1)
+                    {
+                        _nextLocation = new Location(currentloc.x, currentloc.y - 1, currentloc.z - 8);
+
+                        switch (_direction)
+                        {
+                            case 0:
+                                _nextLocation = new Location(currentloc.x, currentloc.y - 1, currentloc.z - 2);
+                                break;
+                            case 1:
+                                _nextLocation = new Location(currentloc.x + 2, currentloc.y - 1, currentloc.z);
+                                break;
+                            case 2:
+                                _nextLocation = new Location(currentloc.x, currentloc.y - 1, currentloc.z + 2);
+                                break;
+                            case 3:
+                                _nextLocation = new Location(currentloc.x - 2, currentloc.y - 1, currentloc.z);
+                                break;
+                        }
+
+                        GoToLocation(_nextLocation, () =>
+                        {
+                            WaitGrounded(() =>
+                            {
+                                TaskCompleted();
+
+                                _firstLayer = false;
+                                _secondLayer = true;
+
+                                _vanillaFirstLayerSand = false;
+                                _vanillaFirstLayerCactus = false;
+                                _vanillaFirstLayerString = false;
+
+                                _layerCount = 0;
+                                _startloc = false;
+                                _activateLayerCount = false;
+                            });
+                        });
+                    }
+
+                    WaitGrounded(() =>
+                    {
+                        if (!Sandblocks(currentloc)) return;
+
+                        DebugMessage("Sandblocks(currentloc)");
+
+                        var location = player.status.entity.location.ToLocation();
+
+                        if (player.world.GetBlockId(location.x, (int)location.y - 1, location.z + 1) == 12 &&
+                            player.world.GetBlockId(location.x, (int)location.y, location.z + 1) == 0 ||
+                            player.world.GetBlockId(location.x, (int)location.y - 1, location.z - 1) == 12 &&
+                            player.world.GetBlockId(location.x, (int)location.y, location.z - 1) == 0)
+                        {
+                            _currentbuildingloc = player.status.entity.location.ToLocation();
+
+                            PlaceBlockData(81, new[]
+                                {
+                                    CheckForBlock(0, 0, 1),
+                                    CheckForBlock(0, 0, -1)
+                                },
+                                () =>
+                                {
+                                    DebugMessage("Place Cactus TaskCompleted();");
+
+                                    TaskCompleted();
+                                });
+                            return;
+                        }
+
+                        MineBlock(currentloc.Offset(-1));
+                    });
                     return;
                 }
-
-                if (!_gamemode)
+                else
                 {
-                    if (_needToMoveToEast)
+                    var currentloc = player.status.entity.location.ToLocation();
+
+                    if (_startLocation.Offset(-1).Distance(currentloc.Offset(-1)) < 1)
                     {
-                        if (!_secondLayerStringEast)
+                        _nextLocation = new Location(currentloc.x, currentloc.y - 1, currentloc.z - 8);
+                        if (_gamemode)
                         {
-                            MakeFirstLayerStringEast();
+                            if (_linearmode)
+                            {
+                                if (!_linearmodepos)
+                                {
+                                    switch (_direction)
+                                    {
+                                        case 0:
+                                            _nextLocation = new Location(currentloc.x + 1, currentloc.y - 1,
+                                                currentloc.z - 7);
+                                            break;
+                                        case 1:
+                                            _nextLocation = new Location(currentloc.x + 7, currentloc.y - 1,
+                                                currentloc.z - 1);
+                                            break;
+                                        case 2:
+                                            _nextLocation = new Location(currentloc.x - 1, currentloc.y - 1,
+                                                currentloc.z + 7);
+                                            break;
+                                        case 3:
+                                            _nextLocation = new Location(currentloc.x - 7, currentloc.y - 1,
+                                                currentloc.z + 1);
+                                            break;
+                                    }
+
+                                    _linearmodepos = true;
+                                }
+                                else
+                                {
+                                    switch (_direction)
+                                    {
+                                        case 0:
+                                            _nextLocation = new Location(currentloc.x - 1, currentloc.y - 1,
+                                                currentloc.z - 7);
+                                            break;
+                                        case 1:
+                                            _nextLocation = new Location(currentloc.x + 7, currentloc.y - 1,
+                                                currentloc.z + 1);
+                                            break;
+                                        case 2:
+                                            _nextLocation = new Location(currentloc.x + 1, currentloc.y - 1,
+                                                currentloc.z + 7);
+                                            break;
+                                        case 3:
+                                            _nextLocation = new Location(currentloc.x - 7, currentloc.y - 1,
+                                                currentloc.z - 1);
+                                            break;
+                                    }
+
+                                    _linearmodepos = false;
+                                }
+                            }
+                            else
+                            {
+                                switch (_direction)
+                                {
+                                    case 0:
+                                        _nextLocation = new Location(currentloc.x, currentloc.y - 1, currentloc.z - 8);
+                                        break;
+                                    case 1:
+                                        _nextLocation = new Location(currentloc.x + 8, currentloc.y - 1, currentloc.z);
+                                        break;
+                                    case 2:
+                                        _nextLocation = new Location(currentloc.x, currentloc.y - 1, currentloc.z + 8);
+                                        break;
+                                    case 3:
+                                        _nextLocation = new Location(currentloc.x - 8, currentloc.y - 1, currentloc.z);
+                                        break;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (_linearmode)
+                            {
+                                if (!_linearmodepos)
+                                {
+                                    switch (_direction)
+                                    {
+                                        case 0:
+                                            _nextLocation = new Location(currentloc.x + 1, currentloc.y - 1,
+                                                currentloc.z - 5);
+                                            break;
+                                        case 1:
+                                            _nextLocation = new Location(currentloc.x + 5, currentloc.y - 1,
+                                                currentloc.z - 1);
+                                            break;
+                                        case 2:
+                                            _nextLocation = new Location(currentloc.x - 1, currentloc.y - 1,
+                                                currentloc.z + 5);
+                                            break;
+                                        case 3:
+                                            _nextLocation = new Location(currentloc.x - 5, currentloc.y - 1,
+                                                currentloc.z + 1);
+                                            break;
+                                    }
+
+                                    _linearmodepos = true;
+                                }
+                                else
+                                {
+                                    switch (_direction)
+                                    {
+                                        case 0:
+                                            _nextLocation = new Location(currentloc.x - 1, currentloc.y - 1,
+                                                currentloc.z - 5);
+                                            break;
+                                        case 1:
+                                            _nextLocation = new Location(currentloc.x + 5, currentloc.y - 1,
+                                                currentloc.z + 1);
+                                            break;
+                                        case 2:
+                                            _nextLocation = new Location(currentloc.x + 1, currentloc.y - 1,
+                                                currentloc.z + 5);
+                                            break;
+                                        case 3:
+                                            _nextLocation = new Location(currentloc.x - 5, currentloc.y - 1,
+                                                currentloc.z - 1);
+                                            break;
+                                    }
+
+                                    _linearmodepos = false;
+                                }
+                            }
+                            else
+                            {
+                                switch (_direction)
+                                {
+                                    case 0:
+                                        _nextLocation = new Location(currentloc.x, currentloc.y - 1, currentloc.z - 6);
+                                        break;
+                                    case 1:
+                                        _nextLocation = new Location(currentloc.x + 6, currentloc.y - 1, currentloc.z);
+                                        break;
+                                    case 2:
+                                        _nextLocation = new Location(currentloc.x, currentloc.y - 1, currentloc.z + 6);
+                                        break;
+                                    case 3:
+                                        _nextLocation = new Location(currentloc.x - 6, currentloc.y - 1, currentloc.z);
+                                        break;
+                                }
+                            }
+                        }
+
+                        GoToLocation(_nextLocation, () =>
+                        {
+                            WaitGrounded(() =>
+                            {
+                                TaskCompleted();
+
+                                _secondLayerString = false;
+
+                                _secondLayer = true;
+                                _firstLayer = false;
+
+                                _secondLayerStringEast = false;
+                                _secondLayerStringSouth = false;
+                                _secondLayerStringWest = false;
+
+                                _firstLayerSand = false;
+                                _firstLayerCactus = false;
+                                _firstLayerString = false;
+                                _secondLayerSand = false;
+
+                                _secondLayerSandEast = false;
+                                _firstLayerStringEast = false;
+                                _secondLayerSandSouth = false;
+                                _firstLayerStringSouth = false;
+                                _secondLayerSandWest = false;
+                                _firstLayerStringWest = false;
+                                _secondLayerSandNorth = false;
+                                _firstLayerStringNorth = false;
+
+                                _firstLayerCactusOutside = false;
+                                _firstLayerStringOutside = false;
+                                _firstLayerCactusInside = false;
+                                _firstLayerStringInside = false;
+
+                                _layerCount = 0;
+                                _startloc = false;
+                                _activateLayerCount = false;
+                            });
+                        });
+                    }
+
+                    WaitGrounded(() =>
+                    {
+                        if (!Sandblocks(currentloc)) return;
+
+                        DebugMessage("Sandblocks(currentloc)");
+
+                        var location = player.status.entity.location.ToLocation();
+
+                        if (player.world.GetBlockId(location.x, (int) location.y - 1, location.z + 1) == 12 &&
+                            player.world.GetBlockId(location.x, (int) location.y, location.z + 1) == 0 ||
+                            player.world.GetBlockId(location.x, (int) location.y - 1, location.z - 1) == 12 &&
+                            player.world.GetBlockId(location.x, (int) location.y, location.z - 1) == 0 ||
+                            player.world.GetBlockId(location.x + 1, (int) location.y - 1, location.z) == 12 &&
+                            player.world.GetBlockId(location.x + 1, (int) location.y, location.z) == 0 ||
+                            player.world.GetBlockId(location.x - 1, (int) location.y - 1, location.z) == 12 &&
+                            player.world.GetBlockId(location.x - 1, (int) location.y, location.z) == 0)
+                        {
+                            _currentbuildingloc = player.status.entity.location.ToLocation();
+
+                            PlaceBlockData(81, new[]
+                                {
+                                    CheckForBlock(0, 0, 1),
+                                    CheckForBlock(0, 0, -1),
+                                    CheckForBlock(1, 0, 0),
+                                    CheckForBlock(-1, 0, 0)
+                                },
+                                () =>
+                                {
+                                    _firstLayerCactusOutside = true;
+
+                                    DebugMessage("Place Cactus TaskCompleted();");
+
+                                    TaskCompleted();
+                                });
                             return;
                         }
 
-                        MakeSecondLayerSandEast();
-                        return;
-                    }
-
-                    if (_needToMoveToSouth)
-                    {
-                        if (!_secondLayerStringSouth)
-                        {
-                            MakeFirstLayerStringSouth();
-                            return;
-                        }
-
-                        MakeSecondLayerSandSouth();
-                        return;
-                    }
-
-                    if (_needToMoveToWest)
-                    {
-                        if (!_secondLayerStringWest)
-                        {
-                            MakeFirstLayerStringWest();
-                            return;
-                        }
-#if DEBUG
-                        Console.WriteLine("MakeFirstLayerStringWestGamemode");
-#endif
-
-                        MakeSecondLayerSandWest();
-                        return;
-                    }
-
-                    if (_needToMoveToMiddle)
-                    {
-                        MoveToMiddleSecondLayer();
-                        return;
-                    }
-                }
-
-                if (!_firstLayerCactus && _gamemode)
-                {
-                    MakeFirstLayerCactusGamemode();
+                        MineBlock(currentloc.Offset(-1));
+                    });
                     return;
                 }
-
-                if (!_firstLayerCactus && !_gamemode)
-                {
-                    if (!_firstLayerCactusOutside)
-                    {
-                        MakeFirstLayerCactusOutside();
-                        return;
-                    }
-
-                    if (!_firstLayerStringOutside)
-                    {
-                        MakeFirstLayerStringOutside();
-                        return;
-                    }
-
-                    if (!_firstLayerCactusInside)
-                    {
-                        MakeFirstLayerCactusInside();
-                        return;
-                    }
-
-                    if (!_firstLayerStringInside)
-                    {
-                        MakeFirstLayerStringInside();
-                        return;
-                    }
-                }
-
-                if (!_firstLayerString && _gamemode)
-                {
-                    MakeFirstLayerString();
-                    return;
-                }
-
-                if (!_secondLayerSand)
-                {
-                    MakeSecondLayerSand();
-                    return;
-                }
-
-                if (_gamemode)
-                {
-                    if (!_secondLayerSandEast)
-                    {
-                        if (!_firstLayerStringEast)
-                        {
-                            MakeFirstLayerStringEastGamemode();
-#if DEBUG
-                            Console.WriteLine("MakeFirstLayerStringEastGamemode();");
-#endif
-                            return;
-                        }
-
-                        MakeSecondLayerSandEastGamemode();
-#if DEBUG
-                        Console.WriteLine("MakeSecondLayerSandEastGamemode();");
-#endif
-                        return;
-                    }
-
-                    if (!_secondLayerSandSouth)
-                    {
-                        if (!_firstLayerStringSouth)
-                        {
-#if DEBUG
-                            Console.WriteLine("MakeFirstLayerStringSouthGamemode();");
-#endif
-                            MakeFirstLayerStringSouthGamemode();
-                            return;
-                        }
-
-                        MakeSecondLayerSandSouthGamemode();
-#if DEBUG
-                        Console.WriteLine("MakeSecondLayerSandSouthGamemode();");
-#endif
-                        return;
-                    }
-
-                    if (!_secondLayerSandWest)
-                    {
-                        if (!_firstLayerStringWest)
-                        {
-                            MakeFirstLayerStringWestGamemode();
-#if DEBUG
-                            Console.WriteLine("MakeFirstLayerStringWestGamemode();");
-#endif
-                            return;
-                        }
-
-                        MakeSecondLayerSandWestGamemode();
-#if DEBUG
-                        Console.WriteLine("MakeSecondLayerSandWestGamemode");
-#endif
-                        return;
-                    }
-#if DEBUG
-                    Console.WriteLine("MakeSecondLayerSandWestGamemode");
-#endif
-
-                    if (!_secondLayerSandNorth)
-                    {
-                        if (!_firstLayerStringNorth)
-                        {
-                            MakeFirstLayerStringNorthGamemode();
-                            return;
-                        }
-#if DEBUG
-                        Console.WriteLine("MakeFirstLayerStringNorthGamemode");
-#endif
-
-                        MakeSecondLayerSandNorthGamemode();
-                        return;
-                    }
-#if DEBUG
-                    Console.WriteLine("MakeSecondLayerSandNorthGamemode");
-#endif
-
-                    MoveToMiddleFirstLayerGamemode();
-                    return;
-                }
-
-                _firstLayer = true;
-                _secondLayer = false;
-
-                _secondLayerCactus = false;
-                _secondLayerString = false;
             }
 
-            if (!_secondLayer)
+            if (!_startloc)
             {
-                if (!_secondLayerCactus)
+                _startLocation = player.status.entity.location.ToLocation();
+                _startloc = true;
+            }
+
+            if (_vanillamode)
+            {
+                if (!_firstLayer)
                 {
-                    MakeSecondLayerCactus();
-                    return;
+                    if (!_vanillaFirstLayerSand)
+                    {
+                        MakeVanillaFirstLayerSand();
+                        return;
+                    }
+                    
+                    if (!_vanillaFirstLayerCactus)
+                    {
+                        MakeVanillaFirstLayerCactus();
+                        return;
+                    }
+                    
+                    if (!_vanillaFirstLayerString)
+                    {
+                        MakeVanillaFirstLayerString();
+                        return;
+                    }
+
+                    _firstLayer = true;
+                    _secondLayer = false;
+
+                    _vanillaSecondLayerSand = false;
+                    _vanillaSecondLayerString = false;
+                    _vanillaSecondLayerGoToFirst = false;
+                    _layerCount++;
                 }
 
-                if (!_secondLayerString)
+                if (!_secondLayer)
                 {
-                    MakeSecondLayerString();
-                    return;
+                    if (!_vanillaSecondLayerSand)
+                    {
+                        MakeVanillaSecondLayerSand();
+                        return;
+                    }
+                
+                    if (!_vanillaSecondLayerString)
+                    {
+                        MakeVanillaSecondLayerString();
+                        return;
+                    }
+
+                    if (!_vanillaSecondLayerGoToFirst)
+                    {
+                        VanillaGoToFirstLayer();
+                        return;
+                    }
+
+                    _firstLayer = false;
+                    _secondLayer = true;
+
+                    _vanillaFirstLayerSand = false;
+                    _vanillaFirstLayerCactus = false;
+                    _vanillaFirstLayerString = false;
+                    _layerCount++;
+                }
+            }
+            else
+            {
+                if (!_firstLayer)
+                {
+                    if (!_firstLayerSand)
+                    {
+                        MakeFirstLayerSand();
+                        return;
+                    }
+
+                    if (!_gamemode)
+                    {
+                        if (_needToMoveToEast)
+                        {
+                            if (!_secondLayerStringEast)
+                            {
+                                MakeFirstLayerStringEast();
+                                return;
+                            }
+
+                            MakeSecondLayerSandEast();
+                            return;
+                        }
+
+                        if (_needToMoveToSouth)
+                        {
+                            if (!_secondLayerStringSouth)
+                            {
+                                MakeFirstLayerStringSouth();
+                                return;
+                            }
+
+                            MakeSecondLayerSandSouth();
+                            return;
+                        }
+
+                        if (_needToMoveToWest)
+                        {
+                            if (!_secondLayerStringWest)
+                            {
+                                MakeFirstLayerStringWest();
+                                return;
+                            }
+
+                            MakeSecondLayerSandWest();
+                            return;
+                        }
+
+                        if (_needToMoveToMiddle)
+                        {
+                            MoveToMiddleSecondLayer();
+                            return;
+                        }
+                    }
+
+                    if (!_firstLayerCactus && _gamemode)
+                    {
+                        MakeFirstLayerCactusGamemode();
+                        return;
+                    }
+
+                    if (!_firstLayerCactus && !_gamemode)
+                    {
+                        if (!_firstLayerCactusOutside)
+                        {
+                            MakeFirstLayerCactusOutside();
+                            return;
+                        }
+
+                        if (!_firstLayerStringOutside)
+                        {
+                            MakeFirstLayerStringOutside();
+                            return;
+                        }
+
+                        if (!_firstLayerCactusInside)
+                        {
+                            MakeFirstLayerCactusInside();
+                            return;
+                        }
+
+                        if (!_firstLayerStringInside)
+                        {
+                            MakeFirstLayerStringInside();
+                            return;
+                        }
+                    }
+
+                    if (!_firstLayerString && _gamemode)
+                    {
+                        MakeFirstLayerString();
+                        return;
+                    }
+
+                    if (!_secondLayerSand)
+                    {
+                        MakeSecondLayerSand();
+                        return;
+                    }
+
+                    if (_gamemode)
+                    {
+                        if (!_secondLayerSandEast)
+                        {
+                            if (!_firstLayerStringEast)
+                            {
+                                MakeFirstLayerStringEastGamemode();
+                                DebugMessage("MakeFirstLayerStringEastGamemode();");
+                                return;
+                            }
+
+                            MakeSecondLayerSandEastGamemode();
+                            DebugMessage("MakeSecondLayerSandEastGamemode();");
+                            return;
+                        }
+
+                        if (!_secondLayerSandSouth)
+                        {
+                            if (!_firstLayerStringSouth)
+                            {
+                                DebugMessage("MakeFirstLayerStringSouthGamemode();");
+                                MakeFirstLayerStringSouthGamemode();
+                                return;
+                            }
+
+                            MakeSecondLayerSandSouthGamemode();
+                            DebugMessage("MakeSecondLayerSandSouthGamemode();");
+                            return;
+                        }
+
+                        if (!_secondLayerSandWest)
+                        {
+                            if (!_firstLayerStringWest)
+                            {
+                                MakeFirstLayerStringWestGamemode();
+                                DebugMessage("MakeFirstLayerStringWestGamemode();");
+                                return;
+                            }
+
+                            MakeSecondLayerSandWestGamemode();
+                            DebugMessage("MakeSecondLayerSandWestGamemode");
+                            return;
+                        }
+
+                        DebugMessage("MakeSecondLayerSandWestGamemode");
+
+                        if (!_secondLayerSandNorth)
+                        {
+                            if (!_firstLayerStringNorth)
+                            {
+                                MakeFirstLayerStringNorthGamemode();
+                                return;
+                            }
+
+                            DebugMessage("MakeFirstLayerStringNorthGamemode");
+
+                            MakeSecondLayerSandNorthGamemode();
+                            return;
+                        }
+
+                        DebugMessage("MakeSecondLayerSandNorthGamemode");
+
+                        MoveToMiddleFirstLayerGamemode();
+                        return;
+                    }
+
+                    _firstLayer = true;
+                    _secondLayer = false;
+
+                    _secondLayerCactus = false;
+                    _secondLayerString = false;
+                }
+
+                if (!_secondLayer)
+                {
+                    if (!_secondLayerCactus)
+                    {
+                        MakeSecondLayerCactus();
+                        return;
+                    }
+
+                    if (!_secondLayerString)
+                    {
+                        MakeSecondLayerString();
+                        return;
+                    }
                 }
             }
 
-#if (DEBUG)
-            Console.WriteLine("Tick End");
-#endif
+            DebugMessage("Tick END");
         }
 
         public override bool Exec()
@@ -562,31 +743,173 @@ namespace CactusFarmBuilder.Tasks
             return !status.entity.isDead && !status.eating && !_busy;
         }
 
+        #region Vanilla Mode
+
+        #region Vanilla First Layer
+
+        private void MakeVanillaFirstLayerSand()
+        {
+            _busy = true;
+
+            _currentbuildingloc = player.status.entity.location.ToLocation();
+
+            PlaceBlockLocation(12, new[]
+                {
+                    CheckForBlock(1, -1, 1), CheckForBlock(-1, -1, 1), CheckForBlock(-1, -1, -1),
+                    CheckForBlock(1, -1, -1)
+                },
+                () =>
+                {
+                    _vanillaFirstLayerSand = true;
+
+                    DebugMessage("MakeVanillaFirstLayerSand TaskCompleted();");
+
+                    TaskCompleted();
+                });
+        }
+
+        private void MakeVanillaFirstLayerCactus()
+        {
+            _busy = true;
+
+            _currentbuildingloc = player.status.entity.location.ToLocation();
+
+            PlaceBlockData(81, new[]
+                {
+                    CheckForBlock(1, 1, 1), CheckForBlock(-1, 1, 1), CheckForBlock(-1, 1, -1),
+                    CheckForBlock(1, 1, -1),
+                },
+                () =>
+                {
+                    _vanillaFirstLayerCactus = true;
+
+                    DebugMessage("MakeVanillaFirstLayerCactus TaskCompleted();");
+
+                    TaskCompleted();
+                });
+        }
+
+        private void MakeVanillaFirstLayerString()
+        {
+            _busy = true;
+
+            _currentbuildingloc = player.status.entity.location.ToLocation();
+
+            PlaceBlockData(287, new[]
+                {
+                    CheckForBlock(0, 1, 1), CheckForBlock(0, 1, -1)
+                },
+                () =>
+                {
+                    _vanillaFirstLayerString = true;
+
+                    DebugMessage("MakeVanillaFirstLayerString TaskCompleted();");
+
+                    TaskCompleted();
+                });
+        }
+
+        #endregion
+
+        #region Vanilla Second Layer
+
+        private void MakeVanillaSecondLayerSand()
+        {
+            var currentloc = player.status.entity.location.ToLocation();
+
+            GoToLocation(currentloc.Offset(1), () =>
+            {
+                WaitGrounded(() =>
+                {
+                    _currentbuildingloc = player.status.entity.location.ToLocation();
+
+                    PlaceBlockLocation(12, new[]
+                        {
+                            CheckForBlock(0, -1, 1),CheckForBlock(0, -1, -1)
+                        },
+                        () =>
+                        {
+                            _vanillaSecondLayerSand = true;
+
+                            DebugMessage("MakeVanillaSecondLayerSand TaskCompleted();");
+
+                            TaskCompleted();
+                        });
+                });
+            });
+        }
+
+        private void MakeVanillaSecondLayerString()
+        {
+            _busy = true;
+
+            _currentbuildingloc = player.status.entity.location.ToLocation();
+
+            PlaceBlockLocation(287, new[]
+                {
+                    CheckForBlock(1, -1, 1), CheckForBlock(1, 0, 1),
+                    CheckForBlock(-1, -1, 1), CheckForBlock(-1, 0, 1),
+                    CheckForBlock(-1, -1, -1), CheckForBlock(-1, 0, -1),
+                    CheckForBlock(1, -1, -1), CheckForBlock(1, 0, -1)
+                },
+                () =>
+                {
+                    MineBlockNoBusy(_currentbuildingloc.Offset(1, 0, 1));
+                    player.tickManager.Register(_tickDelay, () =>
+                    {
+                        MineBlockNoBusy(_currentbuildingloc.Offset(-1, 0, 1));
+                        player.tickManager.Register(_tickDelay, () =>
+                        {
+                            MineBlockNoBusy(_currentbuildingloc.Offset(-1, 0, -1));
+                            player.tickManager.Register(_tickDelay, () =>
+                            {
+                                MineBlockNoBusy(_currentbuildingloc.Offset(1, 0, -1));
+
+                                _vanillaSecondLayerString = true;
+
+                                DebugMessage("MakeVanillaSecondLayerString TaskCompleted();");
+
+                                TaskCompleted();
+                            });
+                        });
+                    });
+                });
+        }
+
+        private void VanillaGoToFirstLayer()
+        {
+            var currentloc = player.status.entity.location.ToLocation();
+
+            GoToLocation(currentloc.Offset(1), () =>
+            {
+                WaitGrounded(() =>
+                {
+                    _vanillaSecondLayerGoToFirst = true;
+
+                    TaskCompleted();
+                });
+            });
+        }
+
+        #endregion
+
+        #endregion
+
         #region First Layer
 
-        #region MakeFirstLayerSand
-
-        private void MakeFirstLayerSand(ILocation[] precomputed, Action callback)
+        private void PlaceBlockData(ushort blockid, IEnumerable<ILocation> precomputed, Action callback)
         {
-            foreach (var location in precomputed)
-                if (location == null)
-                {
-                }
-
             var locations = new Queue<ILocation>(precomputed);
 
             IStopToken stopToken = null;
             stopToken = RegisterReoccuring(_tickDelay, () =>
             {
-                if (locations.Count == 0 || inventory.FindId(12) < 1)
+                //TODO: Stop the plugin when we don't have a block left
+                if (locations.Count == 0 || inventory.FindId(blockid) < 1)
                 {
                     stopToken.Stop();
 
-                    player.tickManager.Register(4, () =>
-                    {
-                        // Wait 4 more ticks to fire callback, as it could be possible that we are waiting for the look event.
-                        callback();
-                    });
+                    player.tickManager.Register(2, callback);
                     return;
                 }
 
@@ -594,11 +917,55 @@ namespace CactusFarmBuilder.Tasks
 
                 if (location == null) return;
 
-                if (player.world.GetBlockId(location.x, (int) location.y + 1, location.z) != 0) return;
+                if (player.world.GetBlockId(location.x, (int)location.y, location.z) != 0) return;
+                
+                var data = player.functions.FindValidNeighbour(location);
 
-                inventory.Select(12); //Select Sand
+                if (data == null) return;
 
-                player.functions.LookAtBlock(location);
+                inventory.Select(blockid);
+
+                player.functions.LookAtBlock(data.location, true, data.face);
+
+                player.tickManager.Register(_tickDelay / 2,
+                    () =>
+                    {
+                        player.functions.BlockPlaceOnBlockFace(data.location, data.face);
+                        player.tickManager.Register(_tickDelay / 4,
+                            () =>
+                            {
+                                if (player.world.GetBlockId(location.x, (int)location.y, location.z) != 0) return;
+
+                                locations.Enqueue(location);
+                            });
+                    });
+            });
+        }
+
+        private void PlaceBlockLocation(ushort blockid, ILocation[] precomputed, Action callback)
+        {
+            var locations = new Queue<ILocation>(precomputed);
+
+            IStopToken stopToken = null;
+            stopToken = RegisterReoccuring(_tickDelay, () =>
+            {
+                if (locations.Count == 0 || inventory.FindId(blockid) < 1)
+                {
+                    stopToken.Stop();
+
+                    player.tickManager.Register(2, callback);
+                    return;
+                }
+
+                var location = locations.Dequeue();
+
+                if (location == null) return;
+
+                if (player.world.GetBlockId(location.x, (int)location.y + 1, location.z) != 0) return;
+
+                inventory.Select(blockid); //Select Sand
+
+                player.functions.LookAtBlock(location, true, 1);
 
                 player.tickManager.Register(_tickDelay / 2,
                     () =>
@@ -607,7 +974,7 @@ namespace CactusFarmBuilder.Tasks
                         player.tickManager.Register(_tickDelay / 4,
                             () =>
                             {
-                                if (player.world.GetBlockId(location.x, (int) location.y + 1, location.z) != 0) return;
+                                if (player.world.GetBlockId(location.x, (int)location.y + 1, location.z) != 0) return;
 
                                 locations.Enqueue(location);
                             });
@@ -615,11 +982,10 @@ namespace CactusFarmBuilder.Tasks
             });
         }
 
+        #region MakeFirstLayerSand
+
         private void MakeFirstLayerSand()
         {
-            //might need to change it to a stop token
-            var cancelToken = new CancelToken();
-
             var currentloc = player.status.entity.location.ToLocation();
             
             GoToLocation(currentloc, () =>
@@ -627,11 +993,10 @@ namespace CactusFarmBuilder.Tasks
                 WaitGrounded(() =>
                 {
                     _currentbuildingloc = player.status.entity.location.ToLocation();
-
-
+                    
                     if (_gamemode)
                     {
-                        MakeFirstLayerSand(new[]
+                        PlaceBlockLocation(12, new[]
                             {
                                 CheckForBlock(3, -2, 1), CheckForBlock(2, -2, 2), CheckForBlock(1, -2, 3),
                                 CheckForBlock(-1, -2, 3), CheckForBlock(-2, -2, 2), CheckForBlock(-3, -2, 1),
@@ -648,22 +1013,24 @@ namespace CactusFarmBuilder.Tasks
                                 _firstLayerSand = true;
                                 _secondLayer = true;
 
-#if (DEBUG)
-                                Console.WriteLine("MakeFirstLayerSand TaskCompleted();");
-#endif
+                                if (_activateLayerCount) _layerCount++;
+
+                                DebugMessage("MakeFirstLayerSand TaskCompleted();");
+
                                 TaskCompleted();
                             });
                         return;
                     }
 
-                    MakeFirstLayerSand(new[]
+                    PlaceBlockLocation(12, new[]
                         {
                             //CheckForBlock(2, -2, 2), CheckForBlock(-2, -2, 2), CheckForBlock(-2, -2, -2),
                             //CheckForBlock(2, -2, -2),
 
-                            CheckForBlock(2, -2, 0), CheckForBlock(1, -2, 1),
+                            CheckForBlock(1, -2, 1),
                             CheckForBlock(0, -2, 2), CheckForBlock(-1, -2, 1), CheckForBlock(-2, -2, 0),
-                            CheckForBlock(-1, -2, -1), CheckForBlock(0, -2, -2), CheckForBlock(1, -2, -1)
+                            CheckForBlock(-1, -2, -1), CheckForBlock(0, -2, -2), CheckForBlock(1, -2, -1),
+                            CheckForBlock(2, -2, 0)
                         },
                         () =>
                         {
@@ -683,55 +1050,6 @@ namespace CactusFarmBuilder.Tasks
 
         #region MakeFirstLayerCactus
 
-        private void MakeFirstLayerCactus(ILocation[] precomputed, Action callback)
-        {
-            foreach (var location in precomputed)
-                if (location == null)
-                {
-                }
-
-            var locations = new Queue<ILocation>(precomputed);
-
-            IStopToken stopToken = null;
-            stopToken = RegisterReoccuring(_tickDelay, () =>
-            {
-                if (locations.Count == 0 || inventory.FindId(81) < 1)
-                {
-                    stopToken.Stop();
-
-                    player.tickManager.Register(4, () =>
-                    {
-                        // Wait 4 more ticks to fire callback, as it could be possible that we are waiting for the look event.
-                        callback();
-                    });
-                    return;
-                }
-
-                var location = locations.Dequeue();
-
-                if (location == null) return;
-
-                if (player.world.GetBlockId(location.x, (int) location.y + 1, location.z) != 0) return;
-
-                inventory.Select(81); //Select Cactus
-
-                player.functions.LookAtBlock(location);
-
-                player.tickManager.Register(_tickDelay / 2,
-                    () =>
-                    {
-                        player.functions.BlockPlaceOnBlockFace(location, 1);
-                        player.tickManager.Register(_tickDelay / 4,
-                            () =>
-                            {
-                                if (player.world.GetBlockId(location.x, (int) location.y + 1, location.z) != 0) return;
-
-                                locations.Enqueue(location);
-                            });
-                    });
-            });
-        }
-
         private void MakeFirstLayerCactusGamemode()
         {
             var currentloc = player.status.entity.location.ToLocation();
@@ -742,26 +1060,24 @@ namespace CactusFarmBuilder.Tasks
                 {
                     _currentbuildingloc = player.status.entity.location.ToLocation();
 
-                    MakeFirstLayerCactus(new[]
+                    PlaceBlockData(81, new[]
                     {
-                        CheckForBlock(3, -2, 1), CheckForBlock(2, -2, 2), CheckForBlock(1, -2, 3),
-                        CheckForBlock(-1, -2, 3), CheckForBlock(-2, -2, 2), CheckForBlock(-3, -2, 1),
-                        CheckForBlock(-3, -2, -1), CheckForBlock(-2, -2, -2),
-                        CheckForBlock(-1, -2, -3), CheckForBlock(1, -2, -3), CheckForBlock(2, -2, -2),
-                        CheckForBlock(3, -2, -1),
-                        CheckForBlock(2, -2, 0), CheckForBlock(1, -2, 1), CheckForBlock(0, -2, 2),
-                        CheckForBlock(-1, -2, 1),
-                        CheckForBlock(-2, -2, 0), CheckForBlock(-1, -2, -1), CheckForBlock(0, -2, -2),
-                        CheckForBlock(1, -2, -1)
+                        CheckForBlock(3, -1, 1), CheckForBlock(2, -1, 2), CheckForBlock(1, -1, 3),
+                        CheckForBlock(-1, -1, 3), CheckForBlock(-2, -1, 2), CheckForBlock(-3, -1, 1),
+                        CheckForBlock(-3, -1, -1), CheckForBlock(-2, -1, -2),
+                        CheckForBlock(-1, -1, -3), CheckForBlock(1, -1, -3), CheckForBlock(2, -1, -2),
+                        CheckForBlock(3, -1, -1),
+                        CheckForBlock(2, -1, 0), CheckForBlock(1, -1, 1), CheckForBlock(0, -1, 2),
+                        CheckForBlock(-1, -1, 1),
+                        CheckForBlock(-2, -1, 0), CheckForBlock(-1, -1, -1), CheckForBlock(0, -1, -2),
+                        CheckForBlock(1, -1, -1)
                     },
                     () =>
                     {
                         _firstLayerCactus = true;
-                        _layerCount++;
 
-#if (DEBUG)
-                        Console.WriteLine("MakeFirstLayerCactusGamemode TaskCompleted();");
-#endif
+                        DebugMessage("MakeFirstLayerCactusGamemode TaskCompleted();");
+
                         TaskCompleted();
                     });
                 });
@@ -778,18 +1094,17 @@ namespace CactusFarmBuilder.Tasks
                 {
                     _currentbuildingloc = player.status.entity.location.ToLocation();
 
-                    MakeFirstLayerCactus(new[]
+                    PlaceBlockData(81, new[]
                         {
-                            CheckForBlock(2, -2, 2), CheckForBlock(-2, -2, 2), CheckForBlock(-2, -2, -2),
-                            CheckForBlock(2, -2, -2)
+                            CheckForBlock(2, -1, 2), CheckForBlock(-2, -1, 2), CheckForBlock(-2, -1, -2),
+                            CheckForBlock(2, -1, -2)
                         },
                         () =>
                         {
                             _firstLayerCactusOutside = true;
 
-#if (DEBUG)
-                            Console.WriteLine("MakeFirstLayerCactusOutside TaskCompleted();");
-#endif
+                            DebugMessage("MakeFirstLayerCactusOutside TaskCompleted();");
+
                             TaskCompleted();
                         });
                 });
@@ -802,19 +1117,18 @@ namespace CactusFarmBuilder.Tasks
 
             _currentbuildingloc = player.status.entity.location.ToLocation();
 
-            MakeFirstLayerCactus(new[]
+            PlaceBlockData(81, new[]
             {
-                CheckForBlock(2, -2, 0), CheckForBlock(1, -2, 1),
-                CheckForBlock(0, -2, 2), CheckForBlock(-1, -2, 1), CheckForBlock(-2, -2, 0),
-                CheckForBlock(-1, -2, -1), CheckForBlock(0, -2, -2), CheckForBlock(1, -2, -1)
+                CheckForBlock(2, -1, 0), CheckForBlock(1, -1, 1),
+                CheckForBlock(0, -1, 2), CheckForBlock(-1, -1, 1), CheckForBlock(-2, -1, 0),
+                CheckForBlock(-1, -1, -1), CheckForBlock(0, -1, -2), CheckForBlock(1, -1, -1)
             },
             () =>
             {
                 _firstLayerCactusInside = true;
 
-#if (DEBUG) 
-                Console.WriteLine("MakeFirstLayerCactusInside TaskCompleted();");
-#endif
+                DebugMessage("MakeFirstLayerCactusInside TaskCompleted();");
+
                 TaskCompleted();
             });
         }
@@ -825,11 +1139,6 @@ namespace CactusFarmBuilder.Tasks
 
         private void MakeFirstLayerString(ILocation[] precomputed, Action callback)
         {
-            foreach (var location in precomputed)
-                if (location == null)
-                {
-                }
-
             var locations = new Queue<ILocation>(precomputed);
 
             IStopToken stopToken = null;
@@ -840,11 +1149,7 @@ namespace CactusFarmBuilder.Tasks
                 {
                     stopToken.Stop();
 
-                    player.tickManager.Register(4, () =>
-                    {
-                        // Wait 4 more ticks to fire callback, as it could be possible that we are waiting for the look event.
-                        callback();
-                    });
+                    player.tickManager.Register(2, callback);
                     return;
                 }
 
@@ -852,13 +1157,13 @@ namespace CactusFarmBuilder.Tasks
 
                 if (location == null) return;
 
-                if (player.world.GetBlockId(location.x, (int) location.y + 1, location.z) != 0) return;
+                if (player.world.GetBlockId(location.x, (int) location.y, location.z) != 0) return;
 
-                inventory.Select(287); //Select String
-                
                 var data = player.functions.FindValidNeighbour(location);
 
                 if (data == null) return;
+
+                inventory.Select(287); //Select String
 
                 player.functions.LookAtBlock(data.location, true, data.face);
 
@@ -883,7 +1188,7 @@ namespace CactusFarmBuilder.Tasks
 
             _currentbuildingloc = player.status.entity.location.ToLocation();
             
-            MakeFirstLayerString(new[]
+            PlaceBlockData(287, new[]
             {
                 CheckForBlock(3, -1, 0),
                 CheckForBlock(2, -1, -1), CheckForBlock(2, -1, 1), CheckForBlock(1, -1, 0),
@@ -901,9 +1206,8 @@ namespace CactusFarmBuilder.Tasks
             {
                 _firstLayerString = true;
 
-#if (DEBUG) 
-                Console.WriteLine("MakeFirstLayerString TaskCompleted();");
-#endif
+                DebugMessage("MakeFirstLayerString TaskCompleted();");
+
                 TaskCompleted();
             });
         }
@@ -914,7 +1218,7 @@ namespace CactusFarmBuilder.Tasks
 
             _currentbuildingloc = player.status.entity.location.ToLocation();
             
-            MakeFirstLayerString(new[]
+            PlaceBlockData(287, new[]
                 {
                     CheckForBlock(2, -1, -1), CheckForBlock(2, -1, 1),
 
@@ -928,9 +1232,8 @@ namespace CactusFarmBuilder.Tasks
                 {
                     _firstLayerStringOutside = true;
 
-#if (DEBUG)
-                    Console.WriteLine("MakeFirstLayerStringOutside TaskCompleted();");
-#endif
+                    DebugMessage("MakeFirstLayerStringOutside TaskCompleted();");
+
                     TaskCompleted();
                 });
         }
@@ -941,7 +1244,7 @@ namespace CactusFarmBuilder.Tasks
 
             _currentbuildingloc = player.status.entity.location.ToLocation();
 
-            MakeFirstLayerString(new[]
+            PlaceBlockData(287, new[]
                 {
                     CheckForBlock(1, -1, 0), CheckForBlock(0, -1, 1), CheckForBlock(-1, -1, 0),
                     CheckForBlock(0, -1, -1)
@@ -950,11 +1253,9 @@ namespace CactusFarmBuilder.Tasks
                 {
                     _firstLayerStringInside = true;
                     _firstLayerCactus = true;
-                    _layerCount++;
 
-#if (DEBUG)
-                    Console.WriteLine("MakeFirstLayerStringInside TaskCompleted();");
-#endif
+                    DebugMessage("MakeFirstLayerStringInside TaskCompleted();");
+
                     TaskCompleted();
                 });
         }
@@ -984,9 +1285,6 @@ namespace CactusFarmBuilder.Tasks
                     {
                         // Wait 4 more ticks to fire callback, as it could be possible that we are waiting for the look event.
                         callback();
-#if DEBUG
-                        Console.WriteLine("No Sand left");
-#endif
                     });
                     return;
                 }
@@ -1018,9 +1316,6 @@ namespace CactusFarmBuilder.Tasks
 
         private void MakeSecondLayerSand()
         {
-            //might need to change it to a stop token
-            var cancelToken = new CancelToken();
-
             var currentloc = player.status.entity.location.ToLocation();
             
             GoToLocation(currentloc, () =>
@@ -1028,11 +1323,10 @@ namespace CactusFarmBuilder.Tasks
                 WaitGrounded(() =>
                 {
                     _currentbuildingloc = player.status.entity.location.ToLocation();
-
-
+                    
                     if (_gamemode)
                     {
-                        MakeSecondLayerSand(new[]
+                        PlaceBlockLocation(12, new[]
                             {
                                 CheckForBlock(3, -2, 0), CheckForBlock(2, -2, -1), CheckForBlock(2, -2, 1),
                                 CheckForBlock(1, -2, 0),
@@ -1050,15 +1344,18 @@ namespace CactusFarmBuilder.Tasks
                             {
                                 _secondLayerSand = true;
 
-#if (DEBUG)
-                                Console.WriteLine("MakeSecondLayerSand TaskCompleted();");
-#endif
+                                _layerCount++;
+
+                                if (!_activateLayerCount) _activateLayerCount = true;
+
+                                DebugMessage("MakeSecondLayerSand TaskCompleted();");
+
                                 TaskCompleted();
                             });
                         return;
                     }
 
-                    MakeSecondLayerSand(new[]
+                    PlaceBlockLocation(12, new[]
                         {
                             CheckForBlock(2, -2, -1), CheckForBlock(2, -2, 1), CheckForBlock(1, -2, 0),
 
@@ -1072,6 +1369,9 @@ namespace CactusFarmBuilder.Tasks
                         {
                             _secondLayerSand = true;
 
+                            _layerCount++;
+
+                            if (!_activateLayerCount) _activateLayerCount = true;
 #if (DEBUG)
                             Console.WriteLine("MakeSecondLayerSand TaskCompleted();");
 #endif
@@ -1095,7 +1395,7 @@ namespace CactusFarmBuilder.Tasks
                 {
                     _currentbuildingloc = player.status.entity.location.ToLocation();
 
-                    MakeFirstLayerString(new[]
+                    PlaceBlockData(287, new[]
                         {
                             CheckForBlock(0, -2, -2), CheckForBlock(0, -2, 2)
                         },
@@ -1103,9 +1403,8 @@ namespace CactusFarmBuilder.Tasks
                         {
                             _firstLayerStringEast = true;
 
-#if (DEBUG)
-                            Console.WriteLine("MakeFirstLayerStringEastGamemode TaskCompleted();");
-#endif
+                            DebugMessage("MakeFirstLayerStringEastGamemode TaskCompleted();");
+
                             TaskCompleted();
                         });
                 });
@@ -1116,7 +1415,7 @@ namespace CactusFarmBuilder.Tasks
         {
             _busy = true;
 
-            MakeSecondLayerSand(new[]
+            PlaceBlockLocation(12, new[]
                 {
                     CheckForBlock(0, -2, -2), CheckForBlock(0, -2, 2)
                 },
@@ -1124,9 +1423,8 @@ namespace CactusFarmBuilder.Tasks
                 {
                     _secondLayerSandEast = true;
 
-#if (DEBUG)
-                    Console.WriteLine("TaskCompleted();");
-#endif
+                    DebugMessage("MakeSecondLayerSandEastGamemode TaskCompleted();");
+
                     TaskCompleted();
                 });
         }
@@ -1143,7 +1441,7 @@ namespace CactusFarmBuilder.Tasks
             {
                 _currentbuildingloc = player.status.entity.location.ToLocation();
 
-                MakeFirstLayerString(new[]
+                PlaceBlockData(287, new[]
                     {
                         CheckForBlock(2, -2, 0), CheckForBlock(-2, -2, 0)
                     },
@@ -1151,9 +1449,8 @@ namespace CactusFarmBuilder.Tasks
                     {
                         _firstLayerStringSouth = true;
 
-#if (DEBUG)
-                        Console.WriteLine("MakeFirstLayerStringSouthGamemode TaskCompleted();");
-#endif
+                        DebugMessage("MakeFirstLayerStringSouthGamemode TaskCompleted();");
+
                         TaskCompleted();
                     });
             });
@@ -1163,7 +1460,7 @@ namespace CactusFarmBuilder.Tasks
         {
             _busy = true;
 
-            MakeSecondLayerSand(new[]
+            PlaceBlockLocation(12, new[]
                 {
                     CheckForBlock(2, -2, 0), CheckForBlock(-2, -2, 0)
                 },
@@ -1171,9 +1468,8 @@ namespace CactusFarmBuilder.Tasks
                 {
                     _secondLayerSandSouth = true;
 
-#if (DEBUG)
-                    Console.WriteLine("TaskCompleted();");
-#endif
+                    DebugMessage("MakeSecondLayerSandSouthGamemode TaskCompleted();");
+
                     TaskCompleted();
                 });
         }
@@ -1198,9 +1494,8 @@ namespace CactusFarmBuilder.Tasks
                     {
                         _firstLayerStringWest = true;
 
-#if (DEBUG)
-                        Console.WriteLine("MakeFirstLayerStringWestGamemode TaskCompleted();");
-#endif
+                        DebugMessage("MakeFirstLayerStringWestGamemode TaskCompleted();");
+
                         TaskCompleted();
                     });
             });
@@ -1218,9 +1513,8 @@ namespace CactusFarmBuilder.Tasks
                 {
                     _secondLayerSandWest = true;
 
-#if (DEBUG)
-                    Console.WriteLine("TaskCompleted();");
-#endif
+                    DebugMessage("MakeSecondLayerSandWestGamemode TaskCompleted();");
+
                     TaskCompleted();
                 });
         }
@@ -1244,7 +1538,7 @@ namespace CactusFarmBuilder.Tasks
             {
                 _currentbuildingloc = player.status.entity.location.ToLocation();
 
-                MakeFirstLayerString(new[]
+                PlaceBlockData(287, new[]
                     {
                         CheckForBlock(-2, -2, 0), CheckForBlock(2, -2, 0)
                     },
@@ -1252,9 +1546,8 @@ namespace CactusFarmBuilder.Tasks
                     {
                         _firstLayerStringNorth = true;
 
-#if (DEBUG)
-                        Console.WriteLine("MakeFirstLayerStringNorthGamemode TaskCompleted();");
-#endif
+                        DebugMessage("MakeFirstLayerStringNorthGamemode TaskCompleted();");
+
                         TaskCompleted();
                     });
             });
@@ -1264,7 +1557,7 @@ namespace CactusFarmBuilder.Tasks
         {
             _busy = true;
 
-            MakeSecondLayerSand(new[]
+            PlaceBlockLocation(12, new[]
                 {
                     CheckForBlock(-2, -2, 0), CheckForBlock(2, -2, 0)
                 },
@@ -1272,9 +1565,8 @@ namespace CactusFarmBuilder.Tasks
                 {
                     _secondLayerSandNorth = true;
 
-#if (DEBUG)
-                    Console.WriteLine("TaskCompleted();");
-#endif
+                    DebugMessage("MakeSecondLayerSandNorthGamemode TaskCompleted();");
+
                     TaskCompleted();
                 });
         }
@@ -1295,9 +1587,7 @@ namespace CactusFarmBuilder.Tasks
                 _secondLayerCactus = false;
                 _secondLayerString = false;
 
-#if DEBUG
-                Console.WriteLine("MoveToMiddleFirstLayerGamemode TaskCompleted");
-#endif
+                DebugMessage("MoveToMiddleFirstLayerGamemode TaskCompleted");
 
                 TaskCompleted();
             });
@@ -1475,9 +1765,8 @@ namespace CactusFarmBuilder.Tasks
                     {
                         _secondLayerStringEast = true;
 
-#if (DEBUG)
-                        Console.WriteLine("MakeFirstLayerStringEast TaskCompleted();");
-#endif
+                        DebugMessage("MakeFirstLayerStringEast TaskCompleted();");
+
                         TaskCompleted();
                     });
                 });
@@ -1488,18 +1777,17 @@ namespace CactusFarmBuilder.Tasks
         {
             _busy = true;
 
-            MakeSecondLayerSand(new[]
+            PlaceBlockLocation(12, new[]
                 {
-                    CheckForBlock(0, -2, -2), CheckForBlock(0, -2, 2)
+                     CheckForBlock(0, -2, 2), CheckForBlock(0, -2, -2)
                 },
                 () =>
                 {
                     _needToMoveToSouth = true;
                     _needToMoveToEast = false;
 
-#if (DEBUG)
-                    Console.WriteLine("MakeSecondLayerSandEast TaskCompleted();");
-#endif
+                    DebugMessage("MakeSecondLayerSandEast TaskCompleted();");
+
                     TaskCompleted();
                 });
         }
@@ -1526,9 +1814,8 @@ namespace CactusFarmBuilder.Tasks
                         {
                             _secondLayerStringSouth = true;
 
-#if (DEBUG)
-                            Console.WriteLine("MakeFirstLayerStringSouth TaskCompleted();");
-#endif
+                            DebugMessage("MakeFirstLayerStringSouth TaskCompleted();");
+
                             TaskCompleted();
                         });
                 });
@@ -1539,7 +1826,7 @@ namespace CactusFarmBuilder.Tasks
         {
             _busy = true;
 
-            MakeSecondLayerSand(new[]
+            PlaceBlockLocation(12, new[]
                 {
                     CheckForBlock(2, -2, 0), CheckForBlock(-2, -2, 0)
                 },
@@ -1548,9 +1835,8 @@ namespace CactusFarmBuilder.Tasks
                     _needToMoveToWest = true;
                     _needToMoveToSouth = false;
 
-#if (DEBUG)
-                    Console.WriteLine("TaskCompleted();");
-#endif
+                    DebugMessage("MakeSecondLayerSandSouth TaskCompleted();");
+
                     TaskCompleted();
                 });
         }
@@ -1577,9 +1863,8 @@ namespace CactusFarmBuilder.Tasks
                         {
                             _secondLayerStringWest = true;
 
-#if (DEBUG)
-                            Console.WriteLine("MakeFirstLayerStringWest TaskCompleted();");
-#endif
+                            DebugMessage("MakeFirstLayerStringWest TaskCompleted();");
+
                             TaskCompleted();
                         });
                 });
@@ -1590,7 +1875,7 @@ namespace CactusFarmBuilder.Tasks
         {
             _busy = true;
 
-            MakeSecondLayerSand(new[]
+            PlaceBlockLocation(12, new[]
                 {
                     CheckForBlock(0, -2, 2), CheckForBlock(0, -2, -2)
                 },
@@ -1599,9 +1884,10 @@ namespace CactusFarmBuilder.Tasks
                     _needToMoveToWest = false;
                     _needToMoveToMiddle = true;
 
-#if (DEBUG)
-                    Console.WriteLine("TaskCompleted();");
-#endif
+                    if (_activateLayerCount) _layerCount++;
+
+                    DebugMessage("MakeSecondLayerSandWest TaskCompleted();");
+
                     TaskCompleted();
                 });
         }
@@ -1619,9 +1905,9 @@ namespace CactusFarmBuilder.Tasks
                 WaitGrounded(() =>
                 {
                     _needToMoveToMiddle = false;
-#if DEBUG
-                    Console.WriteLine("MoveToMiddleSecondLayer TaskCompleted");
-#endif
+                    
+                    DebugMessage("MoveToMiddleSecondLayer TaskCompleted");
+
                     TaskCompleted();
                 });
             });
@@ -1630,6 +1916,7 @@ namespace CactusFarmBuilder.Tasks
         #endregion
 
         #endregion
+
 
 
         #region Second Layer
@@ -1655,9 +1942,6 @@ namespace CactusFarmBuilder.Tasks
                     {
                         // Wait 4 more ticks to fire callback, as it could be possible that we are waiting for the look event.
                         callback();
-#if DEBUG
-                        Console.WriteLine("No Sand left");
-#endif
                     });
                     return;
                 }
@@ -1668,12 +1952,11 @@ namespace CactusFarmBuilder.Tasks
 
                 if (player.world.GetBlockId(location.x, (int) location.y, location.z) != 0) return;
 
-
-                inventory.Select(81); //Select String
-
                 var data = player.functions.FindValidNeighbour(location);
 
                 if (data == null) return;
+
+                inventory.Select(81);
 
                 player.functions.LookAtBlock(data.location, true, data.face);
 
@@ -1704,7 +1987,7 @@ namespace CactusFarmBuilder.Tasks
                     CheckForBlock(0, 0, 3), CheckForBlock(-2, 0, 3), CheckForBlock(-3, 0, 2),
                     CheckForBlock(-3, 0, 0), CheckForBlock(-3, 0, -2), CheckForBlock(-2, 0, -3),
                     CheckForBlock(0, 0, -3), CheckForBlock(2, 0, -3), CheckForBlock(3, 0, -2),
-
+                    
                     CheckForBlock(1, 0, 2), CheckForBlock(2, 0, 1),
                     CheckForBlock(-1, 0, 2), CheckForBlock(-2, 0, 1),
                     CheckForBlock(-2, 0, -1), CheckForBlock(-1, 0, -2),
@@ -1713,11 +1996,9 @@ namespace CactusFarmBuilder.Tasks
                 () =>
                 {
                     _secondLayerCactus = true;
-                    _layerCount++;
 
-#if (DEBUG)
-                    Console.WriteLine("MakeSecondLayerCactus TaskCompleted();");
-#endif
+                    DebugMessage("MakeSecondLayerCactus TaskCompleted();");
+
                     TaskCompleted();
                 });
         }
@@ -1743,9 +2024,6 @@ namespace CactusFarmBuilder.Tasks
                     {
                         // Wait 4 more ticks to fire callback, as it could be possible that we are waiting for the look event.
                         callback();
-#if DEBUG
-                        Console.WriteLine("No Sand left");
-#endif
                     });
                     return;
                 }
@@ -1787,9 +2065,8 @@ namespace CactusFarmBuilder.Tasks
             {
                 WaitGrounded(() =>
                 {
-#if (DEBUG)
-                    Console.WriteLine("map complete");
-#endif
+                    DebugMessage("MakeSecondLayerString map complete");
+
                     _currentbuildingloc = player.status.entity.location.ToLocation();
 
                     if (_gamemode)
@@ -1839,9 +2116,8 @@ namespace CactusFarmBuilder.Tasks
                                 _firstLayerCactusInside = false;
                                 _firstLayerStringInside = false;
 
-#if (DEBUG)
-                                Console.WriteLine("MakeSecondLayerString TaskCompleted();");
-#endif
+                                DebugMessage("MakeSecondLayerString TaskCompleted();");
+
                                 TaskCompleted();
                             });
                         return;
@@ -1895,6 +2171,7 @@ namespace CactusFarmBuilder.Tasks
         #endregion
 
 
+
         #region Functions
 
         private IStopToken RegisterReoccuring(int ticks, Action callback, IStopToken token = null)
@@ -1912,16 +2189,15 @@ namespace CactusFarmBuilder.Tasks
 
         private void GoToLocation(ILocation targetLocation, Action callback)
         {
-            //might need to change it to a stop token
+            inventory.Select(12);
+			
             var cancelToken = new CancelToken();
 
             _busy = true;
 
             var targetMoveToLocation = actions.AsyncMoveToLocation(targetLocation, cancelToken, Mo);
 
-#if DEBUG
-            Console.WriteLine("GoToLocation Target: " + targetMoveToLocation.Target);
-#endif
+            DebugMessage("GoToLocation Target: " + targetMoveToLocation.Target);
 
             targetMoveToLocation.Completed += areaMap => { callback(); };
             targetMoveToLocation.Cancelled += (areaMap, cuboid) =>
@@ -1977,11 +2253,26 @@ namespace CactusFarmBuilder.Tasks
             });
         }
 
+        private void MineBlockNoBusy(ILocation location)
+        {
+            player.tickManager.Register(3, () =>
+            {
+                actions.LookAtBlock(location, true);
+                actions.SelectBestTool(location);
+                player.tickManager.Register(1, () => { actions.BlockDig(location, action => { }); });
+            });
+        }
+
         private ILocation CheckForBlock(int x, float y, int z)
         {
-            return player.world.GetBlockId(_currentbuildingloc.Offset(x, y + 1, z)) == 0
-                ? _currentbuildingloc.Offset(x, y, z)
-                : null;
+            return _currentbuildingloc.Offset(x, y, z);
+        }
+
+        private void DebugMessage(string debugmessage)
+        {
+#if DEBUG
+            Console.WriteLine(debugmessage);
+#endif
         }
 
         private void TaskCompleted()

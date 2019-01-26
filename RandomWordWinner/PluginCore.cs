@@ -5,7 +5,7 @@ using RandomWordWinner.Tasks;
 
 namespace RandomWordWinner
 {
-    [Plugin(1, "Random Word Winner", "Auto. send requested word. (Original author: Dampen59)")]
+    [Plugin(3, "Random Word Winner", "Auto. send requested word. (Original author: Dampen59)", "https://www.youtube.com/watch?v=G5hSzRPJ66s")]
     public class PluginCore : IStartPlugin
     {
         public override void OnLoad(int version, int subversion, int buildversion)
@@ -21,6 +21,7 @@ namespace RandomWordWinner
                 "The bot will send the message between the minimum delay and max delay.", 100, 0, 10000));
             Setting.Add(new NumberSetting("Maximum Delay",
                 "The bot will send the message between the minimum delay and max delay.", 250, 1, 10000, 2));
+            Setting.Add(new BoolSetting("Remove Special Characters", "Do you want to remove characters like \", `, . and so on?", false));
         }
 
         public override PluginResponse OnEnable(IBotSettings botSettings)
@@ -34,7 +35,7 @@ namespace RandomWordWinner
         public override void OnStart()
         {
             RegisterTask(new Chat(Setting.At(0).Get<string>(), Setting.At(1).Get<string>(), Setting.At(2).Get<string>(),
-                Setting.At(3).Get<int>(), Setting.At(4).Get<int>()));
+                Setting.At(3).Get<int>(), Setting.At(4).Get<int>(), Setting.At(5).Get<bool>()));
         }
     }
 }

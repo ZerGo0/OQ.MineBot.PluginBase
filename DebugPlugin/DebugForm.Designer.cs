@@ -29,7 +29,6 @@ namespace DebugPlugin
         /// </summary>
         private void InitializeComponent() {
             this.Chat_Message = new System.Windows.Forms.TextBox();
-            this.Chat_Send = new System.Windows.Forms.Button();
             this.Chat_Box = new System.Windows.Forms.RichTextBox();
             this.Bot_Name = new System.Windows.Forms.Label();
             this.Bot_Name_Text = new System.Windows.Forms.RichTextBox();
@@ -45,8 +44,8 @@ namespace DebugPlugin
             this.Bot_Gamemode_Text = new System.Windows.Forms.RichTextBox();
             this.Bot_UUID = new System.Windows.Forms.Label();
             this.Bot_UUID_Text = new System.Windows.Forms.RichTextBox();
-            this.Bot_Alive = new System.Windows.Forms.Label();
-            this.Bot_Alive_Text = new System.Windows.Forms.RichTextBox();
+            this.Bot_Dead = new System.Windows.Forms.Label();
+            this.Bot_Dead_Text = new System.Windows.Forms.RichTextBox();
             this.Bot_Inv_Full = new System.Windows.Forms.Label();
             this.Bot_Inv_FSlots = new System.Windows.Forms.Label();
             this.Bot_Inv_FSlots_Text = new System.Windows.Forms.RichTextBox();
@@ -117,16 +116,31 @@ namespace DebugPlugin
             this.Current_Path_Valid = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.Bot_Jumping = new System.Windows.Forms.Label();
+            this.Bot_Jumping_Text = new System.Windows.Forms.RichTextBox();
+            this.Bot_In_Water_Text = new System.Windows.Forms.RichTextBox();
+            this.Bot_In_Water = new System.Windows.Forms.Label();
+            this.Bot_Grounded_Text = new System.Windows.Forms.RichTextBox();
+            this.Bot_Grounded = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.Window_Slot_NBT_Text = new System.Windows.Forms.RichTextBox();
+            this.Window_Slot_NBT = new System.Windows.Forms.Label();
             this.tabPage5 = new System.Windows.Forms.TabPage();
+            this.tabPage6 = new System.Windows.Forms.TabPage();
+            Debug_Console = new System.Windows.Forms.RichTextBox();
+            this.tabPage7 = new System.Windows.Forms.TabPage();
+            Debug_Values = new System.Windows.Forms.RichTextBox();
+            this.Chat_Send = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.tabPage4.SuspendLayout();
             this.tabPage5.SuspendLayout();
+            this.tabPage6.SuspendLayout();
+            this.tabPage7.SuspendLayout();
             this.SuspendLayout();
             // 
             // Chat_Message
@@ -140,17 +154,6 @@ namespace DebugPlugin
             this.Chat_Message.Size = new System.Drawing.Size(378, 20);
             this.Chat_Message.TabIndex = 1;
             this.Chat_Message.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Chat_Message_KeyDown);
-            // 
-            // Chat_Send
-            // 
-            this.Chat_Send.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.Chat_Send.Location = new System.Drawing.Point(397, 339);
-            this.Chat_Send.Name = "Chat_Send";
-            this.Chat_Send.Size = new System.Drawing.Size(75, 20);
-            this.Chat_Send.TabIndex = 2;
-            this.Chat_Send.Text = "Send";
-            this.Chat_Send.UseVisualStyleBackColor = false;
-            this.Chat_Send.Click += new System.EventHandler(this.Chat_Send_Click);
             // 
             // Chat_Box
             // 
@@ -305,25 +308,25 @@ namespace DebugPlugin
             this.Bot_UUID_Text.TabIndex = 17;
             this.Bot_UUID_Text.Text = "";
             // 
-            // Bot_Alive
+            // Bot_Dead
             // 
-            this.Bot_Alive.AutoSize = true;
-            this.Bot_Alive.Location = new System.Drawing.Point(3, 215);
-            this.Bot_Alive.Name = "Bot_Alive";
-            this.Bot_Alive.Size = new System.Drawing.Size(52, 13);
-            this.Bot_Alive.TabIndex = 18;
-            this.Bot_Alive.Text = "Bot Alive:";
+            this.Bot_Dead.AutoSize = true;
+            this.Bot_Dead.Location = new System.Drawing.Point(3, 215);
+            this.Bot_Dead.Name = "Bot_Dead";
+            this.Bot_Dead.Size = new System.Drawing.Size(55, 13);
+            this.Bot_Dead.TabIndex = 18;
+            this.Bot_Dead.Text = "Bot Dead:";
             // 
-            // Bot_Alive_Text
+            // Bot_Dead_Text
             // 
-            this.Bot_Alive_Text.HideSelection = false;
-            this.Bot_Alive_Text.Location = new System.Drawing.Point(92, 212);
-            this.Bot_Alive_Text.Name = "Bot_Alive_Text";
-            this.Bot_Alive_Text.ReadOnly = true;
-            this.Bot_Alive_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
-            this.Bot_Alive_Text.Size = new System.Drawing.Size(36, 22);
-            this.Bot_Alive_Text.TabIndex = 19;
-            this.Bot_Alive_Text.Text = "";
+            this.Bot_Dead_Text.HideSelection = false;
+            this.Bot_Dead_Text.Location = new System.Drawing.Point(92, 212);
+            this.Bot_Dead_Text.Name = "Bot_Dead_Text";
+            this.Bot_Dead_Text.ReadOnly = true;
+            this.Bot_Dead_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
+            this.Bot_Dead_Text.Size = new System.Drawing.Size(36, 22);
+            this.Bot_Dead_Text.TabIndex = 19;
+            this.Bot_Dead_Text.Text = "";
             // 
             // Bot_Inv_Full
             // 
@@ -820,7 +823,7 @@ namespace DebugPlugin
             this.Window_Slotids_Text.Name = "Window_Slotids_Text";
             this.Window_Slotids_Text.ReadOnly = true;
             this.Window_Slotids_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            this.Window_Slotids_Text.Size = new System.Drawing.Size(205, 76);
+            this.Window_Slotids_Text.Size = new System.Drawing.Size(315, 76);
             this.Window_Slotids_Text.TabIndex = 69;
             this.Window_Slotids_Text.Text = "";
             // 
@@ -840,7 +843,7 @@ namespace DebugPlugin
             this.Window_Inv_Slotids_Text.Name = "Window_Inv_Slotids_Text";
             this.Window_Inv_Slotids_Text.ReadOnly = true;
             this.Window_Inv_Slotids_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            this.Window_Inv_Slotids_Text.Size = new System.Drawing.Size(205, 76);
+            this.Window_Inv_Slotids_Text.Size = new System.Drawing.Size(315, 76);
             this.Window_Inv_Slotids_Text.TabIndex = 71;
             this.Window_Inv_Slotids_Text.Text = "";
             // 
@@ -1011,6 +1014,8 @@ namespace DebugPlugin
             this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabPage4);
             this.tabControl1.Controls.Add(this.tabPage5);
+            this.tabControl1.Controls.Add(this.tabPage6);
+            this.tabControl1.Controls.Add(this.tabPage7);
             this.tabControl1.Location = new System.Drawing.Point(478, 7);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -1020,6 +1025,12 @@ namespace DebugPlugin
             // tabPage1
             // 
             this.tabPage1.AutoScroll = true;
+            this.tabPage1.Controls.Add(this.Bot_Jumping);
+            this.tabPage1.Controls.Add(this.Bot_Jumping_Text);
+            this.tabPage1.Controls.Add(this.Bot_In_Water_Text);
+            this.tabPage1.Controls.Add(this.Bot_In_Water);
+            this.tabPage1.Controls.Add(this.Bot_Grounded_Text);
+            this.tabPage1.Controls.Add(this.Bot_Grounded);
             this.tabPage1.Controls.Add(this.Bot_Name_Text);
             this.tabPage1.Controls.Add(this.Bot_UUID_Text);
             this.tabPage1.Controls.Add(this.Bot_Health_Text);
@@ -1027,7 +1038,7 @@ namespace DebugPlugin
             this.tabPage1.Controls.Add(this.Bot_Location_Text);
             this.tabPage1.Controls.Add(this.Bot_Dimension_Text);
             this.tabPage1.Controls.Add(this.Bot_Gamemode_Text);
-            this.tabPage1.Controls.Add(this.Bot_Alive_Text);
+            this.tabPage1.Controls.Add(this.Bot_Dead_Text);
             this.tabPage1.Controls.Add(this.Bot_Name);
             this.tabPage1.Controls.Add(this.Bot_Health);
             this.tabPage1.Controls.Add(this.Bot_Hunger);
@@ -1035,7 +1046,7 @@ namespace DebugPlugin
             this.tabPage1.Controls.Add(this.Bot_Dimension);
             this.tabPage1.Controls.Add(this.Bot_Gamemode);
             this.tabPage1.Controls.Add(this.Bot_UUID);
-            this.tabPage1.Controls.Add(this.Bot_Alive);
+            this.tabPage1.Controls.Add(this.Bot_Dead);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
@@ -1043,6 +1054,66 @@ namespace DebugPlugin
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "General";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // Bot_Jumping
+            // 
+            this.Bot_Jumping.AutoSize = true;
+            this.Bot_Jumping.Location = new System.Drawing.Point(3, 299);
+            this.Bot_Jumping.Name = "Bot_Jumping";
+            this.Bot_Jumping.Size = new System.Drawing.Size(68, 13);
+            this.Bot_Jumping.TabIndex = 25;
+            this.Bot_Jumping.Text = "Bot Jumping:";
+            // 
+            // Bot_Jumping_Text
+            // 
+            this.Bot_Jumping_Text.HideSelection = false;
+            this.Bot_Jumping_Text.Location = new System.Drawing.Point(92, 296);
+            this.Bot_Jumping_Text.Name = "Bot_Jumping_Text";
+            this.Bot_Jumping_Text.ReadOnly = true;
+            this.Bot_Jumping_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
+            this.Bot_Jumping_Text.Size = new System.Drawing.Size(36, 22);
+            this.Bot_Jumping_Text.TabIndex = 24;
+            this.Bot_Jumping_Text.Text = "";
+            // 
+            // Bot_In_Water_Text
+            // 
+            this.Bot_In_Water_Text.HideSelection = false;
+            this.Bot_In_Water_Text.Location = new System.Drawing.Point(92, 268);
+            this.Bot_In_Water_Text.Name = "Bot_In_Water_Text";
+            this.Bot_In_Water_Text.ReadOnly = true;
+            this.Bot_In_Water_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
+            this.Bot_In_Water_Text.Size = new System.Drawing.Size(36, 22);
+            this.Bot_In_Water_Text.TabIndex = 23;
+            this.Bot_In_Water_Text.Text = "";
+            // 
+            // Bot_In_Water
+            // 
+            this.Bot_In_Water.AutoSize = true;
+            this.Bot_In_Water.Location = new System.Drawing.Point(3, 271);
+            this.Bot_In_Water.Name = "Bot_In_Water";
+            this.Bot_In_Water.Size = new System.Drawing.Size(66, 13);
+            this.Bot_In_Water.TabIndex = 22;
+            this.Bot_In_Water.Text = "Bot in water:";
+            // 
+            // Bot_Grounded_Text
+            // 
+            this.Bot_Grounded_Text.HideSelection = false;
+            this.Bot_Grounded_Text.Location = new System.Drawing.Point(92, 240);
+            this.Bot_Grounded_Text.Name = "Bot_Grounded_Text";
+            this.Bot_Grounded_Text.ReadOnly = true;
+            this.Bot_Grounded_Text.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
+            this.Bot_Grounded_Text.Size = new System.Drawing.Size(36, 22);
+            this.Bot_Grounded_Text.TabIndex = 21;
+            this.Bot_Grounded_Text.Text = "";
+            // 
+            // Bot_Grounded
+            // 
+            this.Bot_Grounded.AutoSize = true;
+            this.Bot_Grounded.Location = new System.Drawing.Point(3, 243);
+            this.Bot_Grounded.Name = "Bot_Grounded";
+            this.Bot_Grounded.Size = new System.Drawing.Size(76, 13);
+            this.Bot_Grounded.TabIndex = 20;
+            this.Bot_Grounded.Text = "Bot Grounded:";
             // 
             // tabPage2
             // 
@@ -1105,6 +1176,9 @@ namespace DebugPlugin
             // tabPage4
             // 
             this.tabPage4.AutoScroll = true;
+            this.tabPage4.AutoScrollMargin = new System.Drawing.Size(10, 10);
+            this.tabPage4.Controls.Add(this.Window_Slot_NBT_Text);
+            this.tabPage4.Controls.Add(this.Window_Slot_NBT);
             this.tabPage4.Controls.Add(this.Window_Title_Text);
             this.tabPage4.Controls.Add(this.Window_Title);
             this.tabPage4.Controls.Add(this.Window_Type);
@@ -1128,6 +1202,26 @@ namespace DebugPlugin
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "Window/Container";
             this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // Window_Slot_NBT_Text
+            // 
+            this.Window_Slot_NBT_Text.HideSelection = false;
+            this.Window_Slot_NBT_Text.Location = new System.Drawing.Point(108, 367);
+            this.Window_Slot_NBT_Text.Name = "Window_Slot_NBT_Text";
+            this.Window_Slot_NBT_Text.ReadOnly = true;
+            this.Window_Slot_NBT_Text.Size = new System.Drawing.Size(315, 76);
+            this.Window_Slot_NBT_Text.TabIndex = 73;
+            this.Window_Slot_NBT_Text.Text = "";
+            // 
+            // Window_Slot_NBT
+            // 
+            this.Window_Slot_NBT.AutoSize = true;
+            this.Window_Slot_NBT.Location = new System.Drawing.Point(3, 370);
+            this.Window_Slot_NBT.Name = "Window_Slot_NBT";
+            this.Window_Slot_NBT.Size = new System.Drawing.Size(95, 13);
+            this.Window_Slot_NBT.TabIndex = 72;
+            this.Window_Slot_NBT.Text = "Window Slot NBT:";
+            this.Window_Slot_NBT.UseMnemonic = false;
             // 
             // tabPage5
             // 
@@ -1156,6 +1250,61 @@ namespace DebugPlugin
             this.tabPage5.Text = "Current Path";
             this.tabPage5.UseVisualStyleBackColor = true;
             // 
+            // tabPage6
+            // 
+            this.tabPage6.Controls.Add(Debug_Console);
+            this.tabPage6.Location = new System.Drawing.Point(4, 22);
+            this.tabPage6.Name = "tabPage6";
+            this.tabPage6.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage6.Size = new System.Drawing.Size(451, 326);
+            this.tabPage6.TabIndex = 5;
+            this.tabPage6.Text = "Debug Console";
+            this.tabPage6.UseVisualStyleBackColor = true;
+            // 
+            // Debug_Console
+            // 
+            Debug_Console.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            Debug_Console.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            Debug_Console.HideSelection = false;
+            Debug_Console.Location = new System.Drawing.Point(6, 6);
+            Debug_Console.Name = "Debug_Console";
+            Debug_Console.Size = new System.Drawing.Size(439, 314);
+            Debug_Console.TabIndex = 89;
+            Debug_Console.Text = "";
+            // 
+            // tabPage7
+            // 
+            this.tabPage7.Controls.Add(Debug_Values);
+            this.tabPage7.Location = new System.Drawing.Point(4, 22);
+            this.tabPage7.Name = "tabPage7";
+            this.tabPage7.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage7.Size = new System.Drawing.Size(451, 326);
+            this.tabPage7.TabIndex = 6;
+            this.tabPage7.Text = "Debug Values";
+            this.tabPage7.UseVisualStyleBackColor = true;
+            // 
+            // Debug_Values
+            // 
+            Debug_Values.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            Debug_Values.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            Debug_Values.ForeColor = System.Drawing.Color.Black;
+            Debug_Values.Location = new System.Drawing.Point(6, 6);
+            Debug_Values.Name = "Debug_Values";
+            Debug_Values.Size = new System.Drawing.Size(439, 314);
+            Debug_Values.TabIndex = 0;
+            Debug_Values.Text = "";
+            // 
+            // Chat_Send
+            // 
+            this.Chat_Send.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.Chat_Send.Location = new System.Drawing.Point(397, 339);
+            this.Chat_Send.Name = "Chat_Send";
+            this.Chat_Send.Size = new System.Drawing.Size(75, 20);
+            this.Chat_Send.TabIndex = 2;
+            this.Chat_Send.Text = "Send";
+            this.Chat_Send.UseVisualStyleBackColor = false;
+            this.Chat_Send.Click += new System.EventHandler(this.Chat_Send_Click);
+            // 
             // DebugForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1183,6 +1332,8 @@ namespace DebugPlugin
             this.tabPage4.PerformLayout();
             this.tabPage5.ResumeLayout(false);
             this.tabPage5.PerformLayout();
+            this.tabPage6.ResumeLayout(false);
+            this.tabPage7.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1190,7 +1341,6 @@ namespace DebugPlugin
 
         #endregion
         private System.Windows.Forms.TextBox Chat_Message;
-        private System.Windows.Forms.Button Chat_Send;
         private System.Windows.Forms.RichTextBox Chat_Box;
         private Label Bot_Name;
         private RichTextBox Bot_Name_Text;
@@ -1206,8 +1356,8 @@ namespace DebugPlugin
         private RichTextBox Bot_Gamemode_Text;
         private Label Bot_UUID;
         private RichTextBox Bot_UUID_Text;
-        private Label Bot_Alive;
-        private RichTextBox Bot_Alive_Text;
+        private Label Bot_Dead;
+        private RichTextBox Bot_Dead_Text;
         private Label Bot_Inv_Full;
         private Label Bot_Inv_FSlots;
         private RichTextBox Bot_Inv_FSlots_Text;
@@ -1282,5 +1432,18 @@ namespace DebugPlugin
         private TabPage tabPage3;
         private TabPage tabPage4;
         private TabPage tabPage5;
+        private RichTextBox Bot_Grounded_Text;
+        private Label Bot_Grounded;
+        private RichTextBox Bot_In_Water_Text;
+        private Label Bot_In_Water;
+        private Label Bot_Jumping;
+        private RichTextBox Bot_Jumping_Text;
+        private RichTextBox Window_Slot_NBT_Text;
+        private Label Window_Slot_NBT;
+        private TabPage tabPage6;
+        private TabPage tabPage7;
+        private static RichTextBox Debug_Values;
+        private static RichTextBox Debug_Console;
+        private Button Chat_Send;
     }
 }

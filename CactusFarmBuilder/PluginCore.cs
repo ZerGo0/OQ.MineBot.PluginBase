@@ -8,7 +8,7 @@ using OQ.MineBot.PluginBase.Bot;
 
 namespace CactusFarmBuilder
 {
-    [Plugin(1, "Cactus Farm Builder", "Builds a cactus farm for you. (Thanks to @BobTheBotter)")]
+    [Plugin(1, "Cactus Farm Builder", "Builds a cactus farm for you. (Thanks to @BobTheBotter)", "https://www.youtube.com/watch?v=uVdLJZZzuBs")]
     public class PluginCore : IStartPlugin
     {
         public override void OnLoad(int version, int subversion, int buildversion)
@@ -25,16 +25,8 @@ namespace CactusFarmBuilder
             Setting.Add(cropHopperLayout);
 
             var vanillaLayout = new GroupSetting("Vanilla Layout", "Enable this if you want to build a vanilla farm.");
-            vanillaLayout.Add(new BoolSetting("Vanilla Layout","",false));
+            vanillaLayout.Add(new BoolSetting("Vanilla Design", "",false));
             Setting.Add(vanillaLayout);
-
-            //Setting[0] = new StringSetting("Macro on inventory full",
-            //    "Starts the macro when the bots inventory is full.", "");
-            //Setting[1] = new StringSetting("Start x y z", "(x y z) [Split by space]", "");
-            //Setting[2] = new StringSetting("End x y z", "(x y z) [Split by space]", "");
-            //Setting[3] = new StringSetting("Filler Block ID", "The block which is used to fill the area.", "");
-            //Setting[4] = new StringSetting("Macro if no Filler Block",
-            //    "Starts the macro when the bots has no filler block left.", "");
         }
 
         public override PluginResponse OnEnable(IBotSettings botSettings)
@@ -46,25 +38,8 @@ namespace CactusFarmBuilder
             var cropHopperLayout = Setting.Get("Crop Hopper Layouts") as IParentSetting;
             var vanillaLayout = Setting.Get("Vanilla Layout") as IParentSetting;
 
-            if (cropHopperLayout.GetValue<bool>("Creative Layout") && vanillaLayout.GetValue<bool>("Vanilla Layout"))
+            if (cropHopperLayout.GetValue<bool>("Creative Layout") && vanillaLayout.GetValue<bool>("Vanilla Design"))
                 return new PluginResponse(false, "Please select only 1 Layout!");
-
-            //if (string.IsNullOrWhiteSpace(Setting[1].Get<string>()) &&
-            //    string.IsNullOrWhiteSpace(Setting[2].Get<string>()))
-            //    return new PluginResponse(false, "Invalid coordinates (does not contain ' ').");
-            //
-            //if (string.IsNullOrWhiteSpace(Setting[3].Get<string>()))
-            //    return new PluginResponse(false, "Invalid Block ID.");
-            //
-            //if (!Setting[1].Get<string>().Contains(' ') || !Setting[2].Get<string>().Contains(' '))
-            //    return new PluginResponse(false, "Invalid coordinates (does not contain ' ').");
-            //
-            //if (!Setting[3].Get<string>().All(char.IsDigit)) return new PluginResponse(false, "Invalid Block ID!");
-            //
-            //var startSplit = Setting[1].Get<string>().Split(' ');
-            //var endSplit = Setting[2].Get<string>().Split(' ');
-            //if (startSplit.Length != 3 || endSplit.Length != 3)
-            //    return new PluginResponse(false, "Invalid coordinates (must be x y z).");
 
             return new PluginResponse(true);
         }
@@ -81,7 +56,7 @@ namespace CactusFarmBuilder
             var vanillaLayout = Setting.Get("Vanilla Layout") as IParentSetting;
 
             RegisterTask(new Tasks.CactusFarmBuilder(Setting.At(1).Get<int>(), cropHopperLayout.GetValue<bool>("Creative Layout"),
-                Setting.At(2).Get<int>(), Setting.At(3).Get<int>(), cropHopperLayout.GetValue<bool>("Linear Mode"), vanillaLayout.GetValue<bool>("Vanilla Layout"), macro));
+                Setting.At(2).Get<int>(), Setting.At(3).Get<int>(), cropHopperLayout.GetValue<bool>("Linear Mode"), vanillaLayout.GetValue<bool>("Vanilla Design"), macro));
             RegisterTask(new InventoryMonitor(macro));
         }
 

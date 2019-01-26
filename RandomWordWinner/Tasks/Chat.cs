@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using OQ.MineBot.PluginBase;
 using OQ.MineBot.PluginBase.Base.Plugin.Tasks;
@@ -13,16 +14,18 @@ namespace RandomWordWinner.Tasks
         private readonly string _command;
         private readonly int _maxdelay;
         private readonly int _mindelay;
-        private readonly string _pattern;
+        private string _pattern;
         private readonly string _trigger;
+        private readonly bool _removeSpecialChars;
 
-        public Chat(string trigger, string pattern, string command, int mindelay, int maxdelay)
+        public Chat(string trigger, string pattern, string command, int mindelay, int maxdelay, bool removeSpecialChars)
         {
             _trigger = trigger;
             _pattern = pattern;
             _command = command;
             _mindelay = mindelay;
             _maxdelay = maxdelay;
+            _removeSpecialChars = removeSpecialChars;
         }
 
         public override bool Exec()
@@ -42,31 +45,50 @@ namespace RandomWordWinner.Tasks
 
         private void OnChat(IPlayer player, IChat message, byte position)
         {
-            if (!message.Parsed.Contains(_trigger))
-                return;
+            if (!message.GetText().Contains(_trigger)) return;
 
-            var strArray1 = _pattern.Split(Convert.ToChar(" "));
+            if (_removeSpecialChars) _pattern = RemoveSpecialCharacters(_pattern);
+            
+            var patternArray = _pattern.Split(Convert.ToChar(" "));
             var index1 = 0;
-            var strArray2 = strArray1;
-            foreach (var index2 in strArray2)
-                if (index2 == "%randomword%")
-                    break;
+            var patternArraySaved = patternArray;
+            foreach (var index2 in patternArraySaved)
+            {
+                if (_removeSpecialChars)
+                {
+                    if (index2 == "randomword")
+                        break;
+                }
                 else
-                    index1++;
+                {
+                    if (index2 == "%randomword%")
+                        break;
+                }
+                index1++;
+            }
 
-            var strArray3 = message.Parsed.Split(Convert.ToChar(" "));
+            var chatMsgSplit = message.GetTextRtf().Split(Convert.ToChar(" "));
             if (string.IsNullOrWhiteSpace(_command))
             {
                 var randomdelay = Rnd.Next(_mindelay, _maxdelay);
                 Thread.Sleep(randomdelay);
-                player.functions.Chat(strArray3.ElementAt(index1));
+                player.functions.Chat(_removeSpecialChars
+                    ? RemoveSpecialCharacters(chatMsgSplit.ElementAt(index1))
+                    : chatMsgSplit.ElementAt(index1));
             }
             else
             {
                 var randomdelay = Rnd.Next(_mindelay, _maxdelay);
                 Thread.Sleep(randomdelay);
-                player.functions.Chat(_command + " " + strArray3.ElementAt(index1));
+                player.functions.Chat(_removeSpecialChars
+                    ? _command + " " + RemoveSpecialCharacters(chatMsgSplit.ElementAt(index1))
+                    : _command + " " + chatMsgSplit.ElementAt(index1));
             }
+        }
+
+        public static string RemoveSpecialCharacters(string str)
+        {
+            return Regex.Replace(str, "[^0-9A-Za-z ,]", "", RegexOptions.Compiled);
         }
     }
 }

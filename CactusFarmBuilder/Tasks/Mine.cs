@@ -963,7 +963,7 @@ namespace CactusFarmBuilder.Tasks
 
                 if (player.world.GetBlockId(location.x, (int)location.y + 1, location.z) != 0) return;
 
-                inventory.Select(blockid); //Select Sand
+                inventory.Select(blockid);
 
                 player.functions.LookAtBlock(location, true, 1);
 

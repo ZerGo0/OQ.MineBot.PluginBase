@@ -7,7 +7,7 @@ using OQ.MineBot.PluginBase.Utility;
 
 namespace DiscordCommander
 {
-    [Plugin(1, "Discord Commander", "Writes the user on discord when a user writes: 'KEYWORD message' ingame.")]
+    [Plugin(2, "Discord Commander", "Writes the user on discord when a user writes: 'KEYWORD message' ingame.", "https://www.youtube.com/watch?v=NGTCZAI1tfI")]
     public class PluginCore : IStartPlugin
     {
         public override void OnLoad(int version, int subversion, int buildversion)

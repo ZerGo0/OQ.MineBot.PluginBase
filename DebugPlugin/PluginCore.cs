@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Windows.Forms;
 using OQ.MineBot.PluginBase;
 using OQ.MineBot.PluginBase.Base;
@@ -6,13 +7,14 @@ using OQ.MineBot.PluginBase.Base.Plugin;
 
 namespace DebugPlugin
 {
-    [Plugin(1, "Debug Plugin", "Useful for plugin/macro devs.")]
+    [Plugin(1338, "Debug Plugin", "Useful for plugin/macro devs.", "https://www.youtube.com/watch?v=pD2yrQJjqvw")]
     public class PluginCore : IRequestPlugin
     {
         public override void OnLoad(int version, int subversion, int buildversion) { }
-        public override IRequestFunction[] GetFunctions() {
+        public override IRequestFunction[] GetFunctions()
+        {
             return new IRequestFunction[] {
-                new EnableFunction(), 
+                new EnableFunction(),
             };
         }
     }
@@ -23,7 +25,8 @@ namespace DebugPlugin
         /// Name of this function.
         /// </summary>
         /// <returns></returns>
-        public string GetName() {
+        public string GetName()
+        {
             return "Enable";
         }
 
@@ -33,7 +36,8 @@ namespace DebugPlugin
         /// </summary>
         /// <param name="player"></param>
         /// <returns></returns>
-        public PluginResponse OnRequest(IPlayer player) {
+        public PluginResponse OnRequest(IPlayer player)
+        {
             ShowForm(player);
             return new PluginResponse(true);
         }
@@ -54,7 +58,8 @@ namespace DebugPlugin
             return new PluginResponse(true);
         }
 
-        private void ShowForm(IPlayer player) {
+        private void ShowForm(IPlayer player)
+        {
             var chatForm = new DebugForm(player.status.username, player);
 
             var thread = new Thread(ApplicationRunProc);

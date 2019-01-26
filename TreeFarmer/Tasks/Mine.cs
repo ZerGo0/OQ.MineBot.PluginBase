@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 using OQ.MineBot.GUI.Protocol.Movement.Maps;
+using OQ.MineBot.PluginBase;
 using OQ.MineBot.PluginBase.Base.Plugin.Tasks;
 using OQ.MineBot.PluginBase.Classes;
 using OQ.MineBot.PluginBase.Classes.Base;
@@ -16,9 +19,10 @@ namespace TreeFarmerPlugin.Tasks
     {
         private static readonly MapOptions Mo = new MapOptions
         {
-            Look = false,
+            Look = true,
             Quality = SearchQuality.HIGHEST,
-            Mine = true
+            Mine = true,
+            Unwalkable = new ushort[] {6}
         };
 
         private readonly ushort[] _ids;
@@ -40,10 +44,7 @@ namespace TreeFarmerPlugin.Tasks
             var list = new List<ushort> {17};
             _ids = list.ToArray();
 
-            var split = new[]
-                {"1", "4", "5", "24", "35", "45", "87", "98", "121", "125", "159", "155", "162", "172", "174", "179"};
-            var blocks = split.Select(ushort.Parse).ToArray();
-            BlocksGlobal.BUILDING_BLOCKS = blocks;
+            BlocksGlobal.BUILDING_BLOCKS = new ushort[] { 1, 4, 5, 24, 35, 45, 87, 98, 121, 125, 159, 155, 162, 172, 174, 179 };
         }
 
         public void OnTick()
@@ -289,11 +290,12 @@ namespace TreeFarmerPlugin.Tasks
     
     public class MineArea : ITask, ITickListener
     {
-        private static readonly MapOptions Mo = new MapOptions
+        private static readonly MapOptions MoNoSapling = new MapOptions
         {
-            Look = false,
-            Quality = SearchQuality.MEDIUM,
-            Mine = true
+            Look = true,
+            Quality = SearchQuality.HIGHEST,
+            Mine = true,
+            Unwalkable = new []{(ushort)6}
         };
 
         #region Shared work.
@@ -316,6 +318,9 @@ namespace TreeFarmerPlugin.Tasks
         private ILocation _target;
         private IAsyncMap _targetblock;
         private int _targetblockid;
+        private ILocation _safeLocation;
+        private BackgroundWorker _scanWorker;
+        private ILocation _prevLocation;
 
         public MineArea(bool replant, ILocation startLocation, ILocation endLocation, MacroSync macro)
         {
@@ -323,87 +328,237 @@ namespace TreeFarmerPlugin.Tasks
 
             _replant = replant;
             _macro = macro;
-
-            var split = new[]
-                {"1", "4", "5", "24", "35", "45", "87", "98", "121", "125", "159", "155", "162", "172", "174", "179"};
-            var blocks = split.Select(ushort.Parse).ToArray();
-            BlocksGlobal.BUILDING_BLOCKS = blocks;
+            BlocksGlobal.BUILDING_BLOCKS = new ushort[] { 1, 4, 5, 24, 35, 45, 87, 98, 121, 125, 159, 155, 162, 172, 174, 179};
 
             _radius = new IRadius(startLocation, endLocation);
+        }
+
+        public override void Start()
+        {
+            _safeLocation = player.status.entity.location.ToLocation().Offset(-1);
         }
 
         public void OnTick()
         {
 #if (DEBUG)
-            Console.WriteLine("Tick Start");
+            //Console.WriteLine("Tick Start");
 #endif
 
             if (_target == null)
             {
-                _target = FindNext();
+                _target = FindNext(_prevLocation);
 #if (DEBUG)
-                Console.WriteLine("Target:" + _target);
+                //Console.WriteLine("Target:" + _target);
 #endif
-                if (_target == null) return;
             }
 
-            var cancelToken = new CancelToken();
-            _targetblock = actions.AsyncMoveToLocation(_target.Offset(-1), cancelToken, Mo);
+            if (_target == null) return;
+
+            _busy = true;
+
+            var mainCancelToken = new CancelToken();
+            _targetblock = actions.AsyncMoveToLocation(_target.Offset(-1), mainCancelToken, MoNoSapling);
 
 #if (DEBUG)
-            Console.WriteLine("success");
+            //Console.WriteLine("success");
 #endif
-
             _targetblock.Completed += areaMap =>
             {
+                WaitGrounded(() => {
 #if (DEBUG)
-                Console.WriteLine("map complete");
+                    //Console.WriteLine("map complete");
 #endif
-                if (_replant)
-                {
-                    var current = player.status.entity.location.ToLocation();
-                    if (_targetblockid == 17 && inventory.FindId(6) > 0 &&
-                        player.world.GetBlockId(current.Offset(-1)) == 3 ||
-                        _targetblockid == 17 && inventory.FindId(6) > 0 &&
-                        player.world.GetBlockId(current.Offset(-1)) == 2)
+                    if (_replant)
                     {
+                        var current = player.status.entity.location.ToLocation();
+                        if (_targetblockid == 17 && inventory.FindId(6) > 0 &&
+                            player.world.GetBlockId(current.Offset(-1)) == 3 ||
+                            _targetblockid == 17 && inventory.FindId(6) > 0 &&
+                            player.world.GetBlockId(current.Offset(-1)) == 2)
+                        {
 #if (DEBUG)
-                        Console.WriteLine("Replant(current);");
+                            //Console.WriteLine("Replant(current);");
 #endif
-                        Replant(current);
-                        actions.MoveToLocation(current.x + 3, (int) current.y - 1, current.z + 3, cancelToken, Mo);
+                            Replant(current);
+
+                            player.tickManager.Register(10, () =>
+                            {
+                                _target = null;
+                                _target = FindNext(null);
+                                if (_target == null)
+                                {
+                                    _prevLocation = null;
+                                    GoToLocation(_safeLocation, TaskCompleted);
+                                }
+                                else
+                                {
+                                    TaskCompleted();
+                                }
+                            });
+                        }
+                        else
+                        {
+                            _target = null;
+                            _target = FindNext(_targetblock.Target.Offset(1));
+                            if (_target == null)
+                            {
+                                _prevLocation = null;
+                                GoToLocation(_safeLocation, TaskCompleted);
+                            }
+                            else
+                            {
+                                _prevLocation = _targetblock.Target;
+                                TaskCompleted();
+                            }
+                        }
                     }
-                }
-#if (DEBUG)
-                Console.WriteLine("TaskCompleted();");
-#endif
-                TaskCompleted();
+                    else
+                    {
+                        _target = null;
+                        _target = FindNext(_targetblock.Target.Offset(1));
+                        if (_target == null)
+                        {
+                            _prevLocation = null;
+                            GoToLocation(_safeLocation, TaskCompleted);
+                        }
+                        else
+                        {
+                            _prevLocation = _targetblock.Target;
+                            TaskCompleted();
+                        }
+                    }
+                });
             };
             _targetblock.Cancelled += (areaMap, cuboid) =>
             {
 #if (DEBUG)
                 Console.WriteLine("Cancelled");
 #endif
-                if (cancelToken.stopped) return;
-                cancelToken.Stop();
+                if (_targetblock == null)
+                {
+                    Console.WriteLine("Cancelled _targetblock null");
+                    TaskCompleted();
+                    return;
+                }
+
+                if (mainCancelToken.stopped) return;
+
+                try
+                {
+                    mainCancelToken.Stop();
+                }
+                catch (Exception exception)
+                {
+                    Console.WriteLine("Error in CANCELLED: \n" + exception);
+                }
                 InvalidateBlock(_target.Offset(-1));
                 TaskCompleted();
             };
 
             if (!_targetblock.Start())
             {
-                if (cancelToken.stopped) return;
-                cancelToken.Stop();
+                if (_targetblock == null)
+                {
+                    Console.WriteLine("Start _targetblock null");
+                    TaskCompleted();
+                    return;
+                }
+
+                if (mainCancelToken.stopped) return;
+
+                try
+                {
+                    mainCancelToken.Stop();
+                }
+                catch (Exception exception)
+                {
+                    Console.WriteLine("Error in !START: \n" + exception);
+                }
                 InvalidateBlock(_target.Offset(-1));
                 TaskCompleted();
             }
             else
             {
                 _busy = true;
+
+                _scanWorker = null;
+
+                if (_targetblock == null)
+                {
+                    Console.WriteLine("Else _targetblock null");
+                    TaskCompleted();
+                    return;
+                }
+
+                if (player.world.GetBlockId(_targetblock.Target.Offset(1)) == 17 &&
+                    player.world.GetBlockId(_targetblock.Target) == 2) return;
+
+                if (player.world.GetBlockId(_targetblock.Target.Offset(1)) == 17 &&
+                    player.world.GetBlockId(_targetblock.Target) == 3) return;
+                
+                _scanWorker = new BackgroundWorker {WorkerSupportsCancellation = true};
+                _scanWorker.DoWork += ScanWorker_DoWork;
+                _scanWorker.RunWorkerAsync(mainCancelToken);
             }
 #if (DEBUG)
-            Console.WriteLine("Tick End");
+            //Console.WriteLine("Tick End");
 #endif
+        }
+
+        private void ScanWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            while (_targetblock != null)
+            {
+                while (player.world.GetBlockId(_targetblock.Target.Offset(1)) == _targetblockid)
+                {
+                    //Console.WriteLine("BlockID: " + player.world.GetBlockId(_targetblock.Target.Offset(1)) + " | Cur Y: " + player.status.entity.location.ToLocation().Offset(-1).y +
+                    //                  " | Target Y: " + _targetblock.Target.Offset(1).y);
+                    //To prevent getting the bot stuck
+
+
+                    if (_targetblockid == 17)
+                    {
+                        if (player.status.entity.location.ToLocation().Offset(-1).y >=
+                            _targetblock.Target.Offset(1).y) return;
+                    }
+
+                    //Wait till block is not wood anymore
+                    Thread.Sleep(1);
+                }
+
+                break;
+            }
+
+            if (_targetblock == null)
+            {
+                Console.WriteLine("Worker _targetblock null");
+                TaskCompleted();
+                return;
+            }
+
+            Console.WriteLine("Worker while loop passed");
+
+            _target = null;
+            _target = FindNext(_targetblock.Target.Offset(1));
+
+            _prevLocation = _targetblock.Target.Offset(1);
+            var cancelToken = (CancelToken) e.Argument;
+
+            try
+            {
+                cancelToken.Stop();
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine("Error in Worker: \n" +exception);
+            }
+
+            if (_target == null)
+                GoToLocation(_safeLocation, TaskCompleted);
+            else
+            {
+                TaskCompleted();
+            }
         }
 
         public override bool Exec()
@@ -411,20 +566,81 @@ namespace TreeFarmerPlugin.Tasks
             return !status.entity.isDead && !status.eating && !_busy && !_macro.IsMacroRunning() && !inventory.IsFull();
         }
 
-        private ILocation FindNext()
+        private void WaitGrounded(Action callback)
+        {
+            IStopToken stopToken = null;
+            stopToken = player.tickManager.RegisterReocurring(5, () =>
+            {
+                if (!player.physicsEngine.isGrounded) return;
+
+                stopToken?.Stop();
+
+                callback();
+            });
+        }
+
+        private void GoToLocation(ILocation targetLocation, Action callback)
+        {
+            var cancelToken = new CancelToken();
+
+            _busy = true;
+
+            var targetMoveToLocation = actions.AsyncMoveToLocation(targetLocation, cancelToken, MoNoSapling);
+            
+            targetMoveToLocation.Completed += areaMap => WaitGrounded(callback);
+            targetMoveToLocation.Cancelled += (areaMap, cuboid) =>
+            {
+                Console.WriteLine("Go to safelocation CANCELLED!");
+                if (cancelToken.stopped) return;
+                cancelToken.Stop();
+                InvalidateBlock(targetMoveToLocation.Target);
+                TaskCompleted();
+            };
+
+            if (!targetMoveToLocation.Start())
+            {
+                Console.WriteLine("Go to safelocation !Start");
+                if (cancelToken.stopped) return;
+                cancelToken.Stop();
+                InvalidateBlock(targetMoveToLocation.Target);
+                TaskCompleted();
+            }
+            else
+            {
+                _busy = true;
+            }
+        }
+
+        private ILocation FindNext(ILocation prevTargetLocation)
         {
 #if (DEBUG)
-            Console.WriteLine("FindNext Start");
+            //Console.WriteLine("FindNext Start");
 #endif
             //Get the area from the radius.
             if (_radius == null) return null;
 #if (DEBUG)
-            Console.WriteLine("_radius != null");
+            //Console.WriteLine("_radius != null");
 #endif
-
-            //Search from top to bottom.
-            //(As that is easier to manager)
             ILocation closest = null;
+            
+            if (prevTargetLocation != null)
+            {
+                if (_targetblockid == 17)
+                {
+                    for (int i = 0; i > -25; i--)
+                    {
+                        if (player.world.GetBlockId(prevTargetLocation.Offset(i)) == 17)
+                        {
+                            closest = prevTargetLocation.Offset(i);
+                            _targetblockid = player.world.GetBlockId(prevTargetLocation.Offset(i));
+                            return closest;
+                        }
+
+                        if (player.world.GetBlockId(prevTargetLocation.Offset(i)) == 2 ||
+                            player.world.GetBlockId(prevTargetLocation.Offset(i)) == 3) break;
+                    }
+                }
+            }
             double distance = int.MaxValue;
             for (var y = (int) _radius.start.y + _radius.height; y >= (int) _radius.start.y; y--)
                 if (closest == null)
@@ -458,13 +674,13 @@ namespace TreeFarmerPlugin.Tasks
 
                         _targetblockid = player.world.GetBlockId(closest);
 #if (DEBUG)
-                        Console.WriteLine("TargetBlockId: " + _targetblockid);
-                        Console.WriteLine(closest);
+                    //Console.WriteLine("TargetBlockId: " + _targetblockid);
+                    //Console.WriteLine(closest);
 #endif
                     }
 
 #if (DEBUG)
-            Console.WriteLine("FindNext End");
+            //Console.WriteLine("FindNext End");
 #endif
             return closest;
         }
@@ -477,7 +693,7 @@ namespace TreeFarmerPlugin.Tasks
             if (inventory.Select(prioritizedArray) == -1) return;
 
 #if (DEBUG)
-            Console.WriteLine("Replant-loc: " + location);
+            //Console.WriteLine("Replant-loc: " + location);
 #endif
             var face = player.functions.FindValidNeighbour(location);
             player.functions.LookAtBlock(face.location, true, face.face);
@@ -485,7 +701,7 @@ namespace TreeFarmerPlugin.Tasks
             player.tickManager.Register(2, () =>
             {
 #if (DEBUG)
-                Console.WriteLine("placing block");
+                //Console.WriteLine("placing block");
 #endif
                 player.functions.BlockPlaceOnBlockFace(face.location, face.face);
             });
@@ -493,9 +709,15 @@ namespace TreeFarmerPlugin.Tasks
 
         private void TaskCompleted()
         {
-            _targetblockid = 0;
             _target = null;
             _busy = false;
+
+            if (_scanWorker != null)
+            {
+                _scanWorker.CancelAsync();
+                _scanWorker.Dispose();
+                _scanWorker = null;
+            }
         }
 
         private static void InvalidateBlock(ILocation location)

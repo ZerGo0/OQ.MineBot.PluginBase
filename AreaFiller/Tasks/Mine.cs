@@ -68,14 +68,17 @@ namespace AreaFiller.Tasks
 #if (DEBUG)
                 Console.WriteLine("Target:" + _target);
 #endif
-                if (_target == null) return;
             }
+
+            if (_target == null) return;
+
+            Broken.TryAdd(_target, DateTime.Now);
 
             var cancelToken = new CancelToken();
             _targetblock = actions.AsyncMoveToLocation(_target, cancelToken, Mo);
-
+            
 #if (DEBUG)
-            Console.WriteLine("success");
+            Console.WriteLine(_targetblock.Target);
 #endif
 
             _targetblock.Completed += areaMap =>
@@ -83,7 +86,7 @@ namespace AreaFiller.Tasks
 #if (DEBUG)
                 Console.WriteLine("map complete");
 #endif
-
+                Broken.TryRemove(_targetblock.Target, out _);
 #if (DEBUG)
                 Console.WriteLine("TaskCompleted();");
 #endif
@@ -96,7 +99,8 @@ namespace AreaFiller.Tasks
 #endif
                 if (cancelToken.stopped) return;
                 cancelToken.Stop();
-                InvalidateBlock(_target.Offset(-1));
+                Broken.TryRemove(_targetblock.Target, out _);
+                //InvalidateBlock(_targetblock.Target);
                 TaskCompleted();
             };
 
@@ -104,7 +108,8 @@ namespace AreaFiller.Tasks
             {
                 if (cancelToken.stopped) return;
                 cancelToken.Stop();
-                InvalidateBlock(_target.Offset(-1));
+                Broken.TryRemove(_targetblock.Target, out _);
+                //InvalidateBlock(_targetblock.Target);
                 TaskCompleted();
             }
             else
@@ -134,50 +139,41 @@ namespace AreaFiller.Tasks
 
             //Search from top to bottom.
             //(As that is easier to manager)
-            ILocation closest = null;
-            double distance = int.MaxValue;
             for (var y = (int) _radius.start.y; y <= (int) _radius.start.y + _radius.height; y++)
-                if (closest == null)
-                    for (var x = _radius.start.x; x <= _radius.start.x + _radius.xSize; x++)
-                    for (var z = _radius.start.z; z <= _radius.start.z + _radius.zSize; z++)
-                    {
-                        var tempLocation = new Location(x, y, z);
+                for (var x = _radius.start.x; x <= _radius.start.x + _radius.xSize; x++)
+                for (var z = _radius.start.z; z <= _radius.start.z + _radius.zSize; z++)
+                {
+                    var tempLocation = new Location(x, y, z);
 
-                        if (Broken.ContainsKey(tempLocation) &&
-                            Broken[tempLocation].Subtract(DateTime.Now).TotalSeconds < -15)
-                            continue;
+                    if (ScanBlocks(tempLocation)) continue;
 
-                        if (ScanBlocks(tempLocation))
-                            continue;
+                    if (player.world.GetBlockId(tempLocation.x, (int) tempLocation.y, tempLocation.z) != 0)
+                        continue;
 
-                        if (player.world.GetBlockId(tempLocation.x, (int) tempLocation.y, tempLocation.z) != 0)
-                            continue;
-                        
-                        // Check if this block is safe to mine.
-                        if (!IsSafe(tempLocation)) continue;
+                    if (Broken.ContainsKey(tempLocation) && 
+                        Broken[tempLocation].Subtract(DateTime.Now).TotalSeconds >= -5) continue;
 
-                        if (closest == null)
-                        {
-                            distance = tempLocation.Distance(player.status.entity.location.ToLocation());
-                            closest = new Location(x, y, z);
-                        }
-                        else if (tempLocation.Distance(player.status.entity.location.ToLocation()) < distance)
-                        {
-                            distance = tempLocation.Distance(player.status.entity.location.ToLocation());
-                            closest = tempLocation;
-                        }
+                    if (Broken.ContainsKey(tempLocation) && 
+                        Broken[tempLocation].Subtract(DateTime.Now).TotalSeconds <= -5)
+                        Broken.TryRemove(tempLocation, out _);
 
-                        var targetblockid = player.world.GetBlockId(closest);
+                    // Check if this block is safe to mine.
+                    if (!IsSafe(tempLocation)) continue;
+                    
+                    ILocation closest = tempLocation;
+                    
+                    var targetblockid = player.world.GetBlockId(closest);
 #if (DEBUG)
                         Console.WriteLine("TargetBlockId: " + targetblockid);
                         Console.WriteLine(closest);
 #endif
-                    }
+                    return closest;
+                }
 
 #if (DEBUG)
             Console.WriteLine("FindNext End");
 #endif
-            return closest;
+            return null;
         }
 
         private void TaskCompleted()

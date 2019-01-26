@@ -9,7 +9,7 @@ using ShieldPlugin.Tasks;
 
 namespace MobAuraPlugin
 {
-    [Plugin(1, "Mob Aura", "Attacks all mobs around the bot")]
+    [Plugin(1, "Mob Aura", "Attacks all mobs around the bot", "https://www.youtube.com/watch?v=_c5K49y4eVc")]
     public class PluginCore : IStartPlugin
     {
         public override void OnLoad(int version, int subversion, int buildversion) {

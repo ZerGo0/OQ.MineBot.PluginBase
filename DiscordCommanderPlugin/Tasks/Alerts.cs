@@ -44,7 +44,7 @@ namespace DiscordCommander.Tasks
 
         private void OnChat(IPlayer player, IChat message, byte position)
         {
-            _chattext = message.Parsed;
+            _chattext = message.GetText();
 
             // Split keywords here
             var splittedkeywords = _keywords.Split(',');
@@ -56,7 +56,7 @@ namespace DiscordCommander.Tasks
 
                 //Get everything after the keyword
                 var textmessage =
-                    message.Parsed.Substring(_chattext.LastIndexOf(keyword, StringComparison.Ordinal) +
+                    message.GetText().Substring(_chattext.LastIndexOf(keyword, StringComparison.Ordinal) +
                                              keyword.Length);
 
                 //To remove the space after the keyword

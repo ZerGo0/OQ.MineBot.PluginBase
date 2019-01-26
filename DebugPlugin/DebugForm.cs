@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using OQ.MineBot.GUI.Protocol.Movement.Maps;
 using OQ.MineBot.PluginBase;
 using OQ.MineBot.PluginBase.Classes;
 using OQ.MineBot.PluginBase.Classes.Base;
@@ -10,7 +14,10 @@ using OQ.MineBot.PluginBase.Classes.Entity;
 using OQ.MineBot.PluginBase.Classes.Entity.Lists;
 using OQ.MineBot.PluginBase.Classes.Entity.Mob;
 using OQ.MineBot.PluginBase.Classes.Entity.Player;
+using OQ.MineBot.PluginBase.Movement.Maps;
+using OQ.MineBot.PluginBase.Pathfinding;
 using OQ.MineBot.Protocols.Classes.Base;
+using Telegram.Bot;
 
 namespace DebugPlugin
 {
@@ -24,6 +31,12 @@ namespace DebugPlugin
         private bool _setAlive;
         private int _oldHealth;
         private bool _oldHealthFirstTime;
+        private bool _oldGrounded;
+        private bool _oldInWater;
+        private bool _oldJumping;
+        private bool _oldGroundedFirstTime;
+        private bool _oldInWaterFirstTime;
+        private bool _oldJumpingFirstTime;
 
         private bool _oldInvFull;
         private bool _oldInvFullFirstTime;
@@ -46,17 +59,20 @@ namespace DebugPlugin
         private string _oldWindowTitle;
         private int _oldWindowSlotsUsed;
 
-        private String _oldPathTarget;
+        private string _oldPathTarget;
         private bool? _oldPathComplete;
         private bool? _oldPathDisposed;
         private bool? _oldPathSearched;
         private bool? _oldPathStopped;
         private bool? _oldPathValid;
 
+        private static Dictionary<string, string> _oldDebugDictionary;
+
+        private static string _currenBotusername;
+
         public DebugForm(string name, IPlayer player) {
             InitializeComponent();
-            
-            AcceptButton = Chat_Send;
+
             KeyDown += (sender, args) => {
                 args.SuppressKeyPress = true; // Disable sound.
             };
@@ -81,6 +97,7 @@ namespace DebugPlugin
                         });
                 };
 
+            _currenBotusername = player.status.username;
             Bot_Name_Text.AppendText(player.status.username);
             Bot_UUID_Text.AppendText(player.status.uuid);
 
@@ -168,19 +185,59 @@ namespace DebugPlugin
 
                         if (player.status.entity.isDead && _setAlive)
                         {
-                            Bot_Alive_Text.Clear();
-                            Bot_Alive_Text.SelectionFont = new Font(Bot_Alive_Text.Font, FontStyle.Bold);
-                            Bot_Alive_Text.SelectionColor = Color.DarkRed;
-                            Bot_Alive_Text.AppendText(player.status.entity.isDead.ToString());
+                            Bot_Dead_Text.Clear();
+                            Bot_Dead_Text.SelectionFont = new Font(Bot_Dead_Text.Font, FontStyle.Bold);
+                            Bot_Dead_Text.SelectionColor = Color.DarkRed;
+                            Bot_Dead_Text.AppendText(player.status.entity.isDead.ToString());
                             _setAlive = false;
                         }
                         else if (!player.status.entity.isDead && !_setAlive)
                         {
-                            Bot_Alive_Text.Clear();
-                            Bot_Alive_Text.SelectionFont = new Font(Bot_Alive_Text.Font, FontStyle.Regular);
-                            Bot_Alive_Text.SelectionColor = Color.Black;
-                            Bot_Alive_Text.AppendText(player.status.entity.isDead.ToString());
+                            Bot_Dead_Text.Clear();
+                            Bot_Dead_Text.SelectionFont = new Font(Bot_Dead_Text.Font, FontStyle.Regular);
+                            Bot_Dead_Text.SelectionColor = Color.Black;
+                            Bot_Dead_Text.AppendText(player.status.entity.isDead.ToString());
                             _setAlive = true;
+                        }
+
+                        #endregion
+
+                        #region Bot Grounded
+
+                        if (player.physicsEngine.isGrounded != _oldGrounded || !_oldGroundedFirstTime)
+                        {
+                            Bot_Grounded_Text.Clear();
+                            Bot_Grounded_Text.AppendText(player.physicsEngine.isGrounded.ToString());
+
+                            _oldGrounded = player.physicsEngine.isGrounded;
+                            _oldGroundedFirstTime = true;
+                        }
+
+                        #endregion
+
+
+                        #region Bot in Water
+
+                        if (player.physicsEngine.inWater != _oldInWater || !_oldInWaterFirstTime)
+                        {
+                            Bot_In_Water_Text.Clear();
+                            Bot_In_Water_Text.AppendText(player.physicsEngine.inWater.ToString());
+
+                            _oldInWater = player.physicsEngine.inWater;
+                            _oldInWaterFirstTime = true;
+                        }
+
+                        #endregion
+
+                        #region Bot Jumping
+                        
+                        if (player.physicsEngine.jumping != _oldJumping || !_oldJumpingFirstTime)
+                        {
+                            Bot_Jumping_Text.Clear();
+                            Bot_Jumping_Text.AppendText(player.physicsEngine.jumping.ToString());
+
+                            _oldJumping = player.physicsEngine.jumping;
+                            _oldJumpingFirstTime = true;
                         }
 
                         #endregion
@@ -188,13 +245,13 @@ namespace DebugPlugin
                         #endregion
 
                         #region Bot Inv Stuff
-                        
+
                         #region Bot Inv Full
 
                         if (player.status.containers.inventory.IsFull() && _oldInvFull || player.status.containers.inventory.IsFull() && !_oldInvFullFirstTime)
                         {
                             Bot_Inv_Full_Text.Clear();
-                            Bot_Inv_Full_Text.SelectionFont = new Font(Bot_Alive_Text.Font, FontStyle.Bold);
+                            Bot_Inv_Full_Text.SelectionFont = new Font(Bot_Dead_Text.Font, FontStyle.Bold);
                             Bot_Inv_Full_Text.SelectionColor = Color.DarkRed;
                             Bot_Inv_Full_Text.AppendText(player.status.containers.inventory.IsFull().ToString());
                             _oldInvFull = false;
@@ -203,7 +260,7 @@ namespace DebugPlugin
                         else if (!player.status.containers.inventory.IsFull() && !_oldInvFull)
                         {
                             Bot_Inv_Full_Text.Clear();
-                            Bot_Inv_Full_Text.SelectionFont = new Font(Bot_Alive_Text.Font, FontStyle.Regular);
+                            Bot_Inv_Full_Text.SelectionFont = new Font(Bot_Dead_Text.Font, FontStyle.Regular);
                             Bot_Inv_Full_Text.SelectionColor = Color.Black;
                             Bot_Inv_Full_Text.AppendText(player.status.containers.inventory.IsFull().ToString());
                             _oldInvFull = true;
@@ -340,12 +397,13 @@ namespace DebugPlugin
                                 _oldclosestplayerloc = playeraroundloc.ToString();
                             }
 
-                            if (playeraround != _oldplayeraround)
+                            if (playeraround != _oldplayeraround || string.IsNullOrWhiteSpace(Targetable_Player_Text.Text))
                             {
                                 Closest_Player_Text.Clear();
-                                Closest_Player_Text.AppendText(player.entities.FindNameByUuid(playeraround.uuid).Name);
+                                if (player.entities.FindNameByUuid(playeraround.uuid) != null)
+                                    Closest_Player_Text.AppendText(player.entities.FindNameByUuid(playeraround.uuid)
+                                        .Name);
 
-                                //TODO: Check if this is right
                                 Closest_Player_UUID_Text.Clear();
                                 Closest_Player_UUID_Text.AppendText(playeraround.uuid);
 
@@ -422,7 +480,8 @@ namespace DebugPlugin
                             if (targetaround != _oldtargetaround || string.IsNullOrWhiteSpace(Targetable_Player_Text.Text))
                             {
                                 Targetable_Player_Text.Clear();
-                                Targetable_Player_Text.AppendText(player.entities.FindNameByUuid(targetaround.uuid).Name);
+                                if (player.entities.FindNameByUuid(targetaround.uuid) != null)
+                                    Targetable_Player_Text.AppendText(player.entities.FindNameByUuid(targetaround.uuid).Name);
                                 
                                 //TODO: Check if this is right
                                 Targetable_Player_UUID_Text.Clear();
@@ -446,8 +505,7 @@ namespace DebugPlugin
                         #region Window Stuff
 
                         var winSlotsUsed = 0;
-
-                        for (int getwindowid = 999; getwindowid > 0; getwindowid--)
+                        for (int getwindowid = 9999; getwindowid > 0; getwindowid--)
                         {
                             if (player.status.containers.GetWindow(getwindowid) != null)
                             {
@@ -483,6 +541,8 @@ namespace DebugPlugin
                                     Window_EntityID_Text.Clear();
                                     Window_ActionID_Text.Clear();
                                     Window_Slotids_Text.Clear();
+                                    Window_Inv_Slotids_Text.Clear();
+                                    Window_Slot_NBT_Text.Clear();
 
                                     Window_Title_Text.AppendText(winTitle);
                                     Window_Type_Text.AppendText(winType);
@@ -501,7 +561,15 @@ namespace DebugPlugin
                                         {
                                             Window_Slotids_Text.AppendText("Slot: " + windowslots + "   |   ItemID: " + 
                                                                            player.status.containers.GetWindow(getwindowid).GetAt(windowslots).id
-                                                                           + "\n");
+                                                                           + "   |   Metadata: " + player.status.containers.GetWindow(getwindowid).GetAt(windowslots).damage + "\n");
+                                            
+                                            if (player.status.containers.GetWindow(getwindowid).GetAt(windowslots).nbt != null)
+                                            {
+                                                var windowNbt = player.status.containers.GetWindow(getwindowid).GetAt(windowslots).nbt.ToString();
+                                                Window_Slot_NBT_Text.AppendText("Slot: " + windowslots + "   |   ItemID: " +
+                                                                                player.status.containers.GetWindow(getwindowid).GetAt(windowslots).id + 
+                                                                                "   |   ItemNBT: \n" + windowNbt);
+                                            }
                                         }
                                     }
 
@@ -515,7 +583,7 @@ namespace DebugPlugin
                                         {
                                             Window_Inv_Slotids_Text.AppendText("Slot: " + windowslots + "   |   ItemID: " +
                                                                            player.status.containers.GetWindow(getwindowid).GetAt(windowslots).id
-                                                                           + "\n");
+                                                                               + "   |   Metadata: " + player.status.containers.GetWindow(getwindowid).GetAt(windowslots).damage + "\n");
                                         }
                                     }
 
@@ -577,8 +645,6 @@ namespace DebugPlugin
                                 Current_Path_Options_Text.AppendText("Strict: " + player.physicsEngine.path.Options.Strict + "\n");
                                 Current_Path_Options_Text.AppendText("Swim: " + player.physicsEngine.path.Options.Swim + "\n");
 
-
-
                                 _oldPathTarget = player.physicsEngine.path.Target.ToString();
                                 _oldPathComplete = player.physicsEngine.path.Complete;
                                 _oldPathDisposed = player.physicsEngine.path.Disposed;
@@ -587,6 +653,41 @@ namespace DebugPlugin
                                 _oldPathValid = player.physicsEngine.path.Valid;
                             }
                         }
+
+                        //Console.WriteLine(player.physicsEngine.Velocity.distance.ToString());
+                        //Console.WriteLine(player.physicsEngine.collider.blockId.ToString());
+                        //Console.WriteLine(player.physicsEngine.collider.height);
+                        //Console.WriteLine(player.physicsEngine.collider.widthx);
+                        //Console.WriteLine(player.physicsEngine.collider.widthz);
+                        
+                        //Console.WriteLine(player.physicsEngine.isGrounded);
+                        //Console.WriteLine(player.physicsEngine.jumping);
+                        //Console.WriteLine(player.physicsEngine.precomputedRotations.Count);
+                        //
+                        //Console.WriteLine("\n");
+                        //
+                        //Console.WriteLine(player.entities.entityList.Keys.Count);
+                        //Console.WriteLine(player.entities.entityList.Values.ToString());
+                        //
+                        //Console.WriteLine(player.entities.playerList.Keys.Count);
+                        //Console.WriteLine(player.entities.playerList.Values.ToString());
+                        //
+                        //Console.WriteLine(player.entities.uuidList.Keys.Count);
+                        //Console.WriteLine(player.entities.uuidList.Values.ToString());
+                        //
+                        //for (int entitycount = 0; entitycount < 999; entitycount++)
+                        //{
+                        //    if (player.entities.GetEntity(entitycount) != null)
+                        //    {
+                        //        Console.WriteLine(player.entities.GetEntity(entitycount).entityId);
+                        //        Console.WriteLine(player.entities.GetEntity(entitycount).location.ToLocation());
+                        //        Console.WriteLine(player.entities.GetEntity(entitycount));
+                        //    }
+                        //}
+                        //
+                        //Console.WriteLine("\n");
+
+
 
                         #endregion
                     }
@@ -689,6 +790,8 @@ namespace DebugPlugin
 
             //If this isn't the chatbox then ignore it.
             if (position > 1) return;
+            
+            Console.WriteLine(message.GetTextRtf());
 
             //Try-cathc in case the form is already
             //disposed.
@@ -696,7 +799,7 @@ namespace DebugPlugin
             {
                 BeginInvoke((MethodInvoker) delegate
                 {
-                    if (IsDisposed || Disposing || !Log(message.Parsed)) {
+                    if (IsDisposed || Disposing || !Log(message.GetText())) {
                         if (player.events != null)
                             //Unhook, form closed.
                             player.events.onChat -= OnChatMessage;
@@ -748,6 +851,71 @@ namespace DebugPlugin
             return true;
         }
 
+        public static class DebugConsole
+        {
+            public static void DebugText(IPlayer player, int priority, string text)
+            {
+                if (Debug_Console != null)
+                {
+                    if (Debug_Console.IsDisposed || Debug_Console.Disposing || !Debug_Console.Visible) return;
+
+                    if (player.status.username == _currenBotusername)
+                    {
+                        var time = "[" + DateTime.Now.Hour + ":" + DateTime.Now.Minute + ":" + DateTime.Now.Second +
+                                   "] ";
+
+                        switch (priority)
+                        {
+                            case 0:
+                                Debug_Console.SelectionColor = Color.Black;
+                                Debug_Console.AppendText(time + text + "\n");
+                                break;
+                            case 1:
+                                Debug_Console.SelectionColor = Color.DarkGreen;
+                                Debug_Console.AppendText(time + text + "\n");
+                                break;
+                            case 2:
+                                Debug_Console.SelectionColor = Color.Orange;
+                                Debug_Console.AppendText(time + text + "\n");
+                                break;
+                            case 3:
+                                Debug_Console.SelectionFont = new Font(Debug_Console.Font, FontStyle.Bold);
+                                Debug_Console.SelectionColor = Color.DarkRed;
+                                Debug_Console.AppendText(time + text + "\n");
+                                break;
+                        }
+                    }
+                }
+            }
+
+            public static void DebugValues(IPlayer player, Dictionary<string,string> debugDictionary)
+            {
+                if (Debug_Values != null)
+                {
+                    if (Debug_Values.IsDisposed || Debug_Values.Disposing || !Debug_Values.Visible) return;
+
+                    if (player.status.username == _currenBotusername)
+                    {
+                        //TODO: Add mutli bot support
+                        if(_oldDebugDictionary != null)
+                        {
+                            if (_oldDebugDictionary.Count == debugDictionary.Count &&
+                                !_oldDebugDictionary.Except(debugDictionary).Any()) return;
+                        }
+
+                        Debug_Values.Clear();
+
+                        foreach (var value in debugDictionary)
+                        {
+                                Debug_Values.AppendText(value.Key + ": " + value.Value + "\n");
+                        }
+
+                        _oldDebugDictionary = debugDictionary;
+                    }
+                }
+            }
+        }
+
         private void Chat_Message_KeyDown(object sender, KeyEventArgs e)
         {
             //CTRL+A is needed, we all know that
@@ -774,10 +942,10 @@ namespace DebugPlugin
 
         private void Chat_Box_MouseUp(object sender, MouseEventArgs e)
         {
-            if (e.Button != System.Windows.Forms.MouseButtons.Right) return; //click event
+            if (e.Button != MouseButtons.Right) return; //click event
 
             //Menu stuff for the chatbox, maybe someone needs it idk ^^
-            var contextMenu = new System.Windows.Forms.ContextMenu();
+            var contextMenu = new ContextMenu();
             var menuItem = new MenuItem("Copy");
             menuItem.Click += CopyAction;
             contextMenu.MenuItems.Add(menuItem);

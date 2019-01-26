@@ -9,7 +9,7 @@ using OQ.MineBot.Protocols.Classes.Base;
 
 namespace AreaFiller
 {
-    [Plugin(1, "Area Filler", "Select an area and the bot will fill it.")]
+    [Plugin(1, "Area Filler", "Select an area and the bot will fill it.", "https://www.youtube.com/watch?v=ow-QSsbA3p8")]
     public class PluginCore : IStartPlugin
     {
         public override void OnLoad(int version, int subversion, int buildversion)

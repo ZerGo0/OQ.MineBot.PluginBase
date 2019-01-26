@@ -22,11 +22,10 @@ namespace AreaFiller.Tasks
 
         public void OnTick()
         {
-            Console.WriteLine("Test");
             if (inventory.IsFull())
                 _macro.Run(player, _macroName);
 
-            Console.WriteLine(inventory.FindId(_fillerId));
+            Console.WriteLine(player.status.username + ": Has no building blocks!");
 
             if (inventory.FindId(_fillerId) < 1)
                 _fillermacro.Run(player, _fillername);

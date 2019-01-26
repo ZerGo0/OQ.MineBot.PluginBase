@@ -10,7 +10,7 @@ using TreeFarmerPlugin.Tasks;
 
 namespace TreeFarmerPlugin
 {
-    [Plugin(1, "Tree Farmer", "Farms trees and shit.")]
+    [Plugin(1, "Tree Farmer", "Farms trees and shit.", "https://www.youtube.com/watch?v=6huwXOm3U6w")]
     public class PluginCore : IStartPlugin
     {
         public override void OnLoad(int version, int subversion, int buildversion)

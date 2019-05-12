@@ -5,6 +5,7 @@ using System.Threading;
 using OQ.MineBot.PluginBase;
 using OQ.MineBot.PluginBase.Base.Plugin.Tasks;
 using OQ.MineBot.PluginBase.Classes.Base;
+using OQ.MineBot.PluginBase.Utility;
 
 namespace RandomWordWinner.Tasks
 {
@@ -52,6 +53,7 @@ namespace RandomWordWinner.Tasks
             var patternArray = _pattern.Split(Convert.ToChar(" "));
             var index1 = 0;
             var patternArraySaved = patternArray;
+            
             foreach (var index2 in patternArraySaved)
             {
                 if (_removeSpecialChars)
@@ -64,10 +66,18 @@ namespace RandomWordWinner.Tasks
                     if (index2 == "%randomword%")
                         break;
                 }
-                index1++;
+                
+                if (patternArraySaved.Length < index1) index1++;
+                else
+                {
+                    DiscordHelper.__api_hook_ale("[Random Word Winner] Plugin Settings are wrong!", 1);
+                    return;
+                }
             }
+            
+            
 
-            var chatMsgSplit = message.GetTextRtf().Split(Convert.ToChar(" "));
+            var chatMsgSplit = message.GetText().Split(Convert.ToChar(" "));
             if (string.IsNullOrWhiteSpace(_command))
             {
                 var randomdelay = Rnd.Next(_mindelay, _maxdelay);
@@ -86,7 +96,7 @@ namespace RandomWordWinner.Tasks
             }
         }
 
-        public static string RemoveSpecialCharacters(string str)
+        private static string RemoveSpecialCharacters(string str)
         {
             return Regex.Replace(str, "[^0-9A-Za-z ,]", "", RegexOptions.Compiled);
         }

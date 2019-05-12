@@ -1,0 +1,5 @@
+
+*.xml
+*.iml
+RandomWordWinner/.vs/RandomWordWinner/v15/.suo
+RandomWordWinner/.vs/RandomWordWinner/v15/Server/sqlite3/db.lock

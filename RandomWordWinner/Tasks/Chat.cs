@@ -50,26 +50,18 @@ namespace RandomWordWinner.Tasks
 
             if (_removeSpecialChars) _pattern = RemoveSpecialCharacters(_pattern);
             
-            var patternArray = _pattern.Split(Convert.ToChar(" "));
+            var patternArray = _pattern.Split(' ');
             var index1 = 0;
             var patternArraySaved = patternArray;
             
             foreach (var index2 in patternArraySaved)
             {
-                if (_removeSpecialChars)
-                {
-                    if (index2 == "randomword")
-                        break;
-                }
-                else
-                {
-                    if (index2 == "%randomword%")
-                        break;
-                }
+                if (index2.Contains("randomword")) break;
                 
-                if (patternArraySaved.Length < index1) index1++;
+                if (patternArraySaved.Length > index1) index1++;
                 else
                 {
+                    //Console.WriteLine(index2 + " | " + patternArraySaved.Length + " | " + index1);
                     DiscordHelper.__api_hook_ale("[Random Word Winner] Plugin Settings are wrong!", 1);
                     return;
                 }

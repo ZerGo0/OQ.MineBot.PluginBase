@@ -5,7 +5,7 @@ using RandomWordWinner.Tasks;
 
 namespace RandomWordWinner
 {
-    [Plugin(5, "Random Word Winner", "Auto. send requested word. (Original author: Dampen59)", "https://www.youtube.com/watch?v=G5hSzRPJ66s")]
+    [Plugin(6, "Random Word Winner", "Auto. send requested word. (Original author: Dampen59)", "https://www.youtube.com/watch?v=G5hSzRPJ66s")]
     public class PluginCore : IStartPlugin
     {
         public override void OnLoad(int version, int subversion, int buildversion)

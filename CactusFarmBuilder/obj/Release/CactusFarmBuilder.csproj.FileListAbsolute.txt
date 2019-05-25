@@ -1,0 +1,6 @@
+C:\Users\Faven\Desktop\Minebot\plugins\CactusFarmBuilder.dll
+C:\Users\Faven\Desktop\Minebot\plugins\CactusFarmBuilder.pdb
+C:\Users\Faven\Desktop\OQ Minebot Plugin Sources\ZerGo0 Plugins\CactusFarmBuilder\obj\Release\CactusFarmBuilder.csprojResolveAssemblyReference.cache
+C:\Users\Faven\Desktop\OQ Minebot Plugin Sources\ZerGo0 Plugins\CactusFarmBuilder\obj\Release\CactusFarmBuilder.csproj.CoreCompileInputs.cache
+C:\Users\Faven\Desktop\OQ Minebot Plugin Sources\ZerGo0 Plugins\CactusFarmBuilder\obj\Release\CactusFarmBuilder.dll
+C:\Users\Faven\Desktop\OQ Minebot Plugin Sources\ZerGo0 Plugins\CactusFarmBuilder\obj\Release\CactusFarmBuilder.pdb

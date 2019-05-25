@@ -1,0 +1,9 @@
+D:\Minebot\plugins\DiscordCommander.dll
+D:\Minebot\plugins\DiscordCommander.pdb
+D:\SourceCodes\OQ.MineBot.Plugins\DiscordCommanderPlugin\obj\Debug\DiscordCommander.csprojAssemblyReference.cache
+D:\SourceCodes\OQ.MineBot.Plugins\DiscordCommanderPlugin\obj\Debug\DiscordCommander.csproj.CoreCompileInputs.cache
+D:\SourceCodes\OQ.MineBot.Plugins\DiscordCommanderPlugin\obj\Debug\DiscordCommander.csproj.CopyComplete
+D:\SourceCodes\OQ.MineBot.Plugins\DiscordCommanderPlugin\obj\Debug\DiscordCommander.dll
+D:\SourceCodes\OQ.MineBot.Plugins\DiscordCommanderPlugin\obj\Debug\DiscordCommander.pdb
+C:\Users\ZerGo0\Desktop\Minebot\plugins\DiscordCommander.dll
+C:\Users\ZerGo0\Desktop\Minebot\plugins\DiscordCommander.pdb

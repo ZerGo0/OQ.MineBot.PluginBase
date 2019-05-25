@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using DiscordCommander.Tasks;
 using OQ.MineBot.PluginBase.Base;
 using OQ.MineBot.PluginBase.Base.Plugin;
@@ -7,7 +8,7 @@ using OQ.MineBot.PluginBase.Utility;
 
 namespace DiscordCommander
 {
-    [Plugin(2, "Discord Commander", "Writes the user on discord when a user writes: 'KEYWORD message' ingame.", "https://www.youtube.com/watch?v=NGTCZAI1tfI")]
+    [Plugin(3, "Discord Commander", "Writes the user on discord when a user writes: 'KEYWORD message' ingame.", "https://www.youtube.com/watch?v=NGTCZAI1tfI")]
     public class PluginCore : IStartPlugin
     {
         public override void OnLoad(int version, int subversion, int buildversion)
@@ -20,7 +21,7 @@ namespace DiscordCommander
                 1));
             Setting.Add(new LinkSetting("Add bot",
                 "Adds the bot to your discord channel (you must have administrator permissions).",
-                "https://discordapp.com/oauth2/authorize?client_id=299708378236583939&scope=bot&permissions=6152"));
+                "https://discordapp.com/oauth2/authorize?client_id=543100509276340225&scope=bot&permissions=6152"));
         }
 
         public override PluginResponse OnEnable(IBotSettings botSettings)
@@ -31,15 +32,8 @@ namespace DiscordCommander
             if (string.IsNullOrWhiteSpace(Setting.At(1).Get<string>()))
                 return new PluginResponse(false, "No keyword set.");
 
-            try
-            {
-                if (string.IsNullOrWhiteSpace(Setting.At(0).Get<string>()))
-                    return new PluginResponse(false, "Could not parse discord id.");
-            }
-            catch (Exception)
-            {
+            if (string.IsNullOrWhiteSpace(Setting.At(0).Get<string>()) || !Regex.IsMatch(Setting.At(0).Get<string>(), @"^[0-9]+$"))
                 return new PluginResponse(false, "Could not parse discord id.");
-            }
 
             return new PluginResponse(true);
         }

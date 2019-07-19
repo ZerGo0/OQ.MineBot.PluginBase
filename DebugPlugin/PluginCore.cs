@@ -30,6 +30,13 @@ namespace DebugPlugin
             return "Enable";
         }
 
+        public PluginResponse OnRequest(IPlayer player, bool macro = false)
+        {
+            OnRequest(player);
+
+            return new PluginResponse(true);
+        }
+
         /// <summary>
         /// Called once the user requested
         /// for the plugin to start on this player.

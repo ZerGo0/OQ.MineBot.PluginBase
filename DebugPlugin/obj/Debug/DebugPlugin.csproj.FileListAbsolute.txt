@@ -12,3 +12,12 @@ C:\Users\Faven\Desktop\OQ.MineBot.Plugins-master\ZerGo0 Plugins\DebugPlugin\obj\
 C:\Users\Faven\Desktop\OQ.MineBot.Plugins-master\ZerGo0 Plugins\DebugPlugin\obj\Debug\DebugPlugin.csproj.CoreCompileInputs.cache
 C:\Users\Faven\Desktop\OQ.MineBot.Plugins-master\ZerGo0 Plugins\DebugPlugin\obj\Debug\DebugPlugin.dll
 C:\Users\Faven\Desktop\OQ.MineBot.Plugins-master\ZerGo0 Plugins\DebugPlugin\obj\Debug\DebugPlugin.pdb
+G:\Minebot\plugins\DebugPlugin.dll
+G:\Minebot\plugins\DebugPlugin.pdb
+G:\SourceCodes\OQ.MineBot.Plugins\DebugPlugin\obj\Debug\DebugPlugin.csprojResolveAssemblyReference.cache
+G:\SourceCodes\OQ.MineBot.Plugins\DebugPlugin\obj\Debug\DebugPlugin.DebugForm.resources
+G:\SourceCodes\OQ.MineBot.Plugins\DebugPlugin\obj\Debug\DebugPlugin.Properties.Resources.resources
+G:\SourceCodes\OQ.MineBot.Plugins\DebugPlugin\obj\Debug\DebugPlugin.csproj.GenerateResource.Cache
+G:\SourceCodes\OQ.MineBot.Plugins\DebugPlugin\obj\Debug\DebugPlugin.csproj.CoreCompileInputs.cache
+G:\SourceCodes\OQ.MineBot.Plugins\DebugPlugin\obj\Debug\DebugPlugin.dll
+G:\SourceCodes\OQ.MineBot.Plugins\DebugPlugin\obj\Debug\DebugPlugin.pdb

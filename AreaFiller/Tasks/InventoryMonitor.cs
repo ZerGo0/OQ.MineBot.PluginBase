@@ -25,7 +25,7 @@ namespace AreaFiller.Tasks
             if (inventory.IsFull())
                 _macro.Run(player, _macroName);
 
-            Console.WriteLine(player.status.username + ": Has no building blocks!");
+            //Console.WriteLine(player.status.username + ": Has no building blocks!");
 
             if (inventory.FindId(_fillerId) < 1)
                 _fillermacro.Run(player, _fillername);

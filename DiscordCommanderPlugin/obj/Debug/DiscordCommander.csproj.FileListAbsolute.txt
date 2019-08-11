@@ -7,3 +7,15 @@ D:\SourceCodes\OQ.MineBot.Plugins\DiscordCommanderPlugin\obj\Debug\DiscordComman
 D:\SourceCodes\OQ.MineBot.Plugins\DiscordCommanderPlugin\obj\Debug\DiscordCommander.pdb
 C:\Users\ZerGo0\Desktop\Minebot\plugins\DiscordCommander.dll
 C:\Users\ZerGo0\Desktop\Minebot\plugins\DiscordCommander.pdb
+G:\Minebot\plugins\DiscordCommander.dll
+G:\Minebot\plugins\DiscordCommander.pdb
+G:\build\debug\DiscordCommander.dll
+G:\build\debug\DiscordCommander.pdb
+G:\SourceCodes\OQ.MineBot.Plugins\DiscordCommanderPlugin\...\build\debug\OQ.MineBot.PluginBase.dll
+G:\SourceCodes\OQ.MineBot.Plugins\DiscordCommanderPlugin\obj\Debug\DiscordCommander.csprojResolveAssemblyReference.cache
+G:\SourceCodes\OQ.MineBot.Plugins\DiscordCommanderPlugin\obj\Debug\DiscordCommander.csproj.CoreCompileInputs.cache
+G:\SourceCodes\OQ.MineBot.Plugins\DiscordCommanderPlugin\obj\Debug\DiscordCommander.dll
+G:\SourceCodes\OQ.MineBot.Plugins\DiscordCommanderPlugin\obj\Debug\DiscordCommander.pdb
+G:\SourceCodes\OQ.MineBot.Plugins\DiscordCommanderPlugin\build\debug\DiscordCommander.dll
+G:\SourceCodes\OQ.MineBot.Plugins\DiscordCommanderPlugin\build\debug\DiscordCommander.pdb
+G:\SourceCodes\OQ.MineBot.Plugins\DiscordCommanderPlugin\build\debug\OQ.MineBot.PluginBase.dll

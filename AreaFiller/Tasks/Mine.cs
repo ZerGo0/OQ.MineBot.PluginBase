@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using OQ.MineBot.GUI.Protocol.Movement.Maps;
 using OQ.MineBot.PluginBase.Base.Plugin.Tasks;
 using OQ.MineBot.PluginBase.Classes;
@@ -28,11 +30,181 @@ namespace AreaFiller.Tasks
         public static readonly ConcurrentDictionary<ILocation, DateTime> Broken =
             new ConcurrentDictionary<ILocation, DateTime>();
 
+        public static IRadius SharedArea;
+        public static readonly ConcurrentDictionary<string, int> BotNumber =
+            new ConcurrentDictionary<string, int>();
+        public static readonly ConcurrentDictionary<string, IRadius> BotWork =
+            new ConcurrentDictionary<string, IRadius>();
+
+        public static int openBotNumber = 0;
+        private static int _botCount = 0;
+        public static int BotCount
+        {
+            get => _botCount;
+            set
+            {
+                _botCount = value;
+                UpdateSharedArea(value);
+            }
+        }
+
+        public static void UpdateSharedArea(int botCount)
+        {
+            //Console.WriteLine($"Botcount: {botCount} | OpenNumber: {openBotNumber} | BotNumber.Count: {BotNumber.Count}");
+
+            //Update assigned botnumber if a bot stops the plugin
+            if (BotNumber.Count >= botCount)
+            {
+                var updateBot = new List<string>(); 
+                foreach (var bot in BotNumber)
+                {
+                    if (bot.Value < botCount) continue;
+                    
+                    updateBot.Add(bot.Key);
+                    updateBot.Add(bot.Value.ToString());
+                }
+
+                if (updateBot.Count > 0)
+                {
+                    BotNumber.TryUpdate(updateBot[0], openBotNumber, int.Parse(updateBot[1]));
+                }
+                openBotNumber = 0;
+            }
+            
+            //No need to split the area if there is no bot or if there is only 1 bot
+            if (botCount < 2) return;
+
+            if (botCount % 2 == 0)
+            {
+                var distanceX = Math.Abs(SharedArea.xSize);
+                var distanceZ = Math.Abs(SharedArea.zSize);
+
+                if (distanceX > distanceZ)
+                {
+                    var splittedX = Math.Ceiling(distanceX / ((double) botCount / 2));
+                    var splittedZ = Math.Ceiling((double) distanceZ / 2);
+                    //TODO: Check if distanceX or distanceZ is bigger and split area accordingly
+                    var areaList = new List<IRadius>();
+                    for (int i = 0; i < botCount / 2; i++)
+                    {
+                        var startX = SharedArea.start.x + splittedX * i;
+                        var startZ = SharedArea.start.z;
+
+                        //TODO: Check for overlapping
+                        var endX = startX + splittedX;
+                        var endZ = startZ + splittedZ;
+
+                        if (startX >= SharedArea.start.x + distanceX) continue;
+
+                        if (endX > SharedArea.start.x + distanceX) endX = SharedArea.start.x + distanceX;
+
+                        var startLocation = new Location((int) startX, SharedArea.start.y, startZ);
+                        var endLocation = new Location((int) endX, SharedArea.start.y + SharedArea.height, (int) endZ);
+
+                        areaList.Add(new IRadius(startLocation, endLocation));
+                        //Console.WriteLine($"Start: {startLocation} | End: {endLocation}");
+
+                        startZ = SharedArea.start.z + (int) splittedZ;
+
+                        //TODO: Check for overlapping
+                        endZ = startZ + splittedZ;
+
+                        if (startX >= SharedArea.start.x + distanceX) continue;
+
+                        if (endZ > SharedArea.start.z + distanceZ) endZ = SharedArea.start.z + distanceZ;
+
+                        startLocation = new Location((int) startX, SharedArea.start.y, startZ);
+                        endLocation = new Location((int) endX, SharedArea.start.y + SharedArea.height, (int) endZ);
+
+                        areaList.Add(new IRadius(startLocation, endLocation));
+                    }
+
+                    var count = 0;
+                    foreach (var bot in BotNumber)
+                    {
+                        BotWork.TryRemove(bot.Key, out _);
+                        if (count > areaList.Count) continue;
+
+                        BotWork.TryAdd(bot.Key, areaList[count]);
+                        count++;
+                    }
+
+                    foreach (var botworker in BotWork)
+                    {
+                        Console.WriteLine($"{botworker.Key} | {botworker.Value}");
+                    }
+                }
+                else
+                {
+                    var splittedX = Math.Ceiling((double) distanceX / 2);
+                    var splittedZ = Math.Ceiling(distanceZ / ((double) botCount / 2));
+                    //TODO: Check if distanceX or distanceZ is bigger and split area accordingly
+                    var areaList = new List<IRadius>();
+                    for (int i = 0; i < botCount / 2; i++)
+                    {
+                        var startX = SharedArea.start.x;
+                        var startZ = SharedArea.start.z + splittedZ * i;
+
+                        //TODO: Check for overlapping
+                        var endX = startX + splittedX;
+                        var endZ = startZ + splittedZ;
+
+                        if (startZ >= SharedArea.start.z + distanceZ) continue;
+
+                        if (endZ > SharedArea.start.z + distanceZ) endZ = SharedArea.start.z + distanceZ;
+
+                        var startLocation = new Location(startX, SharedArea.start.y, (int) startZ);
+                        var endLocation = new Location((int) endX, SharedArea.start.y + SharedArea.height, (int) endZ);
+
+                        areaList.Add(new IRadius(startLocation, endLocation));
+                        //Console.WriteLine($"Start: {startLocation} | End: {endLocation}");
+
+                        startX = SharedArea.start.x + (int) splittedX;
+
+                        //TODO: Check for overlapping
+                        endX = startX + splittedX;
+
+                        if (startZ >= SharedArea.start.z + distanceZ) continue;
+
+                        if (endX > SharedArea.start.x + distanceX) endX = SharedArea.start.x + distanceX;
+
+                        startLocation = new Location(startX, SharedArea.start.y,(int) startZ);
+                        endLocation = new Location((int) endX, SharedArea.start.y + SharedArea.height, (int) endZ);
+
+                        areaList.Add(new IRadius(startLocation, endLocation));
+                    }
+
+                    var count = 0;
+                    foreach (var bot in BotNumber)
+                    {
+                        BotWork.TryRemove(bot.Key, out _);
+                        if (count > areaList.Count) continue;
+
+                        BotWork.TryAdd(bot.Key, areaList[count]);
+                        count++;
+                    }
+
+                    foreach (var botworker in BotWork)
+                    {
+                        Console.WriteLine($"{botworker.Key} | {botworker.Value}");
+                    }
+                }
+            }
+            else
+            {
+                //TODO: Split Area when bot amount is uneven
+            }
+        }
+        
+        
+        private int _botNumber;
+
         #endregion
 
         private readonly MacroSync _macro;
         private readonly MacroSync _fillermacro;
-        private readonly IRadius _radius;
+        private IRadius _radius;
+        private IRadius _prevRadius;
 
         private bool _busy;
         private readonly string _blockId;
@@ -45,22 +217,35 @@ namespace AreaFiller.Tasks
             _macro = macro;
             _fillermacro = fillerMacro;
 
-            var split = new[]
-                {_blockId};
+            var split = new[] {_blockId};
             var blocks = split.Select(ushort.Parse).ToArray();
             BlocksGlobal.BUILDING_BLOCKS = blocks;
 
-            _radius = new IRadius(startLocation, endLocation);
+            SharedArea = new IRadius(startLocation, endLocation);
+        }
+
+        public override void Start()
+        {
+            BotNumber.TryAdd(player.status.uuid, BotCount);
+            BotCount++;
+        }
+
+        public override void Stop()
+        {
+            BotNumber.TryRemove(player.status.uuid, out openBotNumber);
+            BotWork.TryRemove(player.status.uuid, out _);
+            BotCount--;
         }
 
         public void OnTick()
         {
+            BotWork.TryGetValue(player.status.uuid, out _radius);
+            
 #if (DEBUG)
             Console.WriteLine("Tick Start");
 #endif
 
-            if (inventory.FindId(int.Parse(_blockId)) < 1)
-                return;
+            if (inventory.FindId(int.Parse(_blockId)) < 1) return;
 
             if (_target == null)
             {

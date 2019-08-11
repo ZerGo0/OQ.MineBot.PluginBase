@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using OQ.MineBot.PluginBase;
 using OQ.MineBot.PluginBase.Base.Plugin.Tasks;
@@ -35,6 +38,36 @@ namespace DiscordCommander.Tasks
         public override void Start()
         {
             player.events.onChat += OnChat;
+            
+            Console.Clear();
+            var request = (HttpWebRequest)WebRequest.Create("https://de.namemc.com/search?q=" + player.status.username);
+            request.Method = "GET";
+            request.UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36";
+            ServicePointManager
+                    .ServerCertificateValidationCallback += 
+                (sender, cert, chain, sslPolicyErrors) => true;
+            
+            // Get the response.  
+            WebResponse response = request.GetResponse();
+            // Display the status.  
+            Console.WriteLine(((HttpWebResponse)response).StatusDescription);
+            
+            // Get the stream containing content returned by the server. 
+            // The using block ensures the stream is automatically closed. 
+            using (Stream dataStream = response.GetResponseStream())
+            {
+                // Open the stream using a StreamReader for easy access.  
+                StreamReader reader = new StreamReader(dataStream);
+                // Read the content.  
+                string responseFromServer = reader.ReadToEnd();
+                
+                var match = Regex.Match(responseFromServer, @"(?<=charset\=).*");
+                // Display the content.  
+                Console.WriteLine(match);
+            }
+            
+            // Close the response.  
+            response.Close();
         }
 
         public override void Stop()

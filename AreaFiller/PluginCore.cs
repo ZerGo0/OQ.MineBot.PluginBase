@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using AreaFiller.Tasks;
 using OQ.MineBot.PluginBase;
@@ -51,6 +52,7 @@ namespace AreaFiller
 
         public override void OnStart()
         {
+            Console.Clear();
             var macro = new MacroSync();
             var fillermacro = new MacroSync();
 

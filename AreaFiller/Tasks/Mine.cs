@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using OQ.MineBot.GUI.Protocol.Movement.Maps;
@@ -44,7 +45,11 @@ namespace AreaFiller.Tasks
             set
             {
                 _botCount = value;
+                var timer = new Stopwatch();
+                timer.Start();
                 UpdateSharedArea(value);
+                timer.Stop();
+                Console.WriteLine($"Time: {timer.ElapsedMilliseconds}ms | Area: {SharedArea.xSize}x{SharedArea.height}x{SharedArea.zSize} | Bots: {_botCount}");
             }
         }
 
@@ -73,7 +78,9 @@ namespace AreaFiller.Tasks
             
             //No need to split the area if there is no bot or if there is only 1 bot
             if (botCount < 2) return;
-
+            
+            //BUG: 1. Join with like 50 bots 2. Enable Plugin 3. index out of range
+            //BUG: Fix this ^
             if (botCount % 2 == 0)
             {
                 var distanceX = Math.Abs(SharedArea.xSize);
@@ -241,6 +248,7 @@ namespace AreaFiller.Tasks
         {
             BotWork.TryGetValue(player.status.uuid, out _radius);
             
+            /*
 #if (DEBUG)
             Console.WriteLine("Tick Start");
 #endif
@@ -304,6 +312,7 @@ namespace AreaFiller.Tasks
 #if (DEBUG)
             Console.WriteLine("Tick End");
 #endif
+*/
         }
 
         public override bool Exec()

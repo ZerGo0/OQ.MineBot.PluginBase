@@ -1,10 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using MobAuraPlugin.Tasks;
+﻿using MobAuraPlugin.Tasks;
 using OQ.MineBot.PluginBase.Base;
 using OQ.MineBot.PluginBase.Base.Plugin;
 using OQ.MineBot.PluginBase.Bot;
-using OQ.MineBot.PluginBase.Classes.Entity.Lists;
 using ShieldPlugin.Tasks;
 
 namespace MobAuraPlugin
@@ -13,7 +10,7 @@ namespace MobAuraPlugin
     public class PluginCore : IStartPlugin
     {
         public override void OnLoad(int version, int subversion, int buildversion) {
-            Setting.Add(new ComboSetting("Mode", null, new string[] { "Passive", "Aggressive" }, 0));
+            Setting.Add(new ComboSetting("Mode", null, new string[] { "Passive", "Aggressive", "Moving Passive", "Moving Aggressive" }, 0));
 
             var clickGroup = new GroupSetting("Clicks", "");
                 clickGroup.Add(new NumberSetting("Clicks per second", "How fast should the bot attack?", 5, 1, 60, 1));
@@ -45,79 +42,8 @@ namespace MobAuraPlugin
     public enum Mode
     {
         Passive,
-        Aggresive
-    }
-
-    public class ResolvableNameCollection
-    {
-        public List<ResolvableName> Names = new List<ResolvableName>();
-        private int m_unresolved = 0;
-
-        public ResolvableNameCollection(string friendlyNames) {
-
-            if (!string.IsNullOrWhiteSpace(friendlyNames)) {
-
-                string[] friendlyArray;
-
-                //Check if multiple.
-                if (friendlyNames.Contains(' ')) friendlyArray = friendlyNames.Split(' ');
-                else friendlyArray = new[] {friendlyNames};
-
-                for (int i = 0; i < friendlyArray.Length; i++)
-                    if (friendlyArray[i].Length == 32 || friendlyArray[i].Length == 36)
-                        Add(new ResolvableName(friendlyArray[i].Replace("-", "")));
-                    else
-                        Add(new ResolvableName(friendlyArray[i], false));
-            }
-        }
-
-        public void Add(ResolvableName Name) {
-            if (Name == null || !Name.Resolved) {
-                m_unresolved += 1;
-                return; // Safety check.
-            }
-
-            this.Names.Add(Name);
-            Targeter.IgnoreList.Add(Name.Uuid);
-        }
-
-        public bool HasUnresolved() {
-            return m_unresolved > 0;
-        }
-
-        public void Resolve(IEntityList entities) {
-            for (int i = 0; i < Names.Count; i++)
-                if (!Names[i].Resolved) {
-                    if (Names[i].Resolve(entities))
-                        this.m_unresolved -= 1;
-                }
-        }
-    }
-
-    public class ResolvableName
-    {
-        public string Name;
-        public string Uuid;
-        public bool Resolved;
-
-        public ResolvableName(string Name, bool Resolved)
-        {
-            this.Name = Name;
-            this.Resolved = Resolved;
-        }
-        public ResolvableName(string Uuid)
-        {
-            this.Uuid = Uuid;
-            this.Resolved = true;
-        }
-
-        public bool Resolve(IEntityList entities)
-        {
-            this.Uuid = entities.FindUuidByName(Name)?.Uuid;
-            this.Resolved = this.Uuid != null;
-            if (this.Resolved)
-                Targeter.IgnoreList.Add(this.Uuid);
-            return this.Resolved;
-        }
+        Aggresive,
+        MovingPassive,
+        MovingAggresive
     }
 }

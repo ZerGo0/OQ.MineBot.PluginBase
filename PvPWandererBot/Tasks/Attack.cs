@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using OQ.MineBot.GUI.Protocol.Movement.Maps;
-using OQ.MineBot.PluginBase;
 using OQ.MineBot.PluginBase.Base.Plugin.Tasks;
 using OQ.MineBot.PluginBase.Classes;
 using OQ.MineBot.PluginBase.Classes.Base;
@@ -27,6 +25,8 @@ namespace PvPWandererPlugin.Tasks
         private int _hitTicks;
         private bool _busy;
         private bool _movingBusy;
+        private bool _wanderingBusy;
+        private IPosition _prevPos;
 
         private readonly Mode _mode;
         private readonly int  _cps;
@@ -42,6 +42,18 @@ namespace PvPWandererPlugin.Tasks
 
         public override void Start()
         {
+            player.events.onPlayerUpdate += EventsOnOnPlayerUpdate;
+        }
+
+        private void EventsOnOnPlayerUpdate(IStopToken cancel)
+        {
+            if (_sharedTarget == null)
+            {
+                Console.WriteLine("Searching for target!");
+                _sharedTarget = SearchTarget();
+            }
+            
+            Hit(_sharedTarget);
         }
 
         public override void Stop()
@@ -55,12 +67,6 @@ namespace PvPWandererPlugin.Tasks
 
         public void OnTick()
         {
-            if (_sharedTarget == null)
-            {
-                Console.WriteLine("Searching for target!");
-                _sharedTarget = SearchTarget();
-            }
-            
             if (!_movingBusy)
             {
                 if (_sharedTarget != null)
@@ -80,16 +86,31 @@ namespace PvPWandererPlugin.Tasks
                         _movingBusy = false;
                     });
                 }
+                else
+                {
+                    /*if (!_wanderingBusy)
+                    {
+                        var limit = 50000;
+                        var xRand = new Random().Next(limit / 2, limit);
+                        var zRand = new Random().Next(limit / 2, limit);
+                    
+                        MoveToTarget(new Location(xRand, player.status.entity.location.ToLocation().y, zRand), _wanderingBusy,
+                            () =>
+                        {
+                        
+                        });
+                    }*/
+                }
             }
             
-            Hit();
+            //Hit();
         }
 
         private ILiving SearchTarget()
         {
             var currentLoc = player.status.entity.location.ToLocation();
 
-            return player.entities.FindClosestPlayer(currentLoc.x, currentLoc.y, currentLoc.z);;
+            return player.entities.FindClosestPlayer(currentLoc.x, currentLoc.y, currentLoc.z);
         }
 
         private void MoveToTarget(ILocation targetLocation, Action callback)
@@ -120,7 +141,6 @@ namespace PvPWandererPlugin.Tasks
 
         private List<ILocation> RandomLocationNearTarget(ILocation targetLocation)
         {
-            //Console.WriteLine($"Target Loc: {targetLocation}");
             var targetLocationList = new List<ILocation>();
             for (var y = -3; y < 3; y++)
             {
@@ -128,58 +148,96 @@ namespace PvPWandererPlugin.Tasks
                 {
                     for (var x = -3; x < 3; x++)
                     {
-                        //Console.WriteLine($"Target Offset Loc: {targetLocation.Offset(x, y, z)}");
-                        if (player.world.IsWalkable(targetLocation.Offset(x, y, z)) &&
-                            targetLocation.Distance(targetLocation.Offset(x, y, z)) <= 4 &&
-                            IsLocationsDifferent(targetLocation, targetLocation.Offset(x, y, z)) &&
-                            player.world.IsVisible(targetLocation.Offset(x, y, z).ToPosition(), targetLocation))
+                        var tempLocation = targetLocation.Offset(x, y, z);
+                        if (player.world.IsWalkable(tempLocation) &&
+                            targetLocation.Distance(tempLocation) < 4 &&
+                            IsLocationsDifferent(targetLocation, tempLocation) &&
+                            player.world.IsVisible(tempLocation.ToPosition(), targetLocation))
                         {
-                            targetLocationList.Add(targetLocation.Offset(x, y, z));
+                            targetLocationList.Add(tempLocation);
                         }
                     }
                 }
             }
 
-            foreach (var possibleLoc in targetLocationList)
+            /*foreach (var possibleLoc in targetLocationList)
             {
                 Console.WriteLine($"Possible Target Offset Loc: {possibleLoc}");
-            }
+            }*/
 
             return targetLocationList;
         }
 
         private bool IsLocationsDifferent(ILocation loc1, ILocation loc2)
         {
-            return (loc1.x != loc2.x && loc1.y != loc2.y && loc1.z != loc2.z);
+            return (loc1.x != loc2.x && Math.Abs(loc1.y - loc2.y) > 0 && loc1.z != loc2.z);
+        }
+        
+        private bool IsPostionsDifferent(IPosition pos1, IPosition pos2)
+        {
+            return Math.Abs(pos1.X - pos2.X) > 0 && Math.Abs(pos1.Y - pos2.Y) > 0 && Math.Abs(pos1.Z - pos2.Z) > 0;
+        }
+        
+        private bool HasValue(double value)
+        {
+            return !double.IsNaN(value) && !double.IsInfinity(value);
         }
 
-        private void Hit()
+        private IPosition CalculateVelocity(IPosition currentPos, IPosition prevPos)
+        {
+            if (prevPos == null)
+            {
+                //Console.WriteLine("Test");
+                _prevPos = new Position(currentPos.X, currentPos.Y, currentPos.Z);
+                return null;
+            }
+            //.WriteLine($"Curr {currentPos} | Prev {prevPos}");
+            
+            var posDiffX = currentPos.X - prevPos.X;
+            var posDiffY = currentPos.Y - prevPos.Y;
+            var posDiffZ = currentPos.Z - prevPos.Z;
+            //Console.WriteLine($"DiffX: {posDiffX} | DiffY: {posDiffY} | DiffZ: {posDiffZ}");
+            
+            var magicValue = Math.Sqrt(posDiffX * posDiffX + posDiffY * posDiffY + posDiffZ * posDiffZ);
+
+            var veloX = posDiffX / magicValue;
+            var veloY = posDiffY / magicValue;
+            var veloZ = posDiffZ / magicValue;
+            
+            if (HasValue(veloX) || HasValue(veloY) || HasValue(veloZ))
+                Console.WriteLine($"VelX: {veloX} | VelY: {veloY} | VelZ: {veloZ} | test: {magicValue}");
+                
+            _prevPos = new Position(currentPos.X, currentPos.Y, currentPos.Z);
+            
+            return new Position(veloX, veloY, veloZ);
+        }
+
+        private void Hit(IEntity target)
         {
             var currentLoc = player.status.entity.location.ToLocation();
+
+            if (target == null) return;
             
-            if (_sharedTarget != null) {
+            actions.LookAt(target.location.Offset(new Position(0, .65, 0)), true);
+
+            if (_mode == Mode.Passive)
+            {
+                //Visibility Check
+                if (!player.world.IsVisible(currentLoc.ToPosition(), target.location.ToLocation(1))) return;
+
+                if (currentLoc.Distance(target.location.ToLocation()) > 4) return;
+            }
                 
-                if (_mode == Mode.Passive)
-                {
-                    //Visibility Check
-                    if (!player.world.IsVisible(currentLoc.ToPosition(), _sharedTarget.location.ToLocation(1))) return;
+            if(_autoWeapon) actions.EquipWeapon();
+            // 1 hit tick is about 50 ms.
+            _hitTicks++;
+            int ms = _hitTicks * 50;
 
-                    if (currentLoc.Distance(_sharedTarget.location.ToLocation()) > 4) return;
-                }
-
-                if(_autoWeapon) actions.EquipWeapon();
-                actions.LookAt(_sharedTarget.location.Offset(new Position(0, 1.65, 0)), true);
-                
-                // 1 hit tick is about 50 ms.
-                _hitTicks++;
-                int ms = _hitTicks * 50;
-
-                if (ms >= (1000 / _cps)) {
+            if (ms >= (1000 / _cps)) {
                     
-                    _hitTicks = 0; //Hitting, reset tick counter.
-                    
-                    actions.EntityAttack(_sharedTarget.entityId);
-                }
+                _hitTicks = 0; //Hitting, reset tick counter.
+                if (Rnd.Next(1, 101) < _ms) actions.PerformSwing(); //Miss.
+                else actions.EntityAttack(target.entityId); //Hit.
             }
         }
     }

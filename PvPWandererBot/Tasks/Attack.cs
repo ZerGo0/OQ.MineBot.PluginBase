@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using OQ.MineBot.GUI.Protocol.Movement.Maps;
 using OQ.MineBot.PluginBase;
 using OQ.MineBot.PluginBase.Base.Plugin.Tasks;
 using OQ.MineBot.PluginBase.Classes;
 using OQ.MineBot.PluginBase.Classes.Base;
 using OQ.MineBot.PluginBase.Classes.Entity;
+using OQ.MineBot.PluginBase.Movement.Maps;
 using OQ.MineBot.Protocols.Classes.Base;
 
 namespace PvPWandererPlugin.Tasks
@@ -19,9 +21,11 @@ namespace PvPWandererPlugin.Tasks
 
         private static readonly MapOptions Mo = new MapOptions
         {
+            AntiStuck = true,
             Look = false,
             Quality = SearchQuality.HIGHEST,
-            Mine = false
+            Mine = false,
+            Strict = true
         };
         
         private int _hitTicks;
@@ -46,7 +50,6 @@ namespace PvPWandererPlugin.Tasks
 
         public override void Stop()
         {
-            _sharedTarget = null;
         }
 
         public override bool Exec() {
@@ -57,8 +60,11 @@ namespace PvPWandererPlugin.Tasks
         {
             if (_sharedTarget == null)
             {
-                Console.WriteLine("Searching for target!");
-                _sharedTarget = SearchTarget();
+                //Console.WriteLine("Searching for target!");
+                var test = SearchClosestTarget(player.status.entity.location.ToLocation(), 3);
+
+                var keyValuePairs = test.ToList();
+                if (keyValuePairs.Any()) _sharedTarget = keyValuePairs.First().Value;
             }
             
             if (!_movingBusy)
@@ -69,53 +75,78 @@ namespace PvPWandererPlugin.Tasks
                     if (rndLocList.Count < 1)
                     {
                         _sharedTarget = null;
-                        _movingBusy = false;
+                        //MoveToTarget(_sharedTarget.location.ToLocation(), (b, map) => { _movingBusy = false; });
                         return;
                     }
                 
                     var rndLocationCount = new Random().Next(0, rndLocList.Count);
                 
-                    MoveToTarget(rndLocList[rndLocationCount], () => 
-                    {
-                        _movingBusy = false;
-                    });
+                    MoveToTarget(rndLocList[rndLocationCount], (b, map) => { _movingBusy = false; });
+                }
+                else
+                {
+                    //No target found, wandering stuff here
+                    var wanderLimit = 25; //4096*4
+                    var rnd = new Random();
+                    var rndX = rnd.Next(-wanderLimit, wanderLimit);
+                    var rndY = rnd.Next(-wanderLimit, wanderLimit);
+
+                    var currentloc = player.status.entity.location.ToLocation();
+                    
+                    Console.WriteLine($"{rndX} | {rndY}");
+
+                    MoveToTarget(new Location(currentloc.x + rndX, currentloc.y - 1, currentloc.z + rndY),
+                        (b, map) => { _movingBusy = false; });
                 }
             }
             
             Hit();
         }
 
-        private ILiving SearchTarget()
+        private IEnumerable<KeyValuePair<double, ILiving>> SearchClosestTarget(ILocation currentLoc, int areaAroundTarget)
         {
-            var currentLoc = player.status.entity.location.ToLocation();
+            var targetDic = new Dictionary<double, ILiving>();
+            foreach (var target in player.entities.playerList)
+            {
+                var targetLocation = target.Value.location.ToLocation();
+                var distanceToEnemy = player.status.entity.location.Distance(target.Value.location);
 
-            return player.entities.FindClosestPlayer(currentLoc.x, currentLoc.y, currentLoc.z);;
+                var possibleToPath = false;
+                for (var y = -areaAroundTarget; y < areaAroundTarget; y++)
+                {
+                    for (var z = -areaAroundTarget; z < areaAroundTarget; z++)
+                    {
+                        for (var x = -areaAroundTarget; x < areaAroundTarget; x++)
+                        {
+                            //Console.WriteLine($"Target Offset Loc: {targetLocation.Offset(x, y, z)}");
+                            if (!player.world.IsWalkable(targetLocation.Offset(x, y, z)) ||
+                                !(targetLocation.Distance(targetLocation.Offset(x, y, z)) <= 4) ||
+                                !player.world.IsVisible(targetLocation.Offset(x, y, z).ToPosition(), targetLocation))
+                                continue;
+                            
+                            possibleToPath = true;
+                            break;
+                        }
+                    }
+                }
+                
+                if (possibleToPath) targetDic.Add(distanceToEnemy, target.Value);
+            }
+
+            //var closestTarget = targetDic.Aggregate((l, r) => l.Key < r.Key ? l : r);
+
+            return targetDic.OrderBy(key => key.Key);
         }
 
-        private void MoveToTarget(ILocation targetLocation, Action callback)
+        private void MoveToTarget(ILocation targetLocation, Action<bool, IAreaMap> callback)
         {
-            var cancelToken = new CancelToken();
-
-            _movingBusy = true;
-
-            var targetMoveToLocation = actions.AsyncMoveToLocation(targetLocation, cancelToken, Mo);
-
-            targetMoveToLocation.Completed += areaMap => { callback(); };
-            targetMoveToLocation.Cancelled += (areaMap, cuboid) =>
-            {
-                _movingBusy = false;
-                cancelToken.Stop();
+            var map = actions.AsyncMoveToLocation(targetLocation, token, Mo);
+            _movingBusy = map.Start();
+            map.Completed += areaMap => {
+                callback(true, areaMap);
             };
-
-            if (!targetMoveToLocation.Start())
-            {
-                _movingBusy = false;
-                cancelToken.Stop();
-            }
-            else
-            {
-                _movingBusy = true;
-            }
+            map.Cancelled += (areaMap, cuboid) => { _movingBusy = false; };
+            if (!map.Valid) /*actions.LookAtBlock(location)*/;
         }
 
         private List<ILocation> RandomLocationNearTarget(ILocation targetLocation)
@@ -150,7 +181,7 @@ namespace PvPWandererPlugin.Tasks
 
         private bool IsLocationsDifferent(ILocation loc1, ILocation loc2)
         {
-            return (loc1.x != loc2.x && loc1.y != loc2.y && loc1.z != loc2.z);
+            return (loc1.x != loc2.x && Math.Abs(loc1.y - loc2.y) > 0 && loc1.z != loc2.z);
         }
 
         private void Hit()
@@ -168,7 +199,7 @@ namespace PvPWandererPlugin.Tasks
                 }
 
                 if(_autoWeapon) actions.EquipWeapon();
-                actions.LookAt(_sharedTarget.location.Offset(new Position(0, 1.65, 0)), true);
+                actions.LookAt(_sharedTarget.location.Offset(new Position(0, .65, 0)), true);
                 
                 // 1 hit tick is about 50 ms.
                 _hitTicks++;

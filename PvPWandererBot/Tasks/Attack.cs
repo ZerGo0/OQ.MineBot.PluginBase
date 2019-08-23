@@ -168,6 +168,7 @@ namespace PvPWandererPlugin.Tasks
 
                     _movingBusy = true;
                     
+                    //TODO: Add a check to see if we need to enable segmented paths 
                     //Move to the target
                     MoveToTarget(rndLocList[rndLocationCount],
                         busyState => _movingBusy = busyState, () => { _movingBusy = false; });

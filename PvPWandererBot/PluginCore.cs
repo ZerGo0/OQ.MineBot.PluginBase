@@ -31,7 +31,6 @@ namespace PvPWandererPlugin
         }
 
         public override void OnStart() {
-
             var clickGroup = (IParentSetting)Setting.Get("Clicks");
             var equipmentGroup = (IParentSetting)Setting.Get("Equipment");
 

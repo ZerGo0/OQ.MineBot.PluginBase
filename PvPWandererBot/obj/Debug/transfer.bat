@@ -1,0 +1,1 @@
+xcopy /s/Y "G:\SourceCodes\OQ.MineBot.Plugins\PvPWandererBot\obj\Debug\PvPWandererPlugin.dll" "C:\Users\Faven\Desktop\Minebot\plugins"

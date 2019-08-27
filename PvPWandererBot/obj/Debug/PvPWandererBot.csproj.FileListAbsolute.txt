@@ -1,8 +1,6 @@
 G:\Minebot\plugins\PvPWandererPlugin.dll
 G:\Minebot\plugins\PvPWandererPlugin.pdb
-G:\SourceCodes\OQ.MineBot.Plugins\PvPWandererBot\obj\Debug\PvPWandererBot.csprojAssemblyReference.cache
 G:\SourceCodes\OQ.MineBot.Plugins\PvPWandererBot\obj\Debug\PvPWandererBot.csproj.CoreCompileInputs.cache
-G:\SourceCodes\OQ.MineBot.Plugins\PvPWandererBot\obj\Debug\PvPWandererBot.csproj.CopyComplete
 G:\SourceCodes\OQ.MineBot.Plugins\PvPWandererBot\obj\Debug\PvPWandererPlugin.dll
 G:\SourceCodes\OQ.MineBot.Plugins\PvPWandererBot\obj\Debug\PvPWandererPlugin.pdb
 D:\Minebot\plugins\PvPWandererPlugin.dll
@@ -12,3 +10,4 @@ D:\SourceCodes\OQ-PvP-Bot\ZerGo0.PvPBot\obj\Debug\PvPWandererBot.csproj.CoreComp
 D:\SourceCodes\OQ-PvP-Bot\ZerGo0.PvPBot\obj\Debug\PvPWandererBot.csproj.CopyComplete
 D:\SourceCodes\OQ-PvP-Bot\ZerGo0.PvPBot\obj\Debug\PvPWandererPlugin.dll
 D:\SourceCodes\OQ-PvP-Bot\ZerGo0.PvPBot\obj\Debug\PvPWandererPlugin.pdb
+G:\SourceCodes\OQ.MineBot.Plugins\PvPWandererBot\obj\Debug\PvPWandererBot.csprojResolveAssemblyReference.cache

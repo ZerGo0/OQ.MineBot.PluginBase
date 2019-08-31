@@ -1,1 +1,1 @@
-xcopy /s/Y "G:\SourceCodes\OQ.MineBot.Plugins\PvPWandererBot\obj\Debug\PvPWandererPlugin.dll" "C:\Users\Faven\Desktop\Minebot\plugins"
+xcopy /s/Y "G:\SourceCodes\OQ.MineBot.Plugins\PvPWandererBot\obj\Debug\PvPBotPlugin.dll" "C:\Users\Faven\Desktop\Minebot\plugins"

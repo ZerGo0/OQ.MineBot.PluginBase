@@ -3,25 +3,30 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+
 using OQ.MineBot.GUI.Protocol.Movement.Maps;
 using OQ.MineBot.PluginBase.Base.Plugin.Tasks;
 using OQ.MineBot.PluginBase.Classes;
 using OQ.MineBot.PluginBase.Classes.Base;
 using OQ.MineBot.PluginBase.Classes.Entity;
 using OQ.MineBot.PluginBase.Classes.Entity.Player;
-using OQ.MineBot.PluginBase.Movement.Maps;
 using OQ.MineBot.Protocols.Classes.Base;
 
-namespace PvPWandererPlugin.Tasks
+namespace PvPBotPlugin.Tasks
 {
     public class Attack : ITask, ITickListener
     {
-        private static readonly Random Rnd = new Random();
-        private static IPlayerEntity _sharedTarget;
-        private static List<ILocation> _sharedTargetLocations = new List<ILocation>();
-        private static ConcurrentDictionary<string, bool> _sharedTargetLoaded = new ConcurrentDictionary<string, bool>();
-        
-        private static readonly MapOptions WanderingMapOptions = new MapOptions
+        private static readonly Random _RND = new Random();
+        public static IPlayerEntity SharedTarget;
+        public static List<ILocation> SharedTargetLocations = new List<ILocation>();
+
+        public static ConcurrentDictionary<string, bool> SharedTargetLoaded =
+            new ConcurrentDictionary<string, bool>();
+
+        public static ConcurrentDictionary<string, bool> SharedTargetReachable =
+            new ConcurrentDictionary<string, bool>();
+
+        private static readonly MapOptions _WANDERING_MAP_OPTIONS = new MapOptions
         {
             Swim = true,
             SafeMove = true,
@@ -31,7 +36,7 @@ namespace PvPWandererPlugin.Tasks
             Mine = false
         };
 
-        private static readonly MapOptions TargetingMapOptions = new MapOptions
+        private static readonly MapOptions _TARGETING_SEG_MAP_OPTIONS = new MapOptions
         {
             Swim = true,
             SafeMove = true,
@@ -42,14 +47,21 @@ namespace PvPWandererPlugin.Tasks
             Segment = true
         };
 
-        private readonly bool _autoWeapon;
-        private readonly int _cps;
+        private static readonly MapOptions _TARGETING_MAP_OPTIONS = new MapOptions
+        {
+            Swim = true,
+            SafeMove = true,
+            AntiStuck = true,
+            Look = true,
+            Quality = SearchQuality.HIGHEST,
+            Mine = false,
+            Segment = false
+        };
+
 
         private readonly ConcurrentDictionary<ILocation, DateTime> _invalidLocations =
             new ConcurrentDictionary<ILocation, DateTime>();
 
-        private readonly Mode _mode;
-        private readonly int _ms;
         private bool _busy;
 
         private int _hitTicks;
@@ -61,17 +73,23 @@ namespace PvPWandererPlugin.Tasks
         private bool _wanderingBusy;
         private readonly Stopwatch _sharedInvalidTimer = new Stopwatch();
 
-        public Attack(Mode mode, int cps, int ms, bool autoWeapon)
+        private readonly int _mode;
+        private readonly int _cps;
+        private readonly int _missRate;
+        private readonly List<string> _whitelistedTargets;
+        private readonly bool _autoWeapon;
+
+        public Attack(int mode, int cps, int missRate, List<string> whitelistedTargets, bool autoWeapon)
         {
             _mode = mode;
             _cps = cps;
-            _ms = ms;
+            _missRate = missRate;
+            _whitelistedTargets = whitelistedTargets;
             _autoWeapon = autoWeapon;
         }
-        
+
         public override void Start()
         {
-            _sharedTarget = null;
             player.events.onPlayerUpdate += EventsOnOnPlayerUpdate;
 
             CleanInvalidLocations();
@@ -92,145 +110,142 @@ namespace PvPWandererPlugin.Tasks
         {
             return !status.entity.isDead && !status.eating && !_busy;
         }
-        
+
         //This runs before OnTick()
         private void EventsOnOnPlayerUpdate(IStopToken cancel)
         {
-            if (_sharedInvalidTimer.ElapsedMilliseconds >= 1000)
+            UpdateTarget();
+
+            if (_sharedInvalidTimer.ElapsedMilliseconds >= 100)
             {
                 CleanInvalidLocations();
                 _sharedInvalidTimer.Restart();
             }
 
-            if (player.entities.IsBot(_sharedTarget?.uuid) || player.entities.IsBot(_localTarget?.uuid))
+            if (player.entities.IsBot(SharedTarget?.uuid) || player.entities.IsBot(_localTarget?.uuid))
             {
                 _localTarget = null;
-                _sharedTarget = null;
+                SharedTarget = null;
             }
 
             if (_localTarget != null)
             {
-                Console.WriteLine($"{player.status.username}: _shared loaded: {_localTarget.unloaded}");
-                if (player.status.entity.location.Distance(_localTarget.location) >= 4) return;
+                if (player.status.entity.location.Distance(_localTarget.location) > 4) return;
 
                 Hit(_localTarget);
             }
-
-            UpdateTarget();
         }
 
         public void OnTick()
         {
-            if (_localTarget == null && _sharedTarget != null) _localTarget = _sharedTarget;
-            
             var rndLocList = new List<ILocation>();
 
-            #region Target Selector and Validator
-            
-            if (_sharedTarget == null || _localTarget == null)
+#region Target Selector and Validator
+
+            if (SharedTarget == null || _localTarget == null)
             {
                 //We already have a _sharedTarget, copying it to _localTarget and checking reachable block nearby
-                if (_sharedTarget != null && _sharedTarget != _localTarget)
+                if (SharedTarget != null && SharedTarget != _localTarget)
                 {
-                    _localTarget = _sharedTarget;
+                    //NOTE: Also returns "null" if the entity isn't rendered.
+                    _localTarget = (IPlayerEntity) player.entities.GetEntity(SharedTarget.entityId);
 
-                    //Console.WriteLine($"{player.status.username}: Test");
-                    
                     if (_localTarget != null)
                     {
-                        //We got a new target, let's check if it it has any possible blocks around it
-                        rndLocList = _sharedTargetLocations;
-                        
-                        //If the target is out of render distance then this will be 0...
                         //target has no possible blocks around it, resseting everything
-                        if (rndLocList?.Count < 1)
+                        if (SharedTargetLocations?.Count < 1)
                         {
+                            SharedTargetReachable?.TryRemove(player.status.uuid, out _);
+
                             _localTarget = null;
-                            _sharedTarget = null;
+                            SharedTarget = null;
+                            SharedTargetLocations = new List<ILocation>();
                             _movingBusy = false;
-                            //_wanderingBusy = false;
-                            //_scanningRndLocations = false;
-                            
-                            //_stopToken?.Stop();
-                            
-                            rndLocList = null;
-                            //TODO: this is probably causing issues, needs to be tested
-                            //_rndWanderingLocations = null;
                         }
+                    }
+                    else
+                    {
+                        _localTarget = SharedTarget;
                     }
                 }
                 else
                 {
                     //Array of all possible enemy in render distance
-                    var closestPlayerkeyValuePairs = SearchClosestTarget(player.status.entity.location, 3);
-
-                    var closestPlayerList = closestPlayerkeyValuePairs?.ToList();
+                    var closestPlayerList = SearchClosestTarget(player.status.entity.location, 3)?.ToList();
 
                     //Just choosing the first player in render distance right now
-                    if (closestPlayerList?.First().Value != null && 
-                        closestPlayerList.First().Value != _sharedTarget)
+                    if (closestPlayerList != null && closestPlayerList.Count > 0)
                     {
                         //Using the first possible enemy for now
-                        if (closestPlayerList.Any()) _sharedTarget = closestPlayerList.First().Value;
+                        if (closestPlayerList.Any()) SharedTarget = closestPlayerList.First().Value;
 
-                        if (_sharedTarget != null)
+                        if (SharedTarget != null)
                         {
                             //We got a new target, let's check if it it has any possible blocks around it
-                            _sharedTargetLocations = RandomLocationNearTarget(_sharedTarget.location.ToLocation());
+                            SharedTargetLocations = RandomLocationNearTarget(SharedTarget);
 
-                            if (!_sharedTarget.unloaded)
-                                _sharedTargetLoaded.TryAdd(player.status.uuid, !_sharedTarget.unloaded);
-                            
                             //target has no possible blocks around it, resseting everything
-                            if (_sharedTargetLocations.Count < 1)
+                            if (SharedTargetLocations.Count < 1)
                             {
                                 _localTarget = null;
-                                //_sharedTarget = null;
+                                SharedTarget = null;
+                                SharedTargetLocations = new List<ILocation>();
+                                SharedTargetReachable = new ConcurrentDictionary<string, bool>();
+                                SharedTargetLoaded = new ConcurrentDictionary<string, bool>();
                                 _movingBusy = false;
-                                //_wanderingBusy = false;
-                                //_scanningRndLocations = false;
-                            
-                                //_stopToken?.Stop();
-                            
-                                _sharedTargetLocations = new List<ILocation>();
                             }
                             else
                             {
-                                _localTarget = _sharedTarget;
-                                rndLocList = _sharedTargetLocations;
+                                SharedTargetLoaded.TryAdd(player.status.uuid, true);
+                                SharedTargetReachable.TryAdd(player.status.uuid, true);
+
+                                _localTarget = SharedTarget;
                             }
                         }
                     }
                 }
             }
 
-            #endregion
+#endregion
 
             //The target is either not reachable or out of renderdistance
             if (_localTarget != null)
             {
+                var targetingMapOptions = _TARGETING_MAP_OPTIONS;
                 //We got a new target, let's check if it it has any possible blocks around it
-                if (rndLocList != null && _sharedTargetLocations.Count < 1) 
-                    rndLocList = RandomLocationNearTarget(_localTarget.location.ToLocation());
+                if (SharedTargetLocations != null && SharedTargetLocations.Count < 1)
+                    rndLocList = RandomLocationNearTarget(_localTarget);
 
-                if (_sharedTargetLocations.Count > 1) rndLocList = _sharedTargetLocations;
-                
-                if (rndLocList?.Count < 1)
+                if (SharedTargetLocations != null && SharedTargetLocations.Count > 1)
                 {
-                    _localTarget = null;
-                    _sharedTarget = null;
-                    _movingBusy = false;
-                    //_wanderingBusy = false;
-                    //_scanningRndLocations = false;
-                    
-                    //_stopToken?.Stop();
-                    
-                    rndLocList = null;
-                    //TODO: this is probably causing issues, needs to be tested
-                    //_rndWanderingLocations = null;
+                    var tempLocalPlayer = player.entities.GetPlayer(_localTarget.entityId);
+
+                    if (RandomLocationNearTarget(_localTarget).Count < 1 &&
+                        tempLocalPlayer == null ||
+                        RandomLocationNearTarget(_localTarget).Count < 1 &&
+                        tempLocalPlayer != null && tempLocalPlayer.unloaded)
+                    {
+                        rndLocList = SharedTargetLocations;
+                        targetingMapOptions = _TARGETING_SEG_MAP_OPTIONS;
+                    }
+                    else
+                    {
+                        rndLocList = RandomLocationNearTarget(_localTarget);
+                    }
                 }
 
-                if (rndLocList?.Count > 1 && !_movingBusy)
+                if (rndLocList?.Count < 1)
+                {
+                    SharedTargetReachable?.TryRemove(player.status.uuid, out _);
+
+                    _localTarget = null;
+                    SharedTarget = null;
+                    SharedTargetLocations = new List<ILocation>();
+                    _movingBusy = false;
+                    rndLocList = null;
+                }
+
+                if (rndLocList?.Count > 0 && !_movingBusy)
                 {
                     //Pick a random Loc around the target
                     var rndLocationCount = new Random().Next(0, rndLocList.Count);
@@ -239,19 +254,23 @@ namespace PvPWandererPlugin.Tasks
                     {
                         if (_wanderingBusy || _scanningRndLocations || _rndWanderingLocations?.Count > 0)
                         {
+                            //Stop pathing if we are actually pathing somewhere
                             _stopToken?.Stop();
+
                             _wanderingBusy = false;
                             _scanningRndLocations = false;
-                            
-                            //Reset _rndWanderingLocations since we trying to path to the target
-                            //maybe not a good idea
                             _rndWanderingLocations = new List<ILocation>();
                         }
 
+                        if (SharedTarget != null && !SharedTarget.unloaded)
+                            SharedTargetLoaded.TryAdd(player.status.uuid, !SharedTarget.unloaded);
+
+                        SharedTargetReachable?.TryAdd(player.status.uuid, true);
+
                         _movingBusy = true;
-                        
+
                         //Move to the target
-                        MoveToTarget(rndLocList[rndLocationCount], TargetingMapOptions,
+                        MoveToTarget(rndLocList[rndLocationCount], targetingMapOptions, 30,
                             busyState => _movingBusy = busyState, () =>
                             {
                                 {
@@ -262,13 +281,13 @@ namespace PvPWandererPlugin.Tasks
                         return;
                     }
                 }
-                
+
                 if (_movingBusy) return;
             }
 
             if (!_wanderingBusy && rndLocList?.Count < 1 && !_movingBusy)
             {
-                if (_rndWanderingLocations == null || _rndWanderingLocations.Count < 1 && !_scanningRndLocations)
+                if (!_scanningRndLocations && (_rndWanderingLocations == null || _rndWanderingLocations?.Count < 1))
                 {
                     _scanningRndLocations = true;
                     var currentLoc = player.status.entity.location.ToLocation();
@@ -276,46 +295,38 @@ namespace PvPWandererPlugin.Tasks
                     var rndArea = rnd.Next(25, 50);
                     var rndHeight = rnd.Next(5, 10);
 
-                    /*var timer = new Stopwatch();
-                    timer.Start();*/
                     FindRandomWanderingLocation(currentLoc, rndArea, rndHeight, locations =>
                     {
-                        /*timer.Stop();
-                        Console.WriteLine(
-                            $"{player.status.username}: {timer.ElapsedMilliseconds}ms | {locations.Count} locs");*/
+                        _scanningRndLocations = false;
+
                         if (locations.Count < 1)
                         {
                             _wanderingBusy = false;
-                            _scanningRndLocations = false;
                             _rndWanderingLocations = new List<ILocation>();
                             return;
                         }
 
                         _rndWanderingLocations = locations;
-                        _scanningRndLocations = false;
                     });
                 }
 
-                if (_rndWanderingLocations != null && (_rndWanderingLocations.Count > 0 && !_scanningRndLocations))
+                if (_rndWanderingLocations != null && _rndWanderingLocations.Count > 0 && !_scanningRndLocations)
                 {
                     var rndLocInt = new Random().Next(0, _rndWanderingLocations.Count);
                     var rndLoc = _rndWanderingLocations[rndLocInt];
+                    _rndWanderingLocations.Remove(rndLoc);
 
+                    //NOTE: Kinda redutent I think ^^
                     if (!player.world.IsWalkable(rndLoc) || _invalidLocations.ContainsKey(rndLoc))
                     {
                         _wanderingBusy = false;
-                        if (_invalidLocations.ContainsKey(rndLoc) && !_rndWanderingLocations.Contains(rndLoc))
-                            return;
-
-                        _rndWanderingLocations.Remove(rndLoc);
-                        InvalidateLocation(rndLoc, 5);
+                        if (!_invalidLocations.ContainsKey(rndLoc)) InvalidateLocation(rndLoc, 5);
                         return;
                     }
 
                     _wanderingBusy = true;
-                    _rndWanderingLocations.Remove(rndLoc);
 
-                    MoveToTarget(rndLoc, WanderingMapOptions, busyState => _wanderingBusy = busyState,
+                    MoveToTarget(rndLoc, _WANDERING_MAP_OPTIONS, 5, busyState => _wanderingBusy = busyState,
                         () => { _wanderingBusy = false; });
                 }
             }
@@ -357,15 +368,13 @@ namespace PvPWandererPlugin.Tasks
                                 locations.Add(yMinusTempLoc);
                         }
 
-                    //Console.WriteLine($"Curr Height: {currentHeight} | yPlus: {yPlus} | yMinus: {yMinus} | HeightOff: {heightOffset}");
-
                     heightOffset++;
 
                     if (stopwatch.ElapsedMilliseconds >= maxMs) break;
                 }
 
                 if (heightOffset < scanAreaHeight) return;
-                
+
                 _stopToken?.Stop();
                 callback(locations);
             });
@@ -406,7 +415,7 @@ namespace PvPWandererPlugin.Tasks
             return targetDic.Count <= 0 ? null : targetDic.OrderBy(key => key.Key);
         }
 
-        private void MoveToTarget(ILocation targetLocation, MapOptions mapOptions, Action<bool> busyState,
+        private void MoveToTarget(ILocation targetLocation, MapOptions mapOptions, int timeOut, Action<bool> busyState,
             Action callback)
         {
             if (_invalidLocations.ContainsKey(targetLocation))
@@ -416,9 +425,9 @@ namespace PvPWandererPlugin.Tasks
                 _stopToken?.Stop();
                 return;
             }
-            
+
             busyState(true);
-            
+
             _stopToken = new CancelToken();
 
             var map = actions.AsyncMoveToLocation(targetLocation, _stopToken, mapOptions);
@@ -435,9 +444,8 @@ namespace PvPWandererPlugin.Tasks
 
                 if (_stopToken.stopped) return;
 
-                //Only invalidate a location if we can't actually path to it
-                //Console.WriteLine($"Invalided Loc: {map.Target}");
-                if (!_invalidLocations.ContainsKey(map.Target)) InvalidateLocation(map.Target, 5);
+                //Only invaliddate a location if we can't actually path to it
+                if (!_invalidLocations.ContainsKey(map.Target)) InvalidateLocation(map.Target, timeOut);
                 _stopToken?.Stop();
             };
 
@@ -448,86 +456,30 @@ namespace PvPWandererPlugin.Tasks
                 if (_stopToken.stopped) return;
 
                 //Only invalidate a location if we can't actually path to it
-                if (!_invalidLocations.ContainsKey(map.Target)) InvalidateLocation(map.Target, 5);
+                if (!_invalidLocations.ContainsKey(map.Target)) InvalidateLocation(map.Target, timeOut);
                 _stopToken?.Stop();
             }
             else
             {
                 busyState(true);
             }
-
-            //Console.WriteLine($"Target Loc: {map.Target}");
-        }
-        
-        private IAsyncMap TestMovement(IEntity target, MapOptions mapOptions, Action<bool> busyState,
-            Action callback)
-        {
-            busyState(true);
-            
-            _stopToken = new CancelToken();
-
-            var map = actions.AsyncMoveToEntity(target, _stopToken, mapOptions);
-            map.Completed += areaMap =>
-            {
-                callback();
-
-                if (_invalidLocations.ContainsKey(map.Target)) _invalidLocations.TryRemove(map.Target, out _);
-            };
-
-            map.WaypointReached += areaMap =>
-            {
-                if (map.Target != target.location)
-                {
-                    map.Token.Stop();
-                    TestMovement(target, mapOptions, busyState, callback);
-                }
-            };
-
-            map.Cancelled += (areaMap, cuboid) =>
-            {
-                /*if (map.Target != target.location)
-                {
-                    map.Token.Stop();
-                    TestMovement(target, mapOptions, busyState, callback);
-                }*/
-            };
-
-            map.ChangeDetected += (areaMap, cuboid) => { Console.WriteLine("map.ChangeDetected"); };
-
-            map.Recalculated += (areaMap, found) => { Console.WriteLine("map.Recalculated"); };
-            
-            if (!map.Start())
-            {
-                busyState(false);
-
-                if (_stopToken.stopped) return null;;
-
-                //Only invalidate a location if we can't actually path to it
-                //if (!_invalidLocations.ContainsKey(map.Target)) InvalidateLocation(map.Target);
-                _stopToken?.Stop();
-            }
-            else
-            {
-                busyState(true);
-            }
-
-            //Console.WriteLine($"Target Loc: {map.Target}");
-            return map;
         }
 
-        private List<ILocation> RandomLocationNearTarget(ILocation targetLocation)
+        private List<ILocation> RandomLocationNearTarget(IPlayerEntity target)
         {
             var targetLocationList = new List<ILocation>();
+            var targetLocation = target.location.ToLocation();
             for (var y = -3; y <= 3; y++)
             for (var z = -3; z <= 3; z++)
             for (var x = -3; x <= 3; x++)
             {
                 var tempLocation = targetLocation.Offset(x, y, z);
                 if (player.world.IsWalkable(tempLocation) &&
-                    targetLocation.Distance(tempLocation) <= 4 &&
+                    targetLocation.Distance(tempLocation) < 4 &&
                     IsLocationsDifferent(targetLocation, tempLocation) &&
                     player.world.IsVisible(tempLocation.ToPosition(), targetLocation) &&
-                    !_invalidLocations.ContainsKey(tempLocation))
+                    !_invalidLocations.ContainsKey(tempLocation) &&
+                    !_whitelistedTargets.Contains(player.entities.FindNameByUuid(target.uuid).Name))
                     targetLocationList.Add(tempLocation);
             }
 
@@ -545,8 +497,7 @@ namespace PvPWandererPlugin.Tasks
 
             if (_autoWeapon) actions.EquipWeapon();
             actions.LookAt(target.location.Offset(new Position(0, .65, 0)), true);
-
-            if (_autoWeapon) actions.EquipWeapon();
+            
             // 1 hit tick is about 50 ms.
             _hitTicks++;
             var ms = _hitTicks * 50;
@@ -554,7 +505,7 @@ namespace PvPWandererPlugin.Tasks
             if (ms >= 1000 / _cps)
             {
                 _hitTicks = 0; //Hitting, reset tick counter.
-                if (Rnd.Next(1, 101) < _ms) actions.PerformSwing(); //Miss.
+                if (_RND.Next(1, 101) < _missRate) actions.PerformSwing(); //Miss.
                 else actions.EntityAttack(target.entityId); //Hit.
             }
         }
@@ -562,7 +513,7 @@ namespace PvPWandererPlugin.Tasks
         //Add a cooldown to the current location if we can't path to it.
         private void InvalidateLocation(ILocation location, int timeOut)
         {
-            //Add location as invalid for 5 Seconds
+            //Add location as invalid for "timeOut" Seconds
             if (location != null && !_invalidLocations.ContainsKey(location))
                 _invalidLocations.TryAdd(location, DateTime.Now.AddSeconds(timeOut));
         }
@@ -575,11 +526,36 @@ namespace PvPWandererPlugin.Tasks
 
             foreach (var deleteableLoc in deleteList) _invalidLocations.TryRemove(deleteableLoc, out _);
         }
-        
+
         private void UpdateTarget()
         {
-            if (_sharedTarget != null && _sharedTarget.unloaded)
-                _sharedTargetLoaded.TryRemove(player.status.uuid, out _);
+            if (SharedTarget == null || SharedTarget.unloaded)
+            {
+                SharedTargetLoaded.TryRemove(player.status.uuid, out _);
+            }
+
+            if (SharedTargetLoaded.Count < 1 || SharedTargetReachable?.Count < 1)
+            {
+                SharedTarget = null;
+                _localTarget = null;
+                SharedTargetLocations = new List<ILocation>();
+                SharedTargetLoaded = new ConcurrentDictionary<string, bool>();
+                SharedTargetReachable = new ConcurrentDictionary<string, bool>();
+
+                if (_movingBusy)
+                {
+                    _movingBusy = false;
+                    _stopToken.Stop();
+                }
+            }
+
+            if (SharedTarget != null)
+            {
+                if (RandomLocationNearTarget(SharedTarget).Count < 1)
+                    SharedTargetReachable?.TryRemove(player.status.uuid, out _);
+                else
+                    SharedTargetReachable?.TryAdd(player.status.uuid, true);
+            }
         }
     }
 }

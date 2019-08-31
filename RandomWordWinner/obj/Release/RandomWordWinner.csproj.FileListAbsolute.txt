@@ -1,0 +1,7 @@
+G:\Minebot\plugins\RandomWordWinner.dll
+G:\Minebot\plugins\RandomWordWinner.pdb
+G:\SourceCodes\OQ.MineBot.Plugins\RandomWordWinner\obj\Release\RandomWordWinner.csprojAssemblyReference.cache
+G:\SourceCodes\OQ.MineBot.Plugins\RandomWordWinner\obj\Release\RandomWordWinner.csproj.CoreCompileInputs.cache
+G:\SourceCodes\OQ.MineBot.Plugins\RandomWordWinner\obj\Release\RandomWordWinner.csproj.CopyComplete
+G:\SourceCodes\OQ.MineBot.Plugins\RandomWordWinner\obj\Release\RandomWordWinner.dll
+G:\SourceCodes\OQ.MineBot.Plugins\RandomWordWinner\obj\Release\RandomWordWinner.pdb

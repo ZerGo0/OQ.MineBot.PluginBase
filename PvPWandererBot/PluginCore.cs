@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,7 +12,7 @@ using PvPBotPlugin.Tasks;
 
 namespace PvPBotPlugin
 {
-    [Plugin(1, "PvPBot [BETA]", "Wanders around and searches for players to attack", "")]
+    [Plugin(3, "PvPBot [BETA]", "Wanders around and searches for players to attack", "")]
     public class PluginCore : IStartPlugin
     {
         public override void OnLoad(int version, int subversion, int buildversion)
@@ -29,6 +30,8 @@ namespace PvPBotPlugin
                 "Should the bot auto equip the best armour it has? (ignores enchantments)", true));
             equipmentGroup.Add(new BoolSetting("Auto Sword", "Should the best sword be auto equipped? (ignores enchantments)", true));
             Setting.Add(equipmentGroup);
+            
+            Console.Clear();
         }
 
         public override void OnDisable()
@@ -41,11 +44,6 @@ namespace PvPBotPlugin
 
         public override PluginResponse OnEnable(IBotSettings botSettings)
         {
-            Attack.SharedTarget = null;
-            Attack.SharedTargetLoaded = new ConcurrentDictionary<string, bool>();
-            Attack.SharedTargetLocations = new List<ILocation>();
-            Attack.SharedTargetReachable = new ConcurrentDictionary<string, bool>();
-            
             if (!botSettings.loadWorld) 
                 return new PluginResponse(false, "'Load world' must be enabled.");
             if (botSettings.staticWorlds) 

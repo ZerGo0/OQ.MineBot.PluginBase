@@ -11,12 +11,13 @@
     <AssemblyName>MobAuraPlugin</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\Minebot\plugins\</OutputPath>
+    <OutputPath>C:\Users\Faven\Desktop\Minebot\plugins</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -24,14 +25,14 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\..\Minebot\plugins\</OutputPath>
+    <OutputPath>C:\Users\Faven\Desktop\Minebot\plugins</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="OQ.MineBot.PluginBase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>C:\Users\Faven\Desktop\Minebot\OQ.MineBot.PluginBase.dll</HintPath>
+    <Reference Include="OQ.MineBot.PluginBase, Version=1.2.94.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>C:\Users\Faven\Desktop\Beta\OQ.MineBot.PluginBase.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -47,6 +48,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tasks\Attack.cs" />
     <Compile Include="Tasks\Equipment.cs" />
+    <Compile Include="ZerGo0Debugger.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

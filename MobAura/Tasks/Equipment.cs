@@ -1,10 +1,14 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+
 using OQ.MineBot.PluginBase.Base.Plugin.Tasks;
 using OQ.MineBot.PluginBase.Classes;
 using OQ.MineBot.PluginBase.Classes.Items;
+using OQ.MineBot.PluginBase.Classes.Window;
 using OQ.MineBot.PluginBase.Classes.Window.Containers.Subcontainers;
 
-namespace ShieldPlugin.Tasks
+namespace MobAuraPlugin.Tasks
 {
     public class Equipment : ITask, IInventoryListener
     {
@@ -16,35 +20,61 @@ namespace ShieldPlugin.Tasks
         }
         
         public override bool Exec() {
-            return _autoGear && !_busy && !status.entity.isDead && !status.eating;
+            return _autoGear && !_busy && !Context.Player.IsDead() && !Context.Player.State.Eating;
         }
 
-        public override void Start() {
-            OnInventoryChanged();
+        public override Task Start()
+        {
+            try
+            {
+                OnInventoryChanged();
+            }
+            catch (Exception e)
+            {
+                ZerGo0Debugger.Error(e, Context, this);
+            }
+
+            return null;
         }
 
-        public void OnInventoryChanged() {
-            if (!_autoGear) return;
-            _busy = true;
-            player.functions.OpenInventory();
-
-            ThreadPool.QueueUserWorkItem(state => {
-                Thread.Sleep(250);
-                if (player.functions.EquipBest(EquipmentSlots.Head,
-                    ItemsGlobal.itemHolder.helmets))
-                    Thread.Sleep(250);
-                if (player.functions.EquipBest(EquipmentSlots.Chest,
-                    ItemsGlobal.itemHolder.chestplates))
-                    Thread.Sleep(250);
-                if (player.functions.EquipBest(EquipmentSlots.Pants,
-                    ItemsGlobal.itemHolder.leggings))
-                    Thread.Sleep(250);
-                player.functions.EquipBest(EquipmentSlots.Boots,
-                    ItemsGlobal.itemHolder.boots);
-                Thread.Sleep(250);
-                player.functions.CloseInventory();
+        public async Task OnInventoryChanged() {
+            try
+            {
+                if (!_autoGear) return;
+                _busy = true;
+                
+                await Context.TickManager.Sleep(2);
+                Context.Functions.OpenInventory();
+                
+                await Context.TickManager.Sleep(2);
+                var sword = Inventory.FindBest(EquipmentType.Sword);
+                sword?.PutOn();
+                
+                await Context.TickManager.Sleep(2);
+                var helmet = Inventory.FindBest(EquipmentType.Helmet);
+                helmet?.PutOn();
+                
+                await Context.TickManager.Sleep(2);
+                var chestplate = Inventory.FindBest(EquipmentType.Chestplate);
+                chestplate?.PutOn();
+                
+                await Context.TickManager.Sleep(2);
+                var leggings = Inventory.FindBest(EquipmentType.Leggings);
+                leggings?.PutOn();
+                
+                await Context.TickManager.Sleep(2);
+                var boots = Inventory.FindBest(EquipmentType.Boots);
+                boots?.PutOn();
+                
+                await Context.TickManager.Sleep(2);
+                Context.Functions.CloseInventory();
+                
                 _busy = false;
-            });
+            }
+            catch (Exception e)
+            {
+                ZerGo0Debugger.Error(e, Context, this);
+            }
         }
         public void OnSlotChanged(ISlot slot) { }
         public void OnItemAdded(ISlot slot) { }

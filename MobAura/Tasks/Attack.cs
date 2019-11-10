@@ -1,124 +1,232 @@
 ﻿using System;
+using System.Threading.Tasks;
+
 using OQ.MineBot.GUI.Protocol.Movement.Maps;
 using OQ.MineBot.PluginBase.Base.Plugin.Tasks;
 using OQ.MineBot.PluginBase.Classes;
-using OQ.MineBot.PluginBase.Classes.Base;
+using OQ.MineBot.PluginBase.Classes.Entity;
+using OQ.MineBot.PluginBase.Classes.Entity.Mob;
+using OQ.MineBot.PluginBase.Classes.Window;
+using OQ.MineBot.PluginBase.Movement.Events;
 
 namespace MobAuraPlugin.Tasks
 {
     public class Attack : ITask, ITickListener
     {
-        private static readonly Random Rnd = new Random();
+        private static readonly MapOptions MAP_OPTIONS_NOLOOK = new MapOptions
+        {
+            Look = true,
+            Quality = SearchQuality.HIGHEST,
+            Mine = false,
+            Swim = true
+        };
+        
+        private static readonly Random _RND = new Random();
 
-        private int hitTicks;
+        private int _hitTicks;
 
-        private readonly Mode mode;
-        private readonly int  cps;
-        private readonly int  ms;
-        private readonly bool autoWeapon;
+        private readonly Mode _mode;
+        private readonly int _cps;
+        private readonly int _ms;
+        private readonly bool _autoWeapon;
 
-        private bool currentlyPathing;
+        private bool _currentlyPathing;
+        private MoveResult _moveToMob;
+        private IMobEntity _currentTarget;
+        private string _botName;
 
-        public Attack(Mode mode, int cps, int ms, bool autoWeapon) {
-            this.mode = mode;
-            this.cps        = cps;
-            this.ms         = ms;
-            this.autoWeapon = autoWeapon;
+        public Attack(Mode mode, int cps, int ms, bool autoWeapon)
+        {
+            _mode = mode;
+            _cps = cps;
+            _ms = ms;
+            _autoWeapon = autoWeapon;
         }
 
-        public override bool Exec() {
-            return !status.entity.isDead && !status.eating;
+        public override async Task Start()
+        {
+            _botName = Context.Player.GetUsername();
+            
+            Context.Events.onPlayerUpdate += EventsOnOnPlayerUpdate;
         }
 
-        public void OnTick() {
-            var currentLoc = player.status.entity.location.ToLocation();
+        public override async Task Stop()
+        {
+            _currentTarget = null;
+            Context.Events.onPlayerUpdate -= EventsOnOnPlayerUpdate;
+        }
 
-            var closestMob = player.entities.FindClosestMob(currentLoc.x, currentLoc.y, currentLoc.z);
-            if (closestMob != null) {
+        private void EventsOnOnPlayerUpdate(IStopToken cancel)
+        {
+            if (!Exec()) return;
+            
+            try
+            {
+                AttackClosestTarget(_currentTarget);
+            }
+            catch (Exception e)
+            {
+                ZerGo0Debugger.Error(e, Context, this);
+            }
+        }
 
-                if (mode == Mode.MovingPassive || mode == Mode.MovingAggresive)
-                {
-                    if (!currentlyPathing) GoToLocation(closestMob.location.ToLocation().Offset(-1));
-                    
-                    if (mode == Mode.MovingPassive)
-                    {
-                        //Visibility Check
-                        if (!player.world.IsVisible(currentLoc.ToPosition(), closestMob.location.ToLocation().Offset(1))) return;
+        public override bool Exec()
+        {
+            return !Context.Player.IsDead() && !Context.Player.State.Eating;
+        }
 
-                        if (currentLoc.Distance(closestMob.location.ToLocation()) > 4) return;
-                    }
+        public async Task OnTick()
+        {
+            try
+            {
+                if (_currentTarget == null) _currentTarget = TargetSelector();
 
-                    if(autoWeapon) actions.EquipWeapon();
-                    actions.LookAt(closestMob.location, true);
+                if (_currentTarget == null) return;
                 
-                    // 1 hit tick is about 50 ms.
-                    hitTicks++;
-                    int ms = hitTicks * 50;
-
-                    if (ms >= (1000 / cps)) {
-                    
-                        hitTicks = 0; //Hitting, reset tick counter.
-                        if (Rnd.Next(1, 101) < this.ms) actions.PerformSwing(); //Miss.
-                        else actions.EntityAttack(closestMob.entityId); //Hit.
-                    }
+                if (TargetChecker(_currentTarget))
+                {
+                    _currentlyPathing = false;
+                    _moveToMob = null;
+                    _currentTarget = null;
                 }
                 else
                 {
-                    if (mode == Mode.Passive)
+                    if (_mode == Mode.MovingPassive || _mode == Mode.MovingAggresive)
                     {
-                        //Visibility Check
-                        if (!player.world.IsVisible(currentLoc.ToPosition(), closestMob.location.ToLocation().Offset(1))) return;
+                        await FollowTarget(_currentTarget);
+                        ZerGo0Debugger.Debug(_botName, $"PathStatus: {_moveToMob?.Result.ToString()}");
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                ZerGo0Debugger.Error(e, Context, this);
+            }
+        }
 
-                        if (currentLoc.Distance(closestMob.location.ToLocation()) > 4) return;
+#region Functions
+
+        private IMobEntity TargetSelector()
+        {
+            if (_mode == Mode.Passive) return Context.Entities.GetClosestMob(CurrentLocation(), MobType.All, 
+                mob => !mob.IsDead() && !mob.HasDespawned && mob.GetHealth() > 0 && 
+                       mob.HasLineOfSight() && 
+                       CurrentLocation().Distance(mob.Position.ToLocation()) > 3);
+            
+            return Context.Entities.GetClosestMob(CurrentLocation(), MobType.All, 
+                mob => !mob.IsDead() && !mob.HasDespawned && mob.GetHealth() > 0);
+        }
+        
+        private async Task AttackClosestTarget(IMobEntity target)
+        {
+            if (target == null || CurrentLocation().Distance(target.Position.ToLocation()) > 3 ||
+                TargetChecker(target)) target = TargetSelector();
+            
+            if (target == null) return;
+            
+            ZerGo0Debugger.Debug(Context.Player.GetUsername(), $"Targetting: {target.MobType} | {target.Position}");
+
+            if (_mode == Mode.MovingPassive && !VisibilityCheck(target)) return;
+                
+            if (_mode == Mode.Passive && !VisibilityCheck(target))
+            {
+                _currentTarget = null;
+                return;
+            }
+
+            if (_autoWeapon)
+            {
+                Context.Functions.OpenInventory();
+                
+                await Context.TickManager.Sleep(1);
+                var sword = Inventory.FindBest(EquipmentType.Sword);
+                sword?.PutOn();
+                
+                await Context.TickManager.Sleep(1);
+                Context.Functions.CloseInventory();
+            }
+            
+            await Context.Player.LookAt(target.Position.Offset(0.8));
+//                Context.Functions.LookAtSmooth(target.Position.Offset(0.8), LookSpeed.medium);
+
+            // 1 hit tick is about 50 ms.
+            _hitTicks++;
+            var ms = _hitTicks * 50;
+
+            if (ms < 1000 / _cps) return;
+            
+            _hitTicks = 0; //Hitting, reset tick counter.
+            if (_RND.Next(1, 101) < _ms)
+                Context.Functions.PerformSwing(); //Miss.
+            else 
+                target.Attack(); //Hit.
+        }
+        
+        private bool VisibilityCheck(IEntity target)
+        {
+            if (target == null) return false;
+            
+            if (_mode == Mode.MovingPassive || _mode == Mode.Passive)
+            {
+                if (!target.HasLineOfSight() || Context.Player.GetLocation().Distance(target.Position.ToLocation()) > 4) return false;
+            }
+
+            return true;
+        }
+        
+        private bool TargetChecker(IMobEntity target)
+        {
+            if (target.IsDead() || target.HasDespawned || target.GetHealth() < 1 ||
+                _mode == Mode.Passive && CurrentLocation().Distance(target.Position.ToLocation()) > 3)
+            {
+                ZerGo0Debugger.Debug(_botName, "Resetting Target");
+                return true;
+            }
+
+            return false;
+        }
+
+        private async Task FollowTarget(IMobEntity target)
+        {
+            if (!_currentlyPathing)
+            {
+                _currentlyPathing = true;
+                _moveToMob = await target.Follow(MAP_OPTIONS_NOLOOK).Task;
+//                        ZerGo0Debugger.Debug(_botName, $"PathStatus: {_moveToMob?.Result.ToString()}");
+                ZerGo0Debugger.Debug(_botName, "Follow");
+            }
+            else
+            {
+                if (_moveToMob != null)
+                {
+                    if (_moveToMob.Result == MoveResultType.Cancelled ||
+                        _moveToMob.Result == MoveResultType.Stuck ||
+                        _moveToMob.Result == MoveResultType.PathNotFound)
+                    {
+                        _currentlyPathing = false;
+                        _moveToMob = null;
+                        _currentTarget = null;
+                        return;
                     }
 
-                    if(autoWeapon) actions.EquipWeapon();
-                    actions.LookAt(closestMob.location, true);
-                
-                    // 1 hit tick is about 50 ms.
-                    hitTicks++;
-                    int ms = hitTicks * 50;
-
-                    if (ms >= (1000 / cps)) {
-                    
-                        hitTicks = 0; //Hitting, reset tick counter.
-                        if (Rnd.Next(1, 101) < this.ms) actions.PerformSwing(); //Miss.
-                        else actions.EntityAttack(closestMob.entityId); //Hit.
+                    if (_moveToMob.Result == MoveResultType.Completed)
+                    {
+                        _currentlyPathing = false;
+                        _moveToMob = null;
                     }
                 }
             }
         }
-        
-        private void GoToLocation(ILocation targetLocation)
+
+#endregion
+
+#region Helper Functions
+
+        private ILocation CurrentLocation()
         {
-            var cancelToken = new CancelToken();
-
-            currentlyPathing = true;
-
-            var targetMoveToLocation = actions.AsyncMoveToLocation(targetLocation, cancelToken, new MapOptions{
-                Look = true,
-                Quality = SearchQuality.MEDIUM,
-                Mine = false
-            });
-
-            targetMoveToLocation.Completed += areaMap => { currentlyPathing = false; };
-            targetMoveToLocation.Cancelled += (areaMap, cuboid) =>
-            {
-                if (cancelToken.stopped) return;
-                cancelToken.Stop();
-                currentlyPathing = false;
-            };
-
-            if (!targetMoveToLocation.Start())
-            {
-                if (cancelToken.stopped) return;
-                cancelToken.Stop();
-                currentlyPathing = false;
-            }
-            else
-            {
-                currentlyPathing = true;
-            }
+            return Context.Player.GetLocation();
         }
+
+#endregion
     }
 }

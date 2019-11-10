@@ -1,0 +1,7 @@
+G:\SourceCodes\OQ.MineBot.Plugins\TestPlugin\bin\Release\TestPlugin.dll
+G:\SourceCodes\OQ.MineBot.Plugins\TestPlugin\bin\Release\TestPlugin.pdb
+G:\SourceCodes\OQ.MineBot.Plugins\TestPlugin\bin\Release\OQ.MineBot.PluginBase.dll
+G:\SourceCodes\OQ.MineBot.Plugins\TestPlugin\obj\Release\TestPlugin.csprojAssemblyReference.cache
+G:\SourceCodes\OQ.MineBot.Plugins\TestPlugin\obj\Release\TestPlugin.csproj.CopyComplete
+G:\SourceCodes\OQ.MineBot.Plugins\TestPlugin\obj\Release\TestPlugin.dll
+G:\SourceCodes\OQ.MineBot.Plugins\TestPlugin\obj\Release\TestPlugin.pdb

@@ -1,12 +1,16 @@
 ﻿using MobAuraPlugin.Tasks;
+
 using OQ.MineBot.PluginBase.Base;
 using OQ.MineBot.PluginBase.Base.Plugin;
 using OQ.MineBot.PluginBase.Bot;
-using ShieldPlugin.Tasks;
 
 namespace MobAuraPlugin
 {
-    [Plugin(1, "Mob Aura", "Attacks all mobs around the bot", "https://www.youtube.com/watch?v=_c5K49y4eVc")]
+#if DEBUG
+    [Plugin(3, "Mob Aura", "(DEBUG BUILD) Attacks all mobs around the bot", "https://www.youtube.com/watch?v=_c5K49y4eVc")]
+#else
+    [Plugin(3, "Mob Aura", "Attacks all mobs around the bot", "https://www.youtube.com/watch?v=_c5K49y4eVc")]
+#endif
     public class PluginCore : IStartPlugin
     {
         public override void OnLoad(int version, int subversion, int buildversion) {
@@ -26,14 +30,14 @@ namespace MobAuraPlugin
         public override PluginResponse OnEnable(IBotSettings botSettings) {
             if (!botSettings.loadWorld) return new PluginResponse(false, "'Load world' must be enabled.");
             if (!botSettings.loadEntities || !botSettings.loadMobs) return new PluginResponse(false, "'Load mobs' must be enabled.");
+            
             return new PluginResponse(true);
         }
 
         public override void OnStart() {
-
             var clickGroup = (IParentSetting)Setting.Get("Clicks");
             var equipmentGroup = (IParentSetting)Setting.Get("Equipment");
-
+            
             RegisterTask(new Attack((Mode)Setting.GetValue<int>("Mode"), clickGroup.GetValue<int>("Clicks per second"), clickGroup.GetValue<int>("Miss rate"), equipmentGroup.GetValue<bool>("Equip best weapon?")));
             RegisterTask(new Equipment(equipmentGroup.GetValue<bool>("Auto equip best armor?")));
         }

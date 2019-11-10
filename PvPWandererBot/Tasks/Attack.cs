@@ -137,13 +137,11 @@ namespace PvPBotPlugin.Tasks
                     {
                         var currentPos = player.status.entity.location;
                         var tempTarget = player.entities.FindClosestPlayer(currentPos.X, currentPos.Y, currentPos.Z);
-                        
-                        if (tempTarget != null && currentPos.Distance(tempTarget.location) <= 4/* &&
+
+                        if (tempTarget != null && currentPos.Distance(tempTarget.location) <= 4 /* &&
                             world.IsVisible(currentPos.Offset(new Position(0, .65, 0)), 
                                 tempTarget.location.ToLocation())*/)
-                        {
                             Hit(tempTarget);
-                        }
                         return;
                     }
 
@@ -308,6 +306,10 @@ namespace PvPBotPlugin.Tasks
                     if (_movingBusy) return;
                 }
 
+                IPlayerEntity testingshit = null;
+
+                Console.WriteLine($"{testingshit.isDead}");
+
                 if (!_wanderingBusy && rndLocList?.Count < 1 && !_movingBusy)
                 {
                     if (!_scanningRndLocations && (_rndWanderingLocations == null || _rndWanderingLocations?.Count < 1))
@@ -354,9 +356,9 @@ namespace PvPBotPlugin.Tasks
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                //Console.WriteLine(e);
+                ZerGo0Debugger.ErrorMessage(player.status.username, ex);
             }
         }
 
@@ -415,12 +417,12 @@ namespace PvPBotPlugin.Tasks
             foreach (var target in player.entities.playerList)
             {
                 if (target.Value == null) continue;
-                
+
                 var tempTarget = new KeyValuePair<int, IPlayerEntity>(target.Key, (IPlayerEntity) target.Value);
-                
+
                 /*Console.WriteLine($"Found Target {player.entities.FindNameByUuid(tempTarget.Value.uuid).Name} " +
                                   $"H: {tempTarget.Value.health} D: {tempTarget.Value.isDead}");*/
-                
+
                 if (player.entities.IsBot(tempTarget.Value.uuid) || tempTarget.Value == null ||
                     tempTarget.Value.isDead) continue;
 
@@ -528,7 +530,7 @@ namespace PvPBotPlugin.Tasks
         private void Hit(IEntity target)
         {
             if (target == null) return;
-            
+
             //NOTE: idk if I want this or not
             /*if (!world.IsVisible(player.status.entity.location.Offset(new Position(0, .65, 0)), 
                 target.location.ToLocation((float)0.65))) return;*/

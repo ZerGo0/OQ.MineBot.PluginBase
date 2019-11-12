@@ -23,18 +23,16 @@ namespace MobAuraPlugin.Tasks
             return _autoGear && !_busy && !Context.Player.IsDead() && !Context.Player.State.Eating;
         }
 
-        public override Task Start()
+        public override async Task Start()
         {
             try
             {
-                OnInventoryChanged();
+                await OnInventoryChanged();
             }
             catch (Exception e)
             {
                 ZerGo0Debugger.Error(e, Context, this);
             }
-
-            return null;
         }
 
         public async Task OnInventoryChanged() {

@@ -7,14 +7,14 @@ using OQ.MineBot.PluginBase.Bot;
 namespace MobAuraPlugin
 {
 #if DEBUG
-    [Plugin(3, "Mob Aura", "(DEBUG BUILD) Attacks all mobs around the bot", "https://www.youtube.com/watch?v=_c5K49y4eVc")]
+    [Plugin(4, "Mob Aura", "(DEBUG BUILD) Attacks all mobs around the bot", "https://www.youtube.com/watch?v=_c5K49y4eVc")]
 #else
-    [Plugin(3, "Mob Aura", "Attacks all mobs around the bot", "https://www.youtube.com/watch?v=_c5K49y4eVc")]
+    [Plugin(4, "Mob Aura", "Attacks all mobs around the bot", "https://www.youtube.com/watch?v=_c5K49y4eVc")]
 #endif
     public class PluginCore : IStartPlugin
     {
         public override void OnLoad(int version, int subversion, int buildversion) {
-            Setting.Add(new ComboSetting("Mode", null, new string[] { "Passive", "Aggressive", "Moving Passive", "Moving Aggressive" }, 0));
+            Setting.Add(new ComboSetting("Mode", null, new[] { "Passive", "Aggressive", "Moving Passive", "Moving Aggressive" }, 0));
 
             var clickGroup = new GroupSetting("Clicks", "");
                 clickGroup.Add(new NumberSetting("Clicks per second", "How fast should the bot attack?", 5, 1, 60, 1));
@@ -30,6 +30,11 @@ namespace MobAuraPlugin
         public override PluginResponse OnEnable(IBotSettings botSettings) {
             if (!botSettings.loadWorld) return new PluginResponse(false, "'Load world' must be enabled.");
             if (!botSettings.loadEntities || !botSettings.loadMobs) return new PluginResponse(false, "'Load mobs' must be enabled.");
+            
+            var equipmentGroup = (IParentSetting)Setting.Get("Equipment");
+            if (!botSettings.loadInventory && (equipmentGroup.GetValue<bool>("Auto equip best armor?") || 
+                                               equipmentGroup.GetValue<bool>("Equip best weapon?"))) 
+                return new PluginResponse(false, "'Load inventory' must be enabled.");
             
             return new PluginResponse(true);
         }

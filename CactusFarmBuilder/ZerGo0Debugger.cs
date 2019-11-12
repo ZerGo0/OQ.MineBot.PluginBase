@@ -11,7 +11,7 @@ using OQ.MineBot.PluginBase.Base.Plugin.Tasks;
 using OQ.MineBot.PluginBase.Bot;
 using OQ.MineBot.PluginBase.Utility;
 
-namespace MobAuraPlugin
+namespace CactusFarmBuilder
 {
     public class ZerGo0Debugger : ITask, ITickListener
     {
@@ -32,6 +32,12 @@ namespace MobAuraPlugin
             Console.WriteLine($"{DateTime.Now.ToString("HH:mm:ss", CultureInfo.InvariantCulture)} " +
                               $"[{playerName}] {message}");
 #endif
+        }
+        
+        public static void Info(string playerName, string message)
+        {
+            Console.WriteLine($"{DateTime.Now.ToString("HH:mm:ss", CultureInfo.InvariantCulture)} " +
+                              $"[{playerName}] {message}");
         }
 
         private void TestHandler(object sender, UnhandledExceptionEventArgs args)

@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 
 using OQ.MineBot.GUI.Protocol.Movement.Maps;
+using OQ.MineBot.PluginBase;
 using OQ.MineBot.PluginBase.Base.Plugin.Tasks;
 using OQ.MineBot.PluginBase.Classes;
 using OQ.MineBot.PluginBase.Classes.Entity;
@@ -13,7 +14,7 @@ namespace MobAuraPlugin.Tasks
 {
     public class Attack : ITask, ITickListener
     {
-        private static readonly MapOptions MAP_OPTIONS_NOLOOK = new MapOptions
+        private static readonly MapOptions _MAP_OPTIONS_NOLOOK = new MapOptions
         {
             Look = true,
             Quality = SearchQuality.HIGHEST,
@@ -43,26 +44,29 @@ namespace MobAuraPlugin.Tasks
             _autoWeapon = autoWeapon;
         }
 
-        public override async Task Start()
+        public override Task Start()
         {
             _botName = Context.Player.GetUsername();
             
             Context.Events.onPlayerUpdate += EventsOnOnPlayerUpdate;
+
+            return null;
         }
 
-        public override async Task Stop()
+        public override Task Stop()
         {
-            _currentTarget = null;
             Context.Events.onPlayerUpdate -= EventsOnOnPlayerUpdate;
+            
+            return null;
         }
 
-        private void EventsOnOnPlayerUpdate(IStopToken cancel)
+        private async void EventsOnOnPlayerUpdate(IStopToken cancel)
         {
             if (!Exec()) return;
             
             try
             {
-                AttackClosestTarget(_currentTarget);
+                await AttackClosestTarget(_currentTarget);
             }
             catch (Exception e)
             {
@@ -111,7 +115,7 @@ namespace MobAuraPlugin.Tasks
             if (_mode == Mode.Passive) return Context.Entities.GetClosestMob(CurrentLocation(), MobType.All, 
                 mob => !mob.IsDead() && !mob.HasDespawned && mob.GetHealth() > 0 && 
                        mob.HasLineOfSight() && 
-                       CurrentLocation().Distance(mob.Position.ToLocation()) > 3);
+                       mob.Position.Distance(CurrentPosition()) < 3);
             
             return Context.Entities.GetClosestMob(CurrentLocation(), MobType.All, 
                 mob => !mob.IsDead() && !mob.HasDespawned && mob.GetHealth() > 0);
@@ -119,12 +123,15 @@ namespace MobAuraPlugin.Tasks
         
         private async Task AttackClosestTarget(IMobEntity target)
         {
-            if (target == null || CurrentLocation().Distance(target.Position.ToLocation()) > 3 ||
+            if (target == null || target.Position.Distance(CurrentPosition()) > 3 ||
                 TargetChecker(target)) target = TargetSelector();
             
             if (target == null) return;
             
-            ZerGo0Debugger.Debug(Context.Player.GetUsername(), $"Targetting: {target.MobType} | {target.Position}");
+            ZerGo0Debugger.Debug(Context.Player.GetUsername(), 
+                $"Targetting: {target.MobType} | " +
+                $"Pos: {Math.Round(target.Position.X, 2)}/{Math.Round(target.Position.Y, 2)}/{Math.Round(target.Position.Z, 2)} | " +
+                $"{Math.Round(target.Position.Distance(CurrentPosition()), 2)}");
 
             if (_mode == Mode.MovingPassive && !VisibilityCheck(target)) return;
                 
@@ -146,8 +153,10 @@ namespace MobAuraPlugin.Tasks
                 Context.Functions.CloseInventory();
             }
             
-            await Context.Player.LookAt(target.Position.Offset(0.8));
-//                Context.Functions.LookAtSmooth(target.Position.Offset(0.8), LookSpeed.medium);
+            if (_mode == Mode.Passive || _mode == Mode.MovingPassive)
+                await Context.Player.LookAtSmooth(target.Position.Offset(0.8));
+            else
+                await Context.Player.LookAt(target.Position.Offset(0.8));
 
             // 1 hit tick is about 50 ms.
             _hitTicks++;
@@ -168,7 +177,7 @@ namespace MobAuraPlugin.Tasks
             
             if (_mode == Mode.MovingPassive || _mode == Mode.Passive)
             {
-                if (!target.HasLineOfSight() || Context.Player.GetLocation().Distance(target.Position.ToLocation()) > 4) return false;
+                if (!target.HasLineOfSight() || target.Position.Distance(CurrentPosition()) > 4) return false;
             }
 
             return true;
@@ -177,7 +186,7 @@ namespace MobAuraPlugin.Tasks
         private bool TargetChecker(IMobEntity target)
         {
             if (target.IsDead() || target.HasDespawned || target.GetHealth() < 1 ||
-                _mode == Mode.Passive && CurrentLocation().Distance(target.Position.ToLocation()) > 3)
+                _mode == Mode.Passive && target.Position.Distance(CurrentPosition()) > 3)
             {
                 ZerGo0Debugger.Debug(_botName, "Resetting Target");
                 return true;
@@ -191,7 +200,7 @@ namespace MobAuraPlugin.Tasks
             if (!_currentlyPathing)
             {
                 _currentlyPathing = true;
-                _moveToMob = await target.Follow(MAP_OPTIONS_NOLOOK).Task;
+                _moveToMob = await target.Follow(_MAP_OPTIONS_NOLOOK).Task;
 //                        ZerGo0Debugger.Debug(_botName, $"PathStatus: {_moveToMob?.Result.ToString()}");
                 ZerGo0Debugger.Debug(_botName, "Follow");
             }
@@ -225,6 +234,11 @@ namespace MobAuraPlugin.Tasks
         private ILocation CurrentLocation()
         {
             return Context.Player.GetLocation();
+        }
+        
+        private IPosition CurrentPosition()
+        {
+            return Context.Player.GetPosition();
         }
 
 #endregion

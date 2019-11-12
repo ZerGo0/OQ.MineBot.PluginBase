@@ -7,8 +7,9 @@
 	
 	<s:Boolean x:Key="/Default/UnloadedProject/UnloadedProjects/=6f4eb571_002D68c8_002D4582_002Db6ac_002Ddcc605b41a0d_0023RandomWordWinner/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UnloadedProject/UnloadedProjects/=84af6fdf_002D3fbf_002D4f3f_002D99ae_002D0d56c371bb6f_0023AreaFiller/@EntryIndexedValue">True</s:Boolean>
-	<s:Boolean x:Key="/Default/UnloadedProject/UnloadedProjects/=84af6fdf_002D3fbf_002D4f3f_002D99ae_002D0d56c371bb6f_0023CactusFarmBuilder/@EntryIndexedValue">True</s:Boolean>
+	
 	<s:Boolean x:Key="/Default/UnloadedProject/UnloadedProjects/=84af6fdf_002D3fbf_002D4f3f_002D99ae_002D0d56c371bb6f_0023TreeFarmerPlugin/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UnloadedProject/UnloadedProjects/=c8e72344_002D6e7e_002D4ee1_002D8099_002Dc7578fa37525_0023DebugPlugin/@EntryIndexedValue">True</s:Boolean>
 	
 	
 	

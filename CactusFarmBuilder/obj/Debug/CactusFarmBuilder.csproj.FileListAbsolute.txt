@@ -4,3 +4,7 @@ C:\Users\Faven\Desktop\OQ Minebot Plugin Sources\ZerGo0 Plugins\CactusFarmBuilde
 C:\Users\Faven\Desktop\OQ Minebot Plugin Sources\ZerGo0 Plugins\CactusFarmBuilder\obj\Debug\CactusFarmBuilder.csproj.CoreCompileInputs.cache
 C:\Users\Faven\Desktop\OQ Minebot Plugin Sources\ZerGo0 Plugins\CactusFarmBuilder\obj\Debug\CactusFarmBuilder.dll
 C:\Users\Faven\Desktop\OQ Minebot Plugin Sources\ZerGo0 Plugins\CactusFarmBuilder\obj\Debug\CactusFarmBuilder.pdb
+G:\SourceCodes\OQ.MineBot.Plugins\CactusFarmBuilder\obj\Debug\CactusFarmBuilder.csprojAssemblyReference.cache
+G:\SourceCodes\OQ.MineBot.Plugins\CactusFarmBuilder\obj\Debug\CactusFarmBuilder.csproj.CopyComplete
+G:\SourceCodes\OQ.MineBot.Plugins\CactusFarmBuilder\obj\Debug\CactusFarmBuilder.dll
+G:\SourceCodes\OQ.MineBot.Plugins\CactusFarmBuilder\obj\Debug\CactusFarmBuilder.pdb

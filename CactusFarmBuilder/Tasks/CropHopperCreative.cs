@@ -16,6 +16,7 @@ namespace CactusFarmBuilder.Tasks
         private bool _stopped;
         private int _layerCount;
         private ILocation _startLoc;
+        private HelperFunctions _helperFunctions;
 
         private readonly int _tickDelay;
         private readonly int _maxLayers;
@@ -35,6 +36,7 @@ namespace CactusFarmBuilder.Tasks
         public override Task Start()
         {
             _startLoc = Context.Player.GetLocation();
+            _helperFunctions = new HelperFunctions(Context, Inventory);
 
             return null;
         }
@@ -44,8 +46,9 @@ namespace CactusFarmBuilder.Tasks
             ZerGo0Debugger.Info(Context.Player.GetUsername(), "CactusFarmBuilder STOPPED!");
 
             _stopped = true;
+            _helperFunctions.Stopped = true;
+            
             BlocksGlobal.BUILDING_BLOCKS = _defaultBuldingBlocks;
-
             return null;
         }
 
@@ -58,12 +61,12 @@ namespace CactusFarmBuilder.Tasks
         {
             try
             {
-                if (!HelperFunctions.CheckItemCount(Context, Inventory, new ushort[] {12, 81, 287}, true)) return;
+                if (!_helperFunctions.CheckItemCount(new ushort[] {12, 81, 287}, true)) return;
 
                 if (_layerCount >= _maxLayers)
                 {
                     ZerGo0Debugger.Debug(Context.Player.GetUsername(), $"LayerC: {_layerCount} | MaxL: {_maxLayers}");
-                    if (!await HelperFunctions.BackToStart(Context, Inventory, _tickDelay, _startLoc))
+                    if (!await _helperFunctions.BackToStart(_tickDelay, _startLoc))
                     {
                         _stopped = true;
                         return;
@@ -114,7 +117,7 @@ namespace CactusFarmBuilder.Tasks
                 await Context.World.PlaceOn(loc1, 1);
                 await Context.TickManager.Sleep(4);
                 ZerGo0Debugger.Debug(Context.Player.GetUsername(),
-                    HelperFunctions.IsBlockId(Context, loc1.Offset(1), 35)
+                    _helperFunctions.IsBlockId(loc1.Offset(1), 35)
                         ? $"!await Context.World.PlaceOn({loc1}, 1) failed!"
                         : $"!await Context.World.PlaceOn({loc1}, 1) succeeded!");
 
@@ -123,7 +126,7 @@ namespace CactusFarmBuilder.Tasks
                 await Context.World.PlaceOn(loc2, 1);
                 await Context.TickManager.Sleep(4);
                 ZerGo0Debugger.Debug(Context.Player.GetUsername(),
-                    HelperFunctions.IsBlockId(Context, loc2.Offset(1), 35)
+                    _helperFunctions.IsBlockId(loc2.Offset(1), 35)
                         ? $"!await Context.World.PlaceOn({loc2}, 1) failed!"
                         : $"!await Context.World.PlaceOn({loc2}, 1) succeeded!");
                 
@@ -131,7 +134,7 @@ namespace CactusFarmBuilder.Tasks
                 await Context.World.PlaceOn(loc3, 1);
                 await Context.TickManager.Sleep(4);
                 ZerGo0Debugger.Debug(Context.Player.GetUsername(),
-                    HelperFunctions.IsBlockId(Context, loc3.Offset(1), 35)
+                    _helperFunctions.IsBlockId(loc3.Offset(1), 35)
                         ? $"!await Context.World.PlaceOn({loc3}, 1) failed!"
                         : $"!await Context.World.PlaceOn({loc3}, 1) succeeded!");
                 
@@ -148,7 +151,7 @@ namespace CactusFarmBuilder.Tasks
 #endregion
 
                 if (_layerCount >= _maxLayers) return;
-                await HelperFunctions.GoToLocation(Context, CurrentLoc().Offset(1), HelperFunctions.MAP_OPTIONS_BUILD);
+                await _helperFunctions.GoToLocation(CurrentLoc().Offset(1), HelperFunctions.MAP_OPTIONS_BUILD);
 
 #region 2nd Layer
 
@@ -165,12 +168,13 @@ namespace CactusFarmBuilder.Tasks
 #endregion
 
                 if (_layerCount >= _maxLayers) return;
-                await HelperFunctions.GoToLocation(Context, CurrentLoc().Offset(1), HelperFunctions.MAP_OPTIONS_BUILD);
+                await _helperFunctions.GoToLocation(CurrentLoc().Offset(1), HelperFunctions.MAP_OPTIONS_BUILD);
 
             }
             catch (Exception e)
             {
                 ZerGo0Debugger.Error(e, Context, this);
+                _stopped = true;
             }
         }
 
@@ -181,7 +185,7 @@ namespace CactusFarmBuilder.Tasks
         private async Task<bool> FirstLayer()
         {
             //Note: 1st BOTTOM StringLayer
-            if (!await HelperFunctions.CreateLayer(Context, Inventory, new[]
+            if (!await _helperFunctions.CreateLayer(new[]
             {
                 CurrentLoc().Offset(2, 0, 2), CurrentLoc().Offset(-3, 0, 3),
                 CurrentLoc().Offset(-3, 0, -3), CurrentLoc().Offset(3, 0, -3)
@@ -191,7 +195,7 @@ namespace CactusFarmBuilder.Tasks
             if (_stopped) return false;
             
             //Note: 1st TOP StringLayer
-            if (!await HelperFunctions.CreateLayer(Context, Inventory, new[]
+            if (!await _helperFunctions.CreateLayer(new[]
             {
                 CurrentLoc().Offset(3, 1, 3), CurrentLoc().Offset(-3, 1, 3),
                 CurrentLoc().Offset(-3, 1, -3), CurrentLoc().Offset(3, 1, -3)
@@ -201,7 +205,7 @@ namespace CactusFarmBuilder.Tasks
             if (_stopped) return false;
 
             //Note: 1st BREAK BOTTOM StringLayer
-            if (!await HelperFunctions.BreakBlocks(Context, Inventory, new[]
+            if (!await _helperFunctions.BreakBlocks(new[]
             {
                 CurrentLoc().Offset(3, 0, 3), CurrentLoc().Offset(-3, 0, 3),
                 CurrentLoc().Offset(-3, 0, -3), CurrentLoc().Offset(3, 0, -3)
@@ -211,7 +215,7 @@ namespace CactusFarmBuilder.Tasks
             if (_stopped) return false;
             
             //Note: 1st OUTER Sandlayer
-            if (!await HelperFunctions.CreateLayer(Context, Inventory, new[]
+            if (!await _helperFunctions.CreateLayer(new[]
             {
                 CurrentLoc().Offset(3, 0, 0), CurrentLoc().Offset(3, 0, 2),
                 CurrentLoc().Offset(2, 0, 3), CurrentLoc().Offset(0, 0, 3),
@@ -225,7 +229,7 @@ namespace CactusFarmBuilder.Tasks
             if (_stopped) return false;
             
             //Note: 1st OUTER Cactuslayer
-            if (!await HelperFunctions.CreateLayer(Context, Inventory, new[]
+            if (!await _helperFunctions.CreateLayer(new[]
             {
                 CurrentLoc().Offset(3, 1, 0), CurrentLoc().Offset(3, 1, 2),
                 CurrentLoc().Offset(2, 1, 3), CurrentLoc().Offset(0, 1, 3),
@@ -239,7 +243,7 @@ namespace CactusFarmBuilder.Tasks
             if (_stopped) return false;
             
             //Note: 1st OUTER Stringlayer
-            if (!await HelperFunctions.CreateLayer(Context, Inventory, new[]
+            if (!await _helperFunctions.CreateLayer(new[]
             {
                 CurrentLoc().Offset(3, 1, 1), CurrentLoc().Offset(1, 1, 3),
                 CurrentLoc().Offset(-1, 1, 3), CurrentLoc().Offset(-3, 1, 1),
@@ -252,7 +256,7 @@ namespace CactusFarmBuilder.Tasks
             if (_stopped) return false;
             
             //Note: 1st INNER Sandlayer
-            if (!await HelperFunctions.CreateLayer(Context, Inventory, new[]
+            if (!await _helperFunctions.CreateLayer(new[]
             {
                 CurrentLoc().Offset(2, 0, 1), CurrentLoc().Offset(1, 0, 2),
                 CurrentLoc().Offset(-1, 0, 2), CurrentLoc().Offset(-2, 0, 1),
@@ -265,7 +269,7 @@ namespace CactusFarmBuilder.Tasks
             if (_stopped) return false;
             
             //Note: 1st INNER Cactuslayer
-            if (!await HelperFunctions.CreateLayer(Context, Inventory, new[]
+            if (!await _helperFunctions.CreateLayer(new[]
             {
                 CurrentLoc().Offset(2, 1, 1), CurrentLoc().Offset(1, 1, 2),
                 CurrentLoc().Offset(-1, 1, 2), CurrentLoc().Offset(-2, 1, 1),
@@ -278,7 +282,7 @@ namespace CactusFarmBuilder.Tasks
             if (_stopped) return false;
             
             //Note: 1st INNER Stringlayer
-            if (!await HelperFunctions.CreateLayer(Context, Inventory, new[]
+            if (!await _helperFunctions.CreateLayer(new[]
             {
                 CurrentLoc().Offset(2, 1, 0), CurrentLoc().Offset(1, 1, 1),
                 CurrentLoc().Offset(0, 1, 2), CurrentLoc().Offset(-1, 1, 1),
@@ -291,7 +295,7 @@ namespace CactusFarmBuilder.Tasks
             if (_stopped) return false;
             
             //Note: 1st INNER INNER Sandlayer
-            if (!await HelperFunctions.CreateLayer(Context, Inventory, new[]
+            if (!await _helperFunctions.CreateLayer(new[]
             {
                 CurrentLoc().Offset(1, 0, 0), CurrentLoc().Offset(0, 0, 1),
                 CurrentLoc().Offset(-1, 0, 0), CurrentLoc().Offset(0, 0, -1)
@@ -311,7 +315,7 @@ namespace CactusFarmBuilder.Tasks
         private async Task<bool> SecondLayer()
         {
             //Note: 2nd BOTTOM StringLayer
-            if (!await HelperFunctions.CreateLayer(Context, Inventory, new[]
+            if (!await _helperFunctions.CreateLayer(new[]
             {
                 CurrentLoc().Offset(2, 0, 2), CurrentLoc().Offset(-2, 0, 2),
                 CurrentLoc().Offset(-2, 0, -2), CurrentLoc().Offset(2, 0, -2)
@@ -321,7 +325,7 @@ namespace CactusFarmBuilder.Tasks
             if (_stopped) return false;
 
             //Note: 2nd TOP StringLayer
-            if (!await HelperFunctions.CreateLayer(Context, Inventory, new[]
+            if (!await _helperFunctions.CreateLayer(new[]
             {
                 CurrentLoc().Offset(2, 1, 2), CurrentLoc().Offset(-2, 1, 2),
                 CurrentLoc().Offset(-2, 1, -2), CurrentLoc().Offset(2, 1, -2)
@@ -331,7 +335,7 @@ namespace CactusFarmBuilder.Tasks
             if (_stopped) return false;
 
             //Note: 2nd BREAK BOTTOM StringLayer
-            if (!await HelperFunctions.BreakBlocks(Context, Inventory, new[]
+            if (!await _helperFunctions.BreakBlocks(new[]
             {
                 CurrentLoc().Offset(2, 0, 2), CurrentLoc().Offset(-2, 0, 2),
                 CurrentLoc().Offset(-2, 0, -2), CurrentLoc().Offset(2, 0, -2)
@@ -341,7 +345,7 @@ namespace CactusFarmBuilder.Tasks
             if (_stopped) return false;
 
             //Note: 2nd OUTER Sandlayer
-            if (!await HelperFunctions.CreateLayer(Context, Inventory, new[]
+            if (!await _helperFunctions.CreateLayer(new[]
             {
                 CurrentLoc().Offset(2, 0, 1), CurrentLoc().Offset(1, 0, 2),
                 CurrentLoc().Offset(-1, 0, 2), CurrentLoc().Offset(-2, 0, 1),
@@ -353,7 +357,7 @@ namespace CactusFarmBuilder.Tasks
             if (_stopped) return false;
 
             //Note: 2nd INNER Sandlayer
-            if (!await HelperFunctions.CreateLayer(Context, Inventory, new[]
+            if (!await _helperFunctions.CreateLayer(new[]
             {
                 CurrentLoc().Offset(1, 0, 0), CurrentLoc().Offset(0, 0, 1),
                 CurrentLoc().Offset(-1, 0, 0), CurrentLoc().Offset(0, 0, -1)
@@ -363,7 +367,7 @@ namespace CactusFarmBuilder.Tasks
             if (_stopped) return false;
 
             //Note: 2nd OUTER Cactuslayer
-            if (!await HelperFunctions.CreateLayer(Context, Inventory, new[]
+            if (!await _helperFunctions.CreateLayer(new[]
             {
                 CurrentLoc().Offset(2, 1, 1), CurrentLoc().Offset(1, 1, 2),
                 CurrentLoc().Offset(-1, 1, 2), CurrentLoc().Offset(-2, 1, 1),
@@ -375,7 +379,7 @@ namespace CactusFarmBuilder.Tasks
             if (_stopped) return false;
 
             //Note: 2nd INNER StringLayer
-            if (!await HelperFunctions.CreateLayer(Context, Inventory, new[]
+            if (!await _helperFunctions.CreateLayer(new[]
             {
                 CurrentLoc().Offset(2, 1, 0), CurrentLoc().Offset(1, 1, 1),
                 CurrentLoc().Offset(0, 1, 2), CurrentLoc().Offset(-1, 1, 1),
@@ -419,7 +423,7 @@ namespace CactusFarmBuilder.Tasks
                     break;
             }
 
-            return await HelperFunctions.GoToLocation(Context, nextStart, HelperFunctions.MAP_OPTIONS_MINE);
+            return await _helperFunctions.GoToLocation(nextStart, HelperFunctions.MAP_OPTIONS_MINE);
         }
 
 #endregion

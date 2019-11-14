@@ -14,13 +14,14 @@ namespace MobAuraPlugin.Tasks
     {
         private readonly bool _autoGear;
         private bool _busy;
+        private bool _stopped;
 
         public Equipment(bool autoGear) {
             _autoGear = autoGear;
         }
         
         public override bool Exec() {
-            return _autoGear && !_busy && !Context.Player.IsDead() && !Context.Player.State.Eating;
+            return _autoGear && !_busy && !Context.Player.IsDead() && !Context.Player.State.Eating && !_stopped;
         }
 
         public override async Task Start()
@@ -32,6 +33,7 @@ namespace MobAuraPlugin.Tasks
             catch (Exception e)
             {
                 ZerGo0Debugger.Error(e, Context, this);
+                _stopped = true;
             }
         }
 
@@ -72,6 +74,7 @@ namespace MobAuraPlugin.Tasks
             catch (Exception e)
             {
                 ZerGo0Debugger.Error(e, Context, this);
+                _stopped = true;
             }
         }
         public void OnSlotChanged(ISlot slot) { }

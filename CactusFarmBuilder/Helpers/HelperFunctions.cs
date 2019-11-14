@@ -14,6 +14,11 @@ namespace CactusFarmBuilder.Helpers
 {
     public class HelperFunctions
     {
+        private readonly IBotContext _context;
+        private readonly IInventory _inventory;
+        
+        public bool Stopped = false;
+        
         public static readonly MapOptions MAP_OPTIONS_MINE = new MapOptions
         {
             Look = true,
@@ -42,98 +47,103 @@ namespace CactusFarmBuilder.Helpers
             Mine = false
         };
         
-        public static bool CheckItemCount(IBotContext context, IInventory inventory, ushort itemId, 
-            bool creativeRefill = false)
+        public HelperFunctions(IBotContext context, IInventory inventory)
         {
-            if (inventory.GetAmountOfItem(itemId) < 1)
+            _context = context;
+            _inventory = inventory;
+        }
+        
+        public bool CheckItemCount(ushort itemId, bool creativeRefill = false)
+        {
+            if (Stopped) return false;
+            if (_inventory.GetAmountOfItem(itemId) < 1)
             {
-                if (context.Player.GetGamemode() == Gamemodes.creative && creativeRefill)
+                if (_context.Player.GetGamemode() == Gamemodes.creative && creativeRefill)
                 {
-                    ZerGo0Debugger.Debug(context.Player.GetUsername(), $"CreativeSetSlot {itemId.ToString()}");
+                    ZerGo0Debugger.Debug(_context.Player.GetUsername(), $"CreativeSetSlot {itemId.ToString()}");
                     switch (itemId)
                     {
                         case 12:
-                            context.Functions.CreativeSetSlot(36, SlotType.Create(context, itemId, 64));
+                            _context.Functions.CreativeSetSlot(36, SlotType.Create(_context, itemId, 64));
                             break;
                         case 81:
-                            context.Functions.CreativeSetSlot(37, SlotType.Create(context, itemId, 64));
+                            _context.Functions.CreativeSetSlot(37, SlotType.Create(_context, itemId, 64));
                             break;
                         case 287:
-                            context.Functions.CreativeSetSlot(38, SlotType.Create(context, itemId, 64));
+                            _context.Functions.CreativeSetSlot(38, SlotType.Create(_context, itemId, 64));
                             break;
                         default:
-                            context.Functions.CreativeSetSlot(39, SlotType.Create(context, itemId, 64));
+                            _context.Functions.CreativeSetSlot(39, SlotType.Create(_context, itemId, 64));
                             break;
                     }
                     return true;
                 }
 
-                ZerGo0Debugger.Info(context.Player.GetUsername(), $"Missing {GetItemIdName(itemId)}");
+                ZerGo0Debugger.Info(_context.Player.GetUsername(), $"Missing {GetItemIdName(itemId)}");
                 return false;
             }
             return true;
         }
         
-        public static bool CheckItemCount(IBotContext context, IInventory inventory, ushort[] itemIds, 
-            bool creativeRefill = false)
+        public bool CheckItemCount(ushort[] itemIds, bool creativeRefill = false)
         {
             foreach (var itemId in itemIds)
             {
-                if (!CheckItemCount(context, inventory, itemId, creativeRefill)) return false;
+                if (!CheckItemCount(itemId, creativeRefill)) return false;
             }
             
             return true;
         }
 
-        public static async Task WaitTillGrounded(IBotContext context)
+        public async Task WaitTillGrounded()
         {
-            while (!context.Player.PhysicsEngine.isGrounded) await context.TickManager.Sleep(1);
+            while (!_context.Player.PhysicsEngine.isGrounded) await _context.TickManager.Sleep(1);
         }
 
-        public static bool IsBlockId(IBotContext context, ILocation loc, int blockId)
+        public bool IsBlockId(ILocation loc, int blockId)
         {
-            return context.World.GetBlock(loc).GetId() != (ushort) blockId;
+            return _context.World.GetBlock(loc).GetId() != (ushort) blockId;
         }
 
-        public static async Task<bool> PlaceBlockAt(IBotContext context, IInventory inventory, ILocation location, 
-            int itemId, int tickdelay)
+        public async Task<bool> PlaceBlockAt(ILocation location, int itemId, int tickdelay)
         {
-            if (context.World.GetBlockId(location) == 0 && context.World.GetBlockId(location.Offset(-1)) == 132)
+            if (_context.World.GetBlockId(location) == 0 && _context.World.GetBlockId(location.Offset(-1)) == 132)
             {
-                return await PlaceBlockOn(context, inventory, location.Offset(-1), 1, itemId, tickdelay);
+                return await PlaceBlockOn(location.Offset(-1), 1, itemId, tickdelay);
             }
 
             var i = 0;
             while (true)
             {
-                if (i > 15) return false;
+                if (Stopped) return false;
+                if (!CheckItemCount((ushort) itemId, true)) continue;
+                
+                if (i > 40) return false;
                 i++;
                 
-                CheckItemCount(context, inventory, (ushort) itemId, true);
-                
-                ZerGo0Debugger.Debug(context.Player.GetUsername(), $"PlaceBlockAtLoc: {location} | " +
-                                                                   $"BlockID: {context.World.GetBlock(location).GetId()} | " +
+                ZerGo0Debugger.Debug(_context.Player.GetUsername(), $"PlaceBlockAtLoc: {location} | " +
+                                                                   $"BlockID: {_context.World.GetBlock(location).GetId()} | " +
                                                                    $"ItemID: {itemId}");
-                await inventory.Select((ushort) itemId);
+                await _inventory.Select((ushort) itemId);
                 
-                await context.Player.LookAtSmooth(location);
+                await _context.Player.LookAtSmooth(location);
                 
-                await context.World.PlaceAt(location);
-                await context.TickManager.Sleep(tickdelay);
+                await _context.World.PlaceAt(location);
+                await _context.TickManager.Sleep(tickdelay);
                 
                 var blockCheckCount = 0;
-                while (itemId != 4 && context.World.GetBlock(location).GetId() == 4 && 
-                       context.World.GetBlock(location).GetId() != 0)
+                while (itemId != 4 && _context.World.GetBlock(location).GetId() == 4 && 
+                       _context.World.GetBlock(location).GetId() != 0)
                 {
                     if (blockCheckCount > 15) return false;
                     blockCheckCount++;
-                    await context.TickManager.Sleep(1);
+                    await _context.TickManager.Sleep(1);
                 }
                 
-                if (context.World.GetBlock(location).GetId() != 0)
+                if (_context.World.GetBlock(location).GetId() != 0)
                 {
-                    ZerGo0Debugger.Debug(context.Player.GetUsername(), $"DONE PlaceBlockAtLoc: {location} | " +
-                                                                       $"BlockID: {context.World.GetBlock(location).GetId()} | " +
+                    ZerGo0Debugger.Debug(_context.Player.GetUsername(), $"DONE PlaceBlockAtLoc: {location} | " +
+                                                                       $"BlockID: {_context.World.GetBlock(location).GetId()} | " +
                                                                        $"ItemID: {itemId}");
                     break;
                 }
@@ -142,19 +152,17 @@ namespace CactusFarmBuilder.Helpers
             return true;
         }
         
-        public static async Task<bool> PlaceBlocksAt(IBotContext context, IInventory inventory, ILocation[] locations, 
-            int itemId, int tickdelay)
+        public async Task<bool> PlaceBlocksAt(ILocation[] locations, int itemId, int tickdelay)
         {
             foreach (var location in locations)
             {
-                if (!await PlaceBlockAt(context, inventory, location, itemId, tickdelay)) return false;
+                if (!await PlaceBlockAt(location, itemId, tickdelay)) return false;
             }
 
             return true;
         }
 
-        public static async Task<bool> PlaceBlockOn(IBotContext context, IInventory inventory, ILocation location, 
-            int blockFace, int itemId, int tickdelay)
+        public async Task<bool> PlaceBlockOn(ILocation location, int blockFace, int itemId, int tickdelay)
         {
             var locationOffset = location;
 
@@ -183,34 +191,36 @@ namespace CactusFarmBuilder.Helpers
             var i = 0;
             while (true)
             {
-                if (i > 15) return false;
+                if (Stopped) return false;
+                if (!CheckItemCount((ushort) itemId, true)) continue;
+                
+                if (i > 40) return false;
                 i++;
                 
-                CheckItemCount(context, inventory, (ushort) itemId, true);
                 
-                ZerGo0Debugger.Debug(context.Player.GetUsername(), $"PlaceBlockOnLoc: {locationOffset} | " +
-                                                                   $"BlockID: {context.World.GetBlock(locationOffset).GetId()} | " +
+                ZerGo0Debugger.Debug(_context.Player.GetUsername(), $"PlaceBlockOnLoc: {locationOffset} | " +
+                                                                   $"BlockID: {_context.World.GetBlock(locationOffset).GetId()} | " +
                                                                    $"ItemID: {itemId}");
-                await inventory.Select((ushort) itemId);
+                await _inventory.Select((ushort) itemId);
 
-                await context.Player.LookAtSmooth(location);
+                await _context.Player.LookAtSmooth(location);
 
-                await context.World.PlaceOn(location, (sbyte) blockFace);
-                await context.TickManager.Sleep(tickdelay);
+                await _context.World.PlaceOn(location, (sbyte) blockFace);
+                await _context.TickManager.Sleep(tickdelay);
 
                 var blockCheckCount = 0;
-                while (itemId != 4 && context.World.GetBlock(locationOffset).GetId() == 4 && 
-                       context.World.GetBlock(locationOffset).GetId() != 0)
+                while (itemId != 4 && _context.World.GetBlock(locationOffset).GetId() == 4 && 
+                       _context.World.GetBlock(locationOffset).GetId() != 0)
                 {
                     if (blockCheckCount > 15) return false;
                     blockCheckCount++;
-                    await context.TickManager.Sleep(1);
+                    await _context.TickManager.Sleep(1);
                 }
                 
-                if (context.World.GetBlock(locationOffset).GetId() != 0)
+                if (_context.World.GetBlock(locationOffset).GetId() != 0)
                 {
-                    ZerGo0Debugger.Debug(context.Player.GetUsername(), $"DONE PlaceBlockOnLoc: {locationOffset} | " +
-                                                                       $"BlockID: {context.World.GetBlock(locationOffset).GetId()} | " +
+                    ZerGo0Debugger.Debug(_context.Player.GetUsername(), $"DONE PlaceBlockOnLoc: {locationOffset} | " +
+                                                                       $"BlockID: {_context.World.GetBlock(locationOffset).GetId()} | " +
                                                                        $"ItemID: {itemId}");
                     break;
                 }
@@ -219,105 +229,109 @@ namespace CactusFarmBuilder.Helpers
             return true;
         }
         
-        public static async Task<bool> PlaceBlocksOn(IBotContext context, IInventory inventory, ILocation[] locations, 
-            int blockFace, int itemId, int tickdelay)
+        public async Task<bool> PlaceBlocksOn(ILocation[] locations, int blockFace, int itemId, int tickdelay)
         {
             foreach (var location in locations)
             {
-                if (!await PlaceBlockOn(context, inventory, location, blockFace, itemId, tickdelay)) return false;
+                if (!await PlaceBlockOn(location, blockFace, itemId, tickdelay)) return false;
             }
 
             return true;
         }
 
-        public static async Task<bool> BreakBlock(IBotContext context, IInventory inventory, ILocation location, 
-            int tickdelay)
+        public async Task<bool> BreakBlock(ILocation location, int tickdelay)
         {
             var i = 0;
-            while (context.World.GetBlockId(location) != 0)
+            while (_context.World.GetBlockId(location) != 0)
             {
-                if (i > 15) return false;
+                if (Stopped) return false;
+                
+                if (i > 40) return false;
                 i++;
                 
-                var sword = inventory.FindBest(EquipmentType.Sword);
+                var sword = _inventory.FindBest(EquipmentType.Sword);
                 if (sword != null) await sword.Select();
 
-                await context.Player.LookAtSmooth(location);
+                await _context.Player.LookAtSmooth(location);
 
-                await context.World.Dig(location);
-                await context.TickManager.Sleep(tickdelay);
+                await _context.World.Dig(location);
+                await _context.TickManager.Sleep(tickdelay);
             }
 
             return true;
         }
         
-        public static async Task<bool> BreakBlocks(IBotContext context, IInventory inventory, ILocation[] locations, int tickdelay)
+        public async Task<bool> BreakBlocks(ILocation[] locations, int tickdelay)
         {
             foreach (var location in locations)
             {
-                if (!await BreakBlock(context, inventory, location, tickdelay)) return false;
+                if (!await BreakBlock(location, tickdelay)) return false;
             }
 
             return true;
         }
 
-        public static async Task<bool> GoToLocation(IBotContext context, ILocation location, MapOptions mapOptions = null)
+        public async Task<bool> GoToLocation(ILocation location, MapOptions mapOptions = null)
         {
-            ZerGo0Debugger.Debug(context.Player.GetUsername(), $"GoToLocation Destination: {location}");
-            var moveResult = await context.Player.MoveTo(location, mapOptions).Task;
+            ZerGo0Debugger.Debug(_context.Player.GetUsername(), $"GoToLocation Destination: {location}");
+            var moveResult = await _context.Player.MoveTo(location, mapOptions).Task;
             
             if (moveResult.Result == MoveResultType.Completed)
             {
-                await WaitTillGrounded(context);
-                ZerGo0Debugger.Debug(context.Player.GetUsername(), $"GoToLocation succeeded! | moveResult: {moveResult.Result}");
+                await WaitTillGrounded();
+                ZerGo0Debugger.Debug(_context.Player.GetUsername(), $"GoToLocation succeeded! | moveResult: {moveResult.Result}");
                 return true;
             }
 
-            ZerGo0Debugger.Debug(context.Player.GetUsername(),$"GoToLocation failed! | moveResult: {moveResult.Result}");
+            ZerGo0Debugger.Debug(_context.Player.GetUsername(),$"GoToLocation failed! | moveResult: {moveResult.Result}");
             return false;
         }
 
-        public static async Task<bool> CreateLayer(IBotContext context, IInventory inventory, IEnumerable<ILocation> locList, 
-            int itemId, int tickDelay)
+        public async Task<bool> CreateLayer(IEnumerable<ILocation> locList, int itemId, int tickDelay)
         {
             var locations = new Queue<ILocation>(locList);
             while (locations.Count > 0)
             {
-                if (!CheckItemCount(context, inventory, (ushort) itemId, true)) continue;
+                if (Stopped) return false;
+                
+                if (!CheckItemCount((ushort) itemId, true)) continue;
 
                 var location = locations.Dequeue();
                 
-                if (location == null || context.World.GetBlockId(location) != 0) continue;
+                if (location == null || _context.World.GetBlockId(location) != 0) continue;
 
-                if (!await PlaceBlockAt(context, inventory, location, itemId, tickDelay)) return false;
+                if (!await PlaceBlockAt(location, itemId, tickDelay)) return false;
                 
-                if (context.World.GetBlockId(location) == 0) locations.Enqueue(location);
+                if (_context.World.GetBlockId(location) == 0) locations.Enqueue(location);
             }
 
             return true;
         }
 
-        public static async Task<bool> BackToStart(IBotContext context, IInventory inventory,
-            int tickdelay, ILocation startLoc)
+        public async Task<bool> BackToStart(int tickdelay, ILocation startLoc)
         {
-            ZerGo0Debugger.Debug(context.Player.GetUsername(), "BackToStart");
-            while (!CurrentLocation(context).Compare(startLoc))
+            ZerGo0Debugger.Debug(_context.Player.GetUsername(), "BackToStart");
+            while (!CurrentLocation().Compare(startLoc))
             {
-                if (!await PlaceCactusBackToStart(context, inventory, tickdelay)) return false;
+                if (Stopped) return false;
+                
+                if (!await PlaceCactusBackToStart(tickdelay)) return false;
 
-                if (!await GoToLocation(context, CurrentLocation(context).Offset(-2), MAP_OPTIONS_MINE)) return false;
+                if (!await GoToLocation(CurrentLocation().Offset(-2), MAP_OPTIONS_MINE)) return false;
             }
 
             return true;
         }
 
-        private static async Task<bool> PlaceCactusBackToStart(IBotContext context, IInventory inventory, int tickdelay)
+        private async Task<bool> PlaceCactusBackToStart(int tickdelay)
         {
-            foreach (var location in AreaAroundPlayer(context, 1))
+            foreach (var location in AreaAroundPlayer(1))
             {
-                if (!CheckForPlaceableSpot(context, location)) continue;
+                if (Stopped) return false;
+                
+                if (!CheckForPlaceableSpot(location)) continue;
 
-                if (!await PlaceBlockAt(context, inventory, location, 81, tickdelay)) return false;
+                if (!await PlaceBlockAt(location, 81, tickdelay)) return false;
             }
 
             return true;
@@ -340,25 +354,25 @@ namespace CactusFarmBuilder.Helpers
             }
         }
 
-        public static ILocation CurrentLocation(IBotContext context)
+        public ILocation CurrentLocation()
         {
-            return context.Player.GetLocation();
+            return _context.Player.GetLocation();
         }
         
-        public static IPosition CurrentPosition(IBotContext context)
+        public IPosition CurrentPosition()
         {
-            return context.Player.GetPosition();
+            return _context.Player.GetPosition();
         }
 
-        private static bool CheckForPlaceableSpot(IBotContext context, ILocation location)
+        private bool CheckForPlaceableSpot(ILocation location)
         {
-            return context.World.GetBlockId(location) == 0  && context.World.GetBlockId(location.Offset(-1)) == 12 && 
-                   context.World.IsWalkable(location.Offset(-1)) && context.World.GetBlock(location.Offset(-1)).IsVisible();
+            return _context.World.GetBlockId(location) == 0  && _context.World.GetBlockId(location.Offset(-1)) == 12 && 
+                   _context.World.IsWalkable(location.Offset(-1)) && _context.World.GetBlock(location.Offset(-1)).IsVisible();
         }
 
-        private static ILocation[] AreaAroundPlayer(IBotContext context, int yOffset = 0)
+        private ILocation[] AreaAroundPlayer(int yOffset = 0)
         {
-            var currentLoc = context.Player.GetLocation();
+            var currentLoc = _context.Player.GetLocation();
 
             return new[]
             {

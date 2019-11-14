@@ -7,9 +7,9 @@ using OQ.MineBot.PluginBase.Bot;
 namespace MobAuraPlugin
 {
 #if DEBUG
-    [Plugin(4, "Mob Aura", "(DEBUG BUILD) Attacks all mobs around the bot", "https://www.youtube.com/watch?v=_c5K49y4eVc")]
+    [Plugin(5, "Mob Aura", "(DEBUG BUILD)", "https://www.youtube.com/watch?v=_c5K49y4eVc")]
 #else
-    [Plugin(4, "Mob Aura", "Attacks all mobs around the bot", "https://www.youtube.com/watch?v=_c5K49y4eVc")]
+    [Plugin(5, "Mob Aura", "Attacks all mobs around the bot", "https://www.youtube.com/watch?v=_c5K49y4eVc")]
 #endif
     public class PluginCore : IStartPlugin
     {
@@ -35,6 +35,8 @@ namespace MobAuraPlugin
             if (!botSettings.loadInventory && (equipmentGroup.GetValue<bool>("Auto equip best armor?") || 
                                                equipmentGroup.GetValue<bool>("Equip best weapon?"))) 
                 return new PluginResponse(false, "'Load inventory' must be enabled.");
+
+            ZerGo0Debugger.PluginSettings = Setting.GetCollection();
             
             return new PluginResponse(true);
         }

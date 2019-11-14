@@ -14,6 +14,7 @@ namespace CactusFarmBuilder.Tasks
         private bool _stopped = false;
         private int _layerCount;
         private ILocation _startLoc;
+        private HelperFunctions _helperFunctions;
         
         private readonly int _tickDelay;
         private readonly int _maxLayers;
@@ -33,6 +34,7 @@ namespace CactusFarmBuilder.Tasks
         public override Task Start()
         {
             _startLoc = Context.Player.GetLocation();
+            _helperFunctions = new HelperFunctions(Context, Inventory);
             
             return null;
         }
@@ -40,8 +42,9 @@ namespace CactusFarmBuilder.Tasks
         public override Task Stop()
         {
             _stopped = true;
+            _helperFunctions.Stopped = true;
+            
             BlocksGlobal.BUILDING_BLOCKS = _defaultBuldingBlocks;
-
             return null;
         }
 
@@ -54,12 +57,12 @@ namespace CactusFarmBuilder.Tasks
         {
             try
             {
-                if (!HelperFunctions.CheckItemCount(Context, Inventory, new ushort[]{12, 81, 287}, true)) return;
+                if (!_helperFunctions.CheckItemCount(new ushort[]{12, 81, 287}, true)) return;
                 
                 if (_layerCount >= _maxLayers)
                 {
                     ZerGo0Debugger.Debug(Context.Player.GetUsername(), $"LayerC: {_layerCount} | MaxL: {_maxLayers}");
-                    if (!await HelperFunctions.BackToStart(Context, Inventory, _tickDelay, _startLoc))
+                    if (!await _helperFunctions.BackToStart(_tickDelay, _startLoc))
                     {
                         _stopped = true;
                         return;
@@ -87,7 +90,7 @@ namespace CactusFarmBuilder.Tasks
 #endregion
 
                 if (_layerCount >= _maxLayers) return;
-                await HelperFunctions.GoToLocation(Context, CurrentLoc().Offset(1), HelperFunctions.MAP_OPTIONS_BUILD);
+                await _helperFunctions.GoToLocation(CurrentLoc().Offset(1), HelperFunctions.MAP_OPTIONS_BUILD);
 
 #region 2nd Layer
 
@@ -104,13 +107,14 @@ namespace CactusFarmBuilder.Tasks
 #endregion
 
                 if (_layerCount >= _maxLayers) return;
-                await HelperFunctions.GoToLocation(Context, CurrentLoc().Offset(1), HelperFunctions.MAP_OPTIONS_BUILD);
+                await _helperFunctions.GoToLocation(CurrentLoc().Offset(1), HelperFunctions.MAP_OPTIONS_BUILD);
 
                 
             }
             catch (Exception e)
             {
                 ZerGo0Debugger.Error(e, Context, this);
+                _stopped = true;
             }
         }
 
@@ -119,7 +123,7 @@ namespace CactusFarmBuilder.Tasks
         private async Task<bool> FirstLayer()
         {
             //Note: 1st Sandlayer
-            if (!await HelperFunctions.CreateLayer(Context, Inventory, new[]
+            if (!await _helperFunctions.CreateLayer(new[]
             {
                 CurrentLoc().Offset(1, 0, 1), CurrentLoc().Offset(-1, 0, 1), 
                 CurrentLoc().Offset(-1, 0, -1),CurrentLoc().Offset(1, 0, -1)
@@ -129,7 +133,7 @@ namespace CactusFarmBuilder.Tasks
             if (_stopped) return false;
                 
             //Note: 1st Cactuslayer
-            if (!await HelperFunctions.CreateLayer(Context, Inventory, new[]
+            if (!await _helperFunctions.CreateLayer(new[]
             {
                 CurrentLoc().Offset(1, 1, 1), CurrentLoc().Offset(-1, 1, 1), 
                 CurrentLoc().Offset(-1, 1, -1),CurrentLoc().Offset(1, 1, -1)
@@ -139,7 +143,7 @@ namespace CactusFarmBuilder.Tasks
             if (_stopped) return false;
                 
             //Note: 1st StringLayer
-            if (!await HelperFunctions.CreateLayer(Context, Inventory, new[]
+            if (!await _helperFunctions.CreateLayer(new[]
             {
                 CurrentLoc().Offset(0, 1, 1), CurrentLoc().Offset(0, 1, -1)
             }, 287, _tickDelay)) return false;
@@ -155,7 +159,7 @@ namespace CactusFarmBuilder.Tasks
         private async Task<bool> SecondLayer()
         {
             //Note: 2nd Sandlayer
-            if (!await HelperFunctions.CreateLayer(Context, Inventory, new[]
+            if (!await _helperFunctions.CreateLayer(new[]
             {
                 CurrentLoc().Offset(0, 0, 1), CurrentLoc().Offset(0, 0, -1)
             }, 12, _tickDelay)) return false;
@@ -164,7 +168,7 @@ namespace CactusFarmBuilder.Tasks
             if (_stopped) return false;
                 
             //Note: 2nd BOTTOM StringLayer
-            if (!await HelperFunctions.CreateLayer(Context, Inventory, new[]
+            if (!await _helperFunctions.CreateLayer(new[]
             {
                 CurrentLoc().Offset(1, 0, 1), CurrentLoc().Offset(-1, 0, 1), 
                 CurrentLoc().Offset(-1, 0, -1),CurrentLoc().Offset(1, 0, -1)
@@ -174,7 +178,7 @@ namespace CactusFarmBuilder.Tasks
             if (_stopped) return false;
                 
             //Note: 2nd TOP StringLayer
-            if (!await HelperFunctions.CreateLayer(Context, Inventory, new[]
+            if (!await _helperFunctions.CreateLayer(new[]
             {
                 CurrentLoc().Offset(1, 1, 1), CurrentLoc().Offset(-1, 1, 1), 
                 CurrentLoc().Offset(-1, 1, -1),CurrentLoc().Offset(1, 1, -1)
@@ -184,7 +188,7 @@ namespace CactusFarmBuilder.Tasks
             if (_stopped) return false;
                 
             //Note: 2nd BREAK BOTTOM StringLayer
-            if (!await HelperFunctions.BreakBlocks(Context, Inventory, new[]
+            if (!await _helperFunctions.BreakBlocks(new[]
             {
                 CurrentLoc().Offset(1, 0, 1), CurrentLoc().Offset(-1, 0, 1),
                 CurrentLoc().Offset(-1, 0, -1), CurrentLoc().Offset(1, 0, -1)
@@ -226,7 +230,7 @@ namespace CactusFarmBuilder.Tasks
                     break;
             }
 
-            return await HelperFunctions.GoToLocation(Context, nextStart, HelperFunctions.MAP_OPTIONS_MINE);
+            return await _helperFunctions.GoToLocation(nextStart, HelperFunctions.MAP_OPTIONS_MINE);
         }
 
 #endregion

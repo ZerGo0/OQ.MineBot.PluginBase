@@ -35,6 +35,7 @@ namespace MobAuraPlugin.Tasks
         private MoveResult _moveToMob;
         private IMobEntity _currentTarget;
         private string _botName;
+        private bool _stopped;
 
         public Attack(Mode mode, int cps, int ms, bool autoWeapon)
         {
@@ -71,12 +72,13 @@ namespace MobAuraPlugin.Tasks
             catch (Exception e)
             {
                 ZerGo0Debugger.Error(e, Context, this);
+                _stopped = true;
             }
         }
 
         public override bool Exec()
         {
-            return !Context.Player.IsDead() && !Context.Player.State.Eating;
+            return !Context.Player.IsDead() && !Context.Player.State.Eating && !_stopped;
         }
 
         public async Task OnTick()
@@ -86,6 +88,8 @@ namespace MobAuraPlugin.Tasks
                 if (_currentTarget == null) _currentTarget = TargetSelector();
 
                 if (_currentTarget == null) return;
+                
+                
                 
                 if (TargetChecker(_currentTarget))
                 {
@@ -105,6 +109,7 @@ namespace MobAuraPlugin.Tasks
             catch (Exception e)
             {
                 ZerGo0Debugger.Error(e, Context, this);
+                _stopped = true;
             }
         }
 

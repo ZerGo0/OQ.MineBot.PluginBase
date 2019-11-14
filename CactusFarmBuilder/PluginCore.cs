@@ -10,9 +10,9 @@ using OQ.MineBot.PluginBase.Bot;
 namespace CactusFarmBuilder
 {
 #if DEBUG
-    [Plugin(4, "Cactus Farm Builder", "(DEBUG BUILD)", "https://www.youtube.com/watch?v=uVdLJZZzuBs")]
+    [Plugin(5, "Cactus Farm Builder", "(DEBUG BUILD)", "https://www.youtube.com/watch?v=uVdLJZZzuBs")]
 #else
-    [Plugin(4, "Cactus Farm Builder", "[BETA] Builds a cactus farm for you.", "https://www.youtube.com/watch?v=uVdLJZZzuBs")]
+    [Plugin(5, "Cactus Farm Builder", "[BETA] Builds a cactus farm for you.", "https://www.youtube.com/watch?v=uVdLJZZzuBs")]
 #endif
     public class PluginCore : IStartPlugin
     {
@@ -45,6 +45,8 @@ namespace CactusFarmBuilder
             if (botSettings.staticWorlds) return new PluginResponse(false, "'Shared worlds' should be disabled.");
             
             if (!botSettings.loadInventory) return new PluginResponse(false, "'Load inventory' should be enabled.");
+            
+            ZerGo0Debugger.PluginSettings = Setting.GetCollection();
 
             return new PluginResponse(true);
         }

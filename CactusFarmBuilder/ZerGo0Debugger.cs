@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -15,13 +16,13 @@ namespace CactusFarmBuilder
 {
     public class ZerGo0Debugger : ITask, ITickListener
     {
-        private static Dictionary<string, IPluginSetting> _PLUGIN_SETTINGS = new Dictionary<string, IPluginSetting>();
+        public static Dictionary<string, IPluginSetting> PluginSettings = new Dictionary<string, IPluginSetting>();
         private static IBotSettings _BOT_SETTINGS;
         private IBotContext _context;
 
         public ZerGo0Debugger(Dictionary<string, IPluginSetting> pluginSettings = null, IBotSettings botSettings = null)
         {
-            if (pluginSettings != null) _PLUGIN_SETTINGS = pluginSettings;
+            if (pluginSettings != null) PluginSettings = pluginSettings;
             if (botSettings != null) _BOT_SETTINGS = botSettings;
             AppDomain.CurrentDomain.UnhandledException += TestHandler;
         }
@@ -84,13 +85,22 @@ namespace CactusFarmBuilder
 
 #region Plugin Settings
 
-            if (_PLUGIN_SETTINGS.Count > 0)
+            if (PluginSettings.Count > 0)
             {
                 message += DebuggerLine("Plugin Settings");
                 discordMessage += $"**Plugin Settings**" + nL;
 
-                foreach (var setting in _PLUGIN_SETTINGS)
+                foreach (var setting in PluginSettings.Where(setting => setting.Value != null))
                 {
+                    if (setting.Value.GetType() == typeof(DescriptionSetting) ||
+                        setting.Value.GetType() == typeof(LinkSetting) ||
+                        setting.Value.GetType() == typeof(GroupSetting)) continue;
+                    if (string.IsNullOrEmpty(setting.Value.name)) setting.Value.name = "null";
+                    if (string.IsNullOrEmpty(setting.Value.value.ToString())) setting.Value.value = "null";
+                    
+                    if (context != null)
+                        Debug(context.Player.GetUsername(), $"Type: {setting.Value.GetType()}");
+
                     message += DebuggerLine(setting.Value.name, setting.Value.value.ToString());
                     discordMessage += $"{setting.Value.name}: {setting.Value.value}" + nL;
                 }
@@ -105,9 +115,6 @@ namespace CactusFarmBuilder
 
             if (context != null || _BOT_SETTINGS != null)
             {
-                message += DebuggerLine("Bot Settings");
-                discordMessage += $"**Bot Settings**" + nL;
-
                 var settings = _BOT_SETTINGS;
 
                 if (context != null)
@@ -116,35 +123,41 @@ namespace CactusFarmBuilder
                     _BOT_SETTINGS = settings;
                 }
 
-                message += DebuggerLine("Reconnect", settings.reconnect.ToString());
-                discordMessage += $"Reconnect: {settings.reconnect.ToString()}" + nL;
+                if (settings != null)
+                {
+                    message += DebuggerLine("Bot Settings");
+                    discordMessage += $"**Bot Settings**" + nL;
+                    
+                    message += DebuggerLine("Reconnect", settings.reconnect.ToString());
+                    discordMessage += $"Reconnect: {settings.reconnect.ToString()}" + nL;
                 
-                message += DebuggerLine("Max Reconnects", settings.maxReconnects.ToString());
-                discordMessage += $"Max Reconnects: {settings.maxReconnects}" + nL;
+                    message += DebuggerLine("Max Reconnects", settings.maxReconnects.ToString());
+                    discordMessage += $"Max Reconnects: {settings.maxReconnects}" + nL;
                 
-                message += DebuggerLine("Load World", settings.loadWorld.ToString());
-                discordMessage += $"Load World: {settings.loadWorld}" + nL;
+                    message += DebuggerLine("Load World", settings.loadWorld.ToString());
+                    discordMessage += $"Load World: {settings.loadWorld}" + nL;
                 
-                message += DebuggerLine("Shared World", settings.staticWorlds.ToString());
-                discordMessage += $"Shared World: {settings.staticWorlds}" + nL;
+                    message += DebuggerLine("Shared World", settings.staticWorlds.ToString());
+                    discordMessage += $"Shared World: {settings.staticWorlds}" + nL;
                 
-                message += DebuggerLine("Load Chat", settings.loadChat.ToString());
-                discordMessage += $"Load Chat: {settings.loadChat}" + nL;
+                    message += DebuggerLine("Load Chat", settings.loadChat.ToString());
+                    discordMessage += $"Load Chat: {settings.loadChat}" + nL;
                 
-                message += DebuggerLine("Load Inv", settings.loadInventory.ToString());
-                discordMessage += $"Load Inv: {settings.loadInventory}" + nL;
+                    message += DebuggerLine("Load Inv", settings.loadInventory.ToString());
+                    discordMessage += $"Load Inv: {settings.loadInventory}" + nL;
                 
-                message += DebuggerLine("Load Entities", settings.loadEntities.ToString());
-                discordMessage += $"Load Entities: {settings.loadEntities}" + nL;
+                    message += DebuggerLine("Load Entities", settings.loadEntities.ToString());
+                    discordMessage += $"Load Entities: {settings.loadEntities}" + nL;
                 
-                message += DebuggerLine("Load Players", settings.loadPlayers.ToString());
-                discordMessage += $"Load Players: {settings.loadPlayers}" + nL;
+                    message += DebuggerLine("Load Players", settings.loadPlayers.ToString());
+                    discordMessage += $"Load Players: {settings.loadPlayers}" + nL;
                 
-                message += DebuggerLine("Load Mobs", settings.loadMobs.ToString());
-                discordMessage += $"Load Mobs: {settings.loadMobs}" + nL;
+                    message += DebuggerLine("Load Mobs", settings.loadMobs.ToString());
+                    discordMessage += $"Load Mobs: {settings.loadMobs}" + nL;
             
-                message += DebuggerLine();
-                discordMessage += $"" + nL;
+                    message += DebuggerLine();
+                    discordMessage += $"" + nL;
+                }
             }
             
 #endregion
@@ -221,14 +234,18 @@ namespace CactusFarmBuilder
                 {
                     strackTraceFirst = false;
                     message += DebuggerLine("StackTrace", line.TrimStart(' '));
-                    if (discordMessage.Length + line.Length < 2048) discordMessage += $"StackTrace: {line.TrimStart(' ')}" + nL;
+                    var discordLine = $"```StackTrace: {line.TrimStart(' ')}" + nL;
+                    if (discordMessage.Length + discordLine.Length < 2045) discordMessage += discordLine;
                 }
                 else
                 {
                     message += DebuggerLine("",line.TrimStart(' '));
-                    if (discordMessage.Length + line.Length < 2048) discordMessage += $"{line.TrimStart(' ')}" + nL;
+                    var discordLine = $"{line.TrimStart(' ')}" + nL;
+                    if (discordMessage.Length + discordLine.Length < 2045) discordMessage += discordLine;
                 }
             }
+
+            if (discordMessage.Length + 3 <= 2048) discordMessage += "```";
 
             message += @"##################################################################################";
             

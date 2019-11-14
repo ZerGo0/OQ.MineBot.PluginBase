@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -14,18 +13,13 @@ namespace CactusFarmBuilder.Helpers
 {
     public class HelperFunctions
     {
-        private readonly IBotContext _context;
-        private readonly IInventory _inventory;
-        
-        public bool Stopped = false;
-        
         public static readonly MapOptions MAP_OPTIONS_MINE = new MapOptions
         {
             Look = true,
             Build = false,
             Mine = true
         };
-        
+
         public static readonly MapOptions MAP_OPTIONS_NOMINE = new MapOptions
         {
             Look = true,
@@ -39,20 +33,25 @@ namespace CactusFarmBuilder.Helpers
             Build = true,
             Mine = false
         };
-        
+
         public static readonly MapOptions MAP_OPTIONS_NOBUILD = new MapOptions
         {
             Look = true,
             Build = false,
             Mine = false
         };
-        
+
+        private readonly IBotContext _context;
+        private readonly IInventory _inventory;
+
+        public bool Stopped = false;
+
         public HelperFunctions(IBotContext context, IInventory inventory)
         {
             _context = context;
             _inventory = inventory;
         }
-        
+
         public bool CheckItemCount(ushort itemId, bool creativeRefill = false)
         {
             if (Stopped) return false;
@@ -76,22 +75,23 @@ namespace CactusFarmBuilder.Helpers
                             _context.Functions.CreativeSetSlot(39, SlotType.Create(_context, itemId, 64));
                             break;
                     }
+
                     return true;
                 }
 
                 ZerGo0Debugger.Info(_context.Player.GetUsername(), $"Missing {GetItemIdName(itemId)}");
                 return false;
             }
+
             return true;
         }
-        
+
         public bool CheckItemCount(ushort[] itemIds, bool creativeRefill = false)
         {
             foreach (var itemId in itemIds)
-            {
-                if (!CheckItemCount(itemId, creativeRefill)) return false;
-            }
-            
+                if (!CheckItemCount(itemId, creativeRefill))
+                    return false;
+
             return true;
         }
 
@@ -108,56 +108,53 @@ namespace CactusFarmBuilder.Helpers
         public async Task<bool> PlaceBlockAt(ILocation location, int itemId, int tickdelay)
         {
             if (_context.World.GetBlockId(location) == 0 && _context.World.GetBlockId(location.Offset(-1)) == 132)
-            {
                 return await PlaceBlockOn(location.Offset(-1), 1, itemId, tickdelay);
-            }
 
             var i = 0;
             while (true)
             {
                 if (Stopped) return false;
                 if (!CheckItemCount((ushort) itemId, true)) continue;
-                
+
                 if (i > 40) return false;
                 i++;
-                
+
                 ZerGo0Debugger.Debug(_context.Player.GetUsername(), $"PlaceBlockAtLoc: {location} | " +
-                                                                   $"BlockID: {_context.World.GetBlock(location).GetId()} | " +
-                                                                   $"ItemID: {itemId}");
+                                                                    $"BlockID: {_context.World.GetBlock(location).GetId()} | " +
+                                                                    $"ItemID: {itemId}");
                 await _inventory.Select((ushort) itemId);
-                
+
                 await _context.Player.LookAtSmooth(location);
-                
+
                 await _context.World.PlaceAt(location);
                 await _context.TickManager.Sleep(tickdelay);
-                
+
                 var blockCheckCount = 0;
-                while (itemId != 4 && _context.World.GetBlock(location).GetId() == 4 && 
+                while (itemId != 4 && _context.World.GetBlock(location).GetId() == 4 &&
                        _context.World.GetBlock(location).GetId() != 0)
                 {
                     if (blockCheckCount > 15) return false;
                     blockCheckCount++;
                     await _context.TickManager.Sleep(1);
                 }
-                
+
                 if (_context.World.GetBlock(location).GetId() != 0)
                 {
                     ZerGo0Debugger.Debug(_context.Player.GetUsername(), $"DONE PlaceBlockAtLoc: {location} | " +
-                                                                       $"BlockID: {_context.World.GetBlock(location).GetId()} | " +
-                                                                       $"ItemID: {itemId}");
+                                                                        $"BlockID: {_context.World.GetBlock(location).GetId()} | " +
+                                                                        $"ItemID: {itemId}");
                     break;
                 }
             }
 
             return true;
         }
-        
+
         public async Task<bool> PlaceBlocksAt(ILocation[] locations, int itemId, int tickdelay)
         {
             foreach (var location in locations)
-            {
-                if (!await PlaceBlockAt(location, itemId, tickdelay)) return false;
-            }
+                if (!await PlaceBlockAt(location, itemId, tickdelay))
+                    return false;
 
             return true;
         }
@@ -193,14 +190,14 @@ namespace CactusFarmBuilder.Helpers
             {
                 if (Stopped) return false;
                 if (!CheckItemCount((ushort) itemId, true)) continue;
-                
+
                 if (i > 40) return false;
                 i++;
-                
-                
+
+
                 ZerGo0Debugger.Debug(_context.Player.GetUsername(), $"PlaceBlockOnLoc: {locationOffset} | " +
-                                                                   $"BlockID: {_context.World.GetBlock(locationOffset).GetId()} | " +
-                                                                   $"ItemID: {itemId}");
+                                                                    $"BlockID: {_context.World.GetBlock(locationOffset).GetId()} | " +
+                                                                    $"ItemID: {itemId}");
                 await _inventory.Select((ushort) itemId);
 
                 await _context.Player.LookAtSmooth(location);
@@ -209,32 +206,31 @@ namespace CactusFarmBuilder.Helpers
                 await _context.TickManager.Sleep(tickdelay);
 
                 var blockCheckCount = 0;
-                while (itemId != 4 && _context.World.GetBlock(locationOffset).GetId() == 4 && 
+                while (itemId != 4 && _context.World.GetBlock(locationOffset).GetId() == 4 &&
                        _context.World.GetBlock(locationOffset).GetId() != 0)
                 {
                     if (blockCheckCount > 15) return false;
                     blockCheckCount++;
                     await _context.TickManager.Sleep(1);
                 }
-                
+
                 if (_context.World.GetBlock(locationOffset).GetId() != 0)
                 {
                     ZerGo0Debugger.Debug(_context.Player.GetUsername(), $"DONE PlaceBlockOnLoc: {locationOffset} | " +
-                                                                       $"BlockID: {_context.World.GetBlock(locationOffset).GetId()} | " +
-                                                                       $"ItemID: {itemId}");
+                                                                        $"BlockID: {_context.World.GetBlock(locationOffset).GetId()} | " +
+                                                                        $"ItemID: {itemId}");
                     break;
                 }
             }
 
             return true;
         }
-        
+
         public async Task<bool> PlaceBlocksOn(ILocation[] locations, int blockFace, int itemId, int tickdelay)
         {
             foreach (var location in locations)
-            {
-                if (!await PlaceBlockOn(location, blockFace, itemId, tickdelay)) return false;
-            }
+                if (!await PlaceBlockOn(location, blockFace, itemId, tickdelay))
+                    return false;
 
             return true;
         }
@@ -245,10 +241,10 @@ namespace CactusFarmBuilder.Helpers
             while (_context.World.GetBlockId(location) != 0)
             {
                 if (Stopped) return false;
-                
+
                 if (i > 40) return false;
                 i++;
-                
+
                 var sword = _inventory.FindBest(EquipmentType.Sword);
                 if (sword != null) await sword.Select();
 
@@ -260,13 +256,12 @@ namespace CactusFarmBuilder.Helpers
 
             return true;
         }
-        
+
         public async Task<bool> BreakBlocks(ILocation[] locations, int tickdelay)
         {
             foreach (var location in locations)
-            {
-                if (!await BreakBlock(location, tickdelay)) return false;
-            }
+                if (!await BreakBlock(location, tickdelay))
+                    return false;
 
             return true;
         }
@@ -275,15 +270,17 @@ namespace CactusFarmBuilder.Helpers
         {
             ZerGo0Debugger.Debug(_context.Player.GetUsername(), $"GoToLocation Destination: {location}");
             var moveResult = await _context.Player.MoveTo(location, mapOptions).Task;
-            
+
             if (moveResult.Result == MoveResultType.Completed)
             {
                 await WaitTillGrounded();
-                ZerGo0Debugger.Debug(_context.Player.GetUsername(), $"GoToLocation succeeded! | moveResult: {moveResult.Result}");
+                ZerGo0Debugger.Debug(_context.Player.GetUsername(),
+                    $"GoToLocation succeeded! | moveResult: {moveResult.Result}");
                 return true;
             }
 
-            ZerGo0Debugger.Debug(_context.Player.GetUsername(),$"GoToLocation failed! | moveResult: {moveResult.Result}");
+            ZerGo0Debugger.Debug(_context.Player.GetUsername(),
+                $"GoToLocation failed! | moveResult: {moveResult.Result}");
             return false;
         }
 
@@ -293,15 +290,15 @@ namespace CactusFarmBuilder.Helpers
             while (locations.Count > 0)
             {
                 if (Stopped) return false;
-                
+
                 if (!CheckItemCount((ushort) itemId, true)) continue;
 
                 var location = locations.Dequeue();
-                
+
                 if (location == null || _context.World.GetBlockId(location) != 0) continue;
 
                 if (!await PlaceBlockAt(location, itemId, tickDelay)) return false;
-                
+
                 if (_context.World.GetBlockId(location) == 0) locations.Enqueue(location);
             }
 
@@ -314,7 +311,7 @@ namespace CactusFarmBuilder.Helpers
             while (!CurrentLocation().Compare(startLoc))
             {
                 if (Stopped) return false;
-                
+
                 if (!await PlaceCactusBackToStart(tickdelay)) return false;
 
                 if (!await GoToLocation(CurrentLocation().Offset(-2), MAP_OPTIONS_MINE)) return false;
@@ -328,7 +325,7 @@ namespace CactusFarmBuilder.Helpers
             foreach (var location in AreaAroundPlayer(1))
             {
                 if (Stopped) return false;
-                
+
                 if (!CheckForPlaceableSpot(location)) continue;
 
                 if (!await PlaceBlockAt(location, 81, tickdelay)) return false;
@@ -358,7 +355,7 @@ namespace CactusFarmBuilder.Helpers
         {
             return _context.Player.GetLocation();
         }
-        
+
         public IPosition CurrentPosition()
         {
             return _context.Player.GetPosition();
@@ -366,8 +363,9 @@ namespace CactusFarmBuilder.Helpers
 
         private bool CheckForPlaceableSpot(ILocation location)
         {
-            return _context.World.GetBlockId(location) == 0  && _context.World.GetBlockId(location.Offset(-1)) == 12 && 
-                   _context.World.IsWalkable(location.Offset(-1)) && _context.World.GetBlock(location.Offset(-1)).IsVisible();
+            return _context.World.GetBlockId(location) == 0 && _context.World.GetBlockId(location.Offset(-1)) == 12 &&
+                   _context.World.IsWalkable(location.Offset(-1)) &&
+                   _context.World.GetBlock(location.Offset(-1)).IsVisible();
         }
 
         private ILocation[] AreaAroundPlayer(int yOffset = 0)
@@ -376,12 +374,13 @@ namespace CactusFarmBuilder.Helpers
 
             return new[]
             {
-                currentLoc.Offset(-1, yOffset, -1), currentLoc.Offset(0, yOffset, -1), currentLoc.Offset(1, yOffset, -1),
-                currentLoc.Offset(-1, yOffset, 0), currentLoc.Offset(1, yOffset, 0),
-                currentLoc.Offset(-1, yOffset, 1), currentLoc.Offset(0, yOffset, 1), currentLoc.Offset(1, yOffset, 1)
+                currentLoc.Offset(-1, yOffset, -1), currentLoc.Offset(0, yOffset, -1),
+                currentLoc.Offset(1, yOffset, -1), currentLoc.Offset(-1, yOffset, 0),
+                currentLoc.Offset(1, yOffset, 0), currentLoc.Offset(-1, yOffset, 1),
+                currentLoc.Offset(0, yOffset, 1), currentLoc.Offset(1, yOffset, 1)
             };
         }
-        
+
 #endregion
     }
 }

@@ -11,16 +11,16 @@ namespace CactusFarmBuilder.Tasks
 {
     public class VanillaMode : ITask, ITickListener
     {
-        private bool _stopped = false;
+        private readonly ushort[] _defaultBuldingBlocks;
+        private readonly int _direction;
+        private readonly int _maxLayers;
+
+        private readonly int _tickDelay;
+        private HelperFunctions _helperFunctions;
         private int _layerCount;
         private ILocation _startLoc;
-        private HelperFunctions _helperFunctions;
-        
-        private readonly int _tickDelay;
-        private readonly int _maxLayers;
-        private readonly int _direction;
-        private readonly ushort[] _defaultBuldingBlocks;
-        
+        private bool _stopped;
+
         public VanillaMode(int speedmode, int maxlayers, int direction)
         {
             _maxLayers = maxlayers;
@@ -28,37 +28,15 @@ namespace CactusFarmBuilder.Tasks
             _tickDelay = speedmode;
 
             _defaultBuldingBlocks = BlocksGlobal.BUILDING_BLOCKS;
-            BlocksGlobal.BUILDING_BLOCKS = new[] {(ushort)12};
-        }
-
-        public override Task Start()
-        {
-            _startLoc = Context.Player.GetLocation();
-            _helperFunctions = new HelperFunctions(Context, Inventory);
-            
-            return null;
-        }
-
-        public override Task Stop()
-        {
-            _stopped = true;
-            _helperFunctions.Stopped = true;
-            
-            BlocksGlobal.BUILDING_BLOCKS = _defaultBuldingBlocks;
-            return null;
-        }
-
-        public override bool Exec()
-        {
-            return !Context.Player.IsDead() && !Context.Player.State.Eating && !_stopped;
+            BlocksGlobal.BUILDING_BLOCKS = new[] {(ushort) 12};
         }
 
         public async Task OnTick()
         {
             try
             {
-                if (!_helperFunctions.CheckItemCount(new ushort[]{12, 81, 287}, true)) return;
-                
+                if (!_helperFunctions.CheckItemCount(new ushort[] {12, 81, 287}, true)) return;
+
                 if (_layerCount >= _maxLayers)
                 {
                     ZerGo0Debugger.Debug(Context.Player.GetUsername(), $"LayerC: {_layerCount} | MaxL: {_maxLayers}");
@@ -74,19 +52,19 @@ namespace CactusFarmBuilder.Tasks
                     _startLoc = CurrentLoc();
                     return;
                 }
-                
+
 #region 1st Layer
 
                 ZerGo0Debugger.Debug(Context.Player.GetUsername(), "1st Layer START");
-                
+
                 if (!await FirstLayer())
                 {
                     _stopped = true;
                     return;
                 }
-                
+
                 ZerGo0Debugger.Debug(Context.Player.GetUsername(), "1st Layer END");
-                
+
 #endregion
 
                 if (_layerCount >= _maxLayers) return;
@@ -101,15 +79,13 @@ namespace CactusFarmBuilder.Tasks
                     _stopped = true;
                     return;
                 }
-                
+
                 ZerGo0Debugger.Debug(Context.Player.GetUsername(), "2nd Layer END");
 
 #endregion
 
                 if (_layerCount >= _maxLayers) return;
                 await _helperFunctions.GoToLocation(CurrentLoc().Offset(1), HelperFunctions.MAP_OPTIONS_BUILD);
-
-                
             }
             catch (Exception e)
             {
@@ -118,30 +94,52 @@ namespace CactusFarmBuilder.Tasks
             }
         }
 
+        public override Task Start()
+        {
+            _startLoc = Context.Player.GetLocation();
+            _helperFunctions = new HelperFunctions(Context, Inventory);
+
+            return null;
+        }
+
+        public override Task Stop()
+        {
+            _stopped = true;
+            _helperFunctions.Stopped = true;
+
+            BlocksGlobal.BUILDING_BLOCKS = _defaultBuldingBlocks;
+            return null;
+        }
+
+        public override bool Exec()
+        {
+            return !Context.Player.IsDead() && !Context.Player.State.Eating && !_stopped;
+        }
+
 #region Layers
-        
+
         private async Task<bool> FirstLayer()
         {
             //Note: 1st Sandlayer
             if (!await _helperFunctions.CreateLayer(new[]
             {
-                CurrentLoc().Offset(1, 0, 1), CurrentLoc().Offset(-1, 0, 1), 
-                CurrentLoc().Offset(-1, 0, -1),CurrentLoc().Offset(1, 0, -1)
+                CurrentLoc().Offset(1, 0, 1), CurrentLoc().Offset(-1, 0, 1),
+                CurrentLoc().Offset(-1, 0, -1), CurrentLoc().Offset(1, 0, -1)
             }, 12, _tickDelay)) return false;
             ZerGo0Debugger.Debug(Context.Player.GetUsername(), "1st SandLayer DONE");
 
             if (_stopped) return false;
-                
+
             //Note: 1st Cactuslayer
             if (!await _helperFunctions.CreateLayer(new[]
             {
-                CurrentLoc().Offset(1, 1, 1), CurrentLoc().Offset(-1, 1, 1), 
-                CurrentLoc().Offset(-1, 1, -1),CurrentLoc().Offset(1, 1, -1)
+                CurrentLoc().Offset(1, 1, 1), CurrentLoc().Offset(-1, 1, 1),
+                CurrentLoc().Offset(-1, 1, -1), CurrentLoc().Offset(1, 1, -1)
             }, 81, _tickDelay)) return false;
             ZerGo0Debugger.Debug(Context.Player.GetUsername(), "1st CactusLayer DONE");
 
             if (_stopped) return false;
-                
+
             //Note: 1st StringLayer
             if (!await _helperFunctions.CreateLayer(new[]
             {
@@ -166,27 +164,27 @@ namespace CactusFarmBuilder.Tasks
             ZerGo0Debugger.Debug(Context.Player.GetUsername(), "2nd SandLayer DONE");
 
             if (_stopped) return false;
-                
+
             //Note: 2nd BOTTOM StringLayer
             if (!await _helperFunctions.CreateLayer(new[]
             {
-                CurrentLoc().Offset(1, 0, 1), CurrentLoc().Offset(-1, 0, 1), 
-                CurrentLoc().Offset(-1, 0, -1),CurrentLoc().Offset(1, 0, -1)
+                CurrentLoc().Offset(1, 0, 1), CurrentLoc().Offset(-1, 0, 1),
+                CurrentLoc().Offset(-1, 0, -1), CurrentLoc().Offset(1, 0, -1)
             }, 287, _tickDelay)) return false;
             ZerGo0Debugger.Debug(Context.Player.GetUsername(), "2nd BOTTOM StringLayer DONE");
 
             if (_stopped) return false;
-                
+
             //Note: 2nd TOP StringLayer
             if (!await _helperFunctions.CreateLayer(new[]
             {
-                CurrentLoc().Offset(1, 1, 1), CurrentLoc().Offset(-1, 1, 1), 
-                CurrentLoc().Offset(-1, 1, -1),CurrentLoc().Offset(1, 1, -1)
+                CurrentLoc().Offset(1, 1, 1), CurrentLoc().Offset(-1, 1, 1),
+                CurrentLoc().Offset(-1, 1, -1), CurrentLoc().Offset(1, 1, -1)
             }, 287, _tickDelay)) return false;
             ZerGo0Debugger.Debug(Context.Player.GetUsername(), "2nd TOP StringLayer DONE");
 
             if (_stopped) return false;
-                
+
             //Note: 2nd BREAK BOTTOM StringLayer
             if (!await _helperFunctions.BreakBlocks(new[]
             {
@@ -196,21 +194,21 @@ namespace CactusFarmBuilder.Tasks
             ZerGo0Debugger.Debug(Context.Player.GetUsername(), "2nd BREAK BOTTOM StringLayer DONE");
 
             if (_stopped) return false;
-            
+
             _layerCount++;
 
             return true;
         }
 
 #endregion
-        
+
 #region Helper Functions
 
         private ILocation CurrentLoc()
         {
             return Context.Player.GetLocation();
         }
-        
+
         private async Task<bool> GoToNextStart()
         {
             var nextStart = CurrentLoc().Offset(0, -1, -2);
@@ -234,6 +232,5 @@ namespace CactusFarmBuilder.Tasks
         }
 
 #endregion
-        
     }
 }

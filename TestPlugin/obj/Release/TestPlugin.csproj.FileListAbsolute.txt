@@ -5,3 +5,5 @@ G:\SourceCodes\OQ.MineBot.Plugins\TestPlugin\obj\Release\TestPlugin.csprojAssemb
 G:\SourceCodes\OQ.MineBot.Plugins\TestPlugin\obj\Release\TestPlugin.csproj.CopyComplete
 G:\SourceCodes\OQ.MineBot.Plugins\TestPlugin\obj\Release\TestPlugin.dll
 G:\SourceCodes\OQ.MineBot.Plugins\TestPlugin\obj\Release\TestPlugin.pdb
+C:\Users\Faven\Desktop\Minebot\plugins\TestPlugin.dll
+C:\Users\Faven\Desktop\Minebot\plugins\TestPlugin.pdb

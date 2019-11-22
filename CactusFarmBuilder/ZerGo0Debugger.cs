@@ -211,8 +211,10 @@ namespace CactusFarmBuilder
                         {
                             if (variable.GetValue(null) != null)
                             {
-                                message += DebuggerLine(variable.Name, variable.GetValue(null).ToString());
-                                discordMessage += $"{variable.Name}: {variable.GetValue(null)}" + nL;
+                                var val = variable.GetValue(null).ToString().Replace(
+                                    "`", string.Empty);
+                                message += DebuggerLine(variable.Name, val);
+                                discordMessage += $"{variable.Name}: {val}" + nL;
                             }
                             else
                             {
@@ -224,8 +226,10 @@ namespace CactusFarmBuilder
                         {
                             if (variable.GetValue(classObj) != null)
                             {
-                                message += DebuggerLine(variable.Name, variable.GetValue(classObj).ToString());
-                                discordMessage += $"{variable.Name}: {variable.GetValue(classObj)}" + nL;
+                                var val = variable.GetValue(classObj).ToString().Replace(
+                                    "`", string.Empty);
+                                message += DebuggerLine(variable.Name, val);
+                                discordMessage += $"{variable.Name}: {val}" + nL;
                             }
                             else
                             {

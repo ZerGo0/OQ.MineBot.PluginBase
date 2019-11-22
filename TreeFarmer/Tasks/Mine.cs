@@ -288,7 +288,7 @@ namespace TreeFarmerPlugin.Tasks
     //                                                                                                                    //
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
-    public class MineArea : ITask, ITickListener
+    public class dwadawwad : ITask, ITickListener
     {
         private static readonly MapOptions MoNoSapling = new MapOptions
         {
@@ -322,7 +322,7 @@ namespace TreeFarmerPlugin.Tasks
         private BackgroundWorker _scanWorker;
         private ILocation _prevLocation;
 
-        public MineArea(bool replant, ILocation startLocation, ILocation endLocation, MacroSync macro)
+        public dwadawwad(bool replant, ILocation startLocation, ILocation endLocation, MacroSync macro)
         {
             //if (startLocation == null || endLocation == null) return;
 

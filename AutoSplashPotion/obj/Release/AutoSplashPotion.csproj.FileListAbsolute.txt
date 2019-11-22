@@ -1,0 +1,9 @@
+G:\SourceCodes\OQ.MineBot.Plugins\AutoSplashPotion\bin\Release\AutoSplashPotion.dll
+G:\SourceCodes\OQ.MineBot.Plugins\AutoSplashPotion\bin\Release\AutoSplashPotion.pdb
+G:\SourceCodes\OQ.MineBot.Plugins\AutoSplashPotion\bin\Release\OQ.MineBot.PluginBase.dll
+G:\SourceCodes\OQ.MineBot.Plugins\AutoSplashPotion\obj\Release\AutoSplashPotion.csprojAssemblyReference.cache
+G:\SourceCodes\OQ.MineBot.Plugins\AutoSplashPotion\obj\Release\AutoSplashPotion.csproj.CopyComplete
+G:\SourceCodes\OQ.MineBot.Plugins\AutoSplashPotion\obj\Release\AutoSplashPotion.dll
+G:\SourceCodes\OQ.MineBot.Plugins\AutoSplashPotion\obj\Release\AutoSplashPotion.pdb
+C:\Users\Faven\Desktop\Minebot\plugins\AutoSplashPotion.dll
+C:\Users\Faven\Desktop\Minebot\plugins\AutoSplashPotion.pdb

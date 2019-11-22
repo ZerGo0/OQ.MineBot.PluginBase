@@ -1,7 +1,8 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
+
 using AreaFiller.Tasks;
+
 using OQ.MineBot.PluginBase;
 using OQ.MineBot.PluginBase.Base;
 using OQ.MineBot.PluginBase.Base.Plugin;
@@ -10,18 +11,21 @@ using OQ.MineBot.Protocols.Classes.Base;
 
 namespace AreaFiller
 {
-    [Plugin(1, "Area Filler", "Select an area and the bot will fill it.", "https://www.youtube.com/watch?v=ow-QSsbA3p8")]
+#if DEBUG
+    [Plugin(3, "Area Filler", "(DEBUG BUILD)", "https://www.youtube.com/watch?v=ow-QSsbA3p8")]
+#else
+    [Plugin(3, "Area Filler", "Select an area and the bot will fill it.",
+        "https://www.youtube.com/watch?v=ow-QSsbA3p8")]
+#endif
     public class PluginCore : IStartPlugin
     {
         public override void OnLoad(int version, int subversion, int buildversion)
         {
-            Setting.Add(new StringSetting("Macro on inventory full",
-                "Starts the macro when the bots inventory is full.", ""));
-            Setting.Add(new StringSetting("Start x y z", "(x y z) [Split by space]", ""));
-            Setting.Add(new StringSetting("End x y z", "(x y z) [Split by space]", ""));
-            Setting.Add(new StringSetting("Filler Block ID", "The block which is used to fill the area.", ""));
+            Setting.Add(new LocationSetting("Start x y z", "DESC"));
+            Setting.Add(new LocationSetting("End x y z", "DESC"));
+            Setting.Add(new StringSetting("Building Block ID", "The block which is used to fill the area.", ""));
             Setting.Add(new StringSetting("Macro if no Filler Block",
-                "Starts the macro when the bots has no filler block left.", ""));
+                "Starts the macro when the bots has no building blocks left. (Doesn't need '.macro' included)", ""));
         }
 
         public override PluginResponse OnEnable(IBotSettings botSettings)
@@ -30,44 +34,39 @@ namespace AreaFiller
 
             if (botSettings.staticWorlds) return new PluginResponse(false, "'Shared worlds' should be disabled.");
 
-            if (string.IsNullOrWhiteSpace(Setting.At(1).Get<string>()) &&
-                string.IsNullOrWhiteSpace(Setting.At(2).Get<string>()))
-                return new PluginResponse(false, "Invalid coordinates (does not contain ' ').");
+            if (!botSettings.loadInventory) return new PluginResponse(false, "'Load inventory' must be enabled.");
 
-            if (string.IsNullOrWhiteSpace(Setting.At(3).Get<string>()))
-                return new PluginResponse(false, "Invalid Block ID.");
+            if (Setting.At(0).Get<Location>() == null || Setting.At(1).Get<Location>() == null)
+                return new PluginResponse(false, "Invalid coordinates, please check your plugin settings.");
 
-            if (!Setting.At(1).Get<string>().Contains(' ') || !Setting.At(2).Get<string>().Contains(' '))
-                return new PluginResponse(false, "Invalid coordinates (does not contain ' ').");
+            if (string.IsNullOrWhiteSpace(Setting.At(2).Get<string>()))
+                return new PluginResponse(false, "Invalid Building Block ID, please check your plugin settings.");
 
-            if (!Setting.At(3).Get<string>().All(char.IsDigit)) return new PluginResponse(false, "Invalid Block ID!");
+            if (!Setting.At(2).Get<string>().All(char.IsDigit))
+                return new PluginResponse(false, "Invalid Building Block ID, please check your plugin settings.");
 
-            var startSplit = Setting.At(1).Get<string>().Split(' ');
-            var endSplit = Setting.At(2).Get<string>().Split(' ');
-            if (startSplit.Length != 3 || endSplit.Length != 3)
-                return new PluginResponse(false, "Invalid coordinates (must be x y z).");
+            ZerGo0Debugger.PluginSettings = Setting.GetCollection();
 
             return new PluginResponse(true);
         }
 
         public override void OnStart()
         {
-            Console.Clear();
-            var macro = new MacroSync();
             var fillermacro = new MacroSync();
 
-            var startSplit = Setting.At(1).Get<string>().Split(' ');
-            var endSplit = Setting.At(2).Get<string>().Split(' ');
+            var fillerMacroName = Setting.At(3).Get<string>();
+            if (fillerMacroName.Contains(".macro"))
+                fillerMacroName = fillerMacroName.Replace(".macro", "");
 
-            RegisterTask(new FillerArea(Setting.At(3).Get<string>(),
-                new Location(int.Parse(startSplit[0]), int.Parse(startSplit[1]), int.Parse(startSplit[2])),
-                new Location(int.Parse(endSplit[0]), int.Parse(endSplit[1]), int.Parse(endSplit[2])), macro, fillermacro));
-            RegisterTask(new InventoryMonitor(Setting.At(3).Get<string>(), Setting.At(0).Get<string>(), macro, Setting.At(4).Get<string>(), fillermacro));
+            RegisterTask(new Filler(Setting.At(0).Get<Location>(), Setting.At(1).Get<Location>(),
+                Setting.At(2).Get<string>(), fillermacro));
+            RegisterTask(new InventoryMonitor(Setting.At(2).Get<string>(), fillerMacroName, fillermacro));
         }
 
-        public override void OnStop()
+        public override void OnDisable()
         {
-            FillerArea.Broken.Clear();
+            Filler.CurrentLayer = null;
+            Filler.DoingShit = null;
         }
     }
 
@@ -83,9 +82,9 @@ namespace AreaFiller
             return !_macroTask.IsCompleted && !_macroTask.IsCanceled && !_macroTask.IsFaulted;
         }
 
-        public void Run(IPlayer player, string name)
+        public void Run(IBotContext context, string name)
         {
-            _macroTask = player.functions.StartMacro(name);
+            _macroTask = context.Functions.StartMacro(name);
         }
     }
 }

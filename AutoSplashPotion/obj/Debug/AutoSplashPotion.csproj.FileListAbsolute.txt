@@ -1,0 +1,6 @@
+C:\Users\Faven\Desktop\Minebot\plugins\AutoSplashPotion.dll
+C:\Users\Faven\Desktop\Minebot\plugins\AutoSplashPotion.pdb
+G:\SourceCodes\OQ.MineBot.Plugins\AutoSplashPotion\obj\Debug\AutoSplashPotion.csprojAssemblyReference.cache
+G:\SourceCodes\OQ.MineBot.Plugins\AutoSplashPotion\obj\Debug\AutoSplashPotion.csproj.CopyComplete
+G:\SourceCodes\OQ.MineBot.Plugins\AutoSplashPotion\obj\Debug\AutoSplashPotion.dll
+G:\SourceCodes\OQ.MineBot.Plugins\AutoSplashPotion\obj\Debug\AutoSplashPotion.pdb

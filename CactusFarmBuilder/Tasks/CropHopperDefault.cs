@@ -35,6 +35,11 @@ namespace CactusFarmBuilder.Tasks
         {
             try
             {
+                if (_startLoc == null) _startLoc = Context.Player.GetLocation();
+                if (_helperFunctions == null) _helperFunctions = new HelperFunctions(Context, Inventory);
+                
+                if (_startLoc == null || _helperFunctions == null) return;
+                
                 if (!_helperFunctions.CheckItemCount(new ushort[] {12, 81, 287}, true)) return;
 
                 if (_layerCount >= _maxLayers)
@@ -70,7 +75,14 @@ namespace CactusFarmBuilder.Tasks
 #endregion
 
                 if (_layerCount >= _maxLayers) return;
-                await _helperFunctions.GoToLocation(CurrentLoc().Offset(1), HelperFunctions.MAP_OPTIONS_BUILD);
+                var tempPathTarget = CurrentLoc().Offset(1);
+                if (!await _helperFunctions.GoToLocation(tempPathTarget, HelperFunctions.MAP_OPTIONS_BUILD))
+                    if (!await _helperFunctions.GoToLocation(tempPathTarget, HelperFunctions.MAP_OPTIONS_BUILD))
+                    {
+                        _stopped = true;
+                        _helperFunctions.Stopped = true;
+                        return;
+                    }
 
 #region 2nd Layer
 
@@ -87,22 +99,21 @@ namespace CactusFarmBuilder.Tasks
 #endregion
 
                 if (_layerCount >= _maxLayers) return;
-                await _helperFunctions.GoToLocation(CurrentLoc().Offset(1), HelperFunctions.MAP_OPTIONS_BUILD);
+                tempPathTarget = CurrentLoc().Offset(1);
+                if (!await _helperFunctions.GoToLocation(tempPathTarget, HelperFunctions.MAP_OPTIONS_BUILD))
+                    if (!await _helperFunctions.GoToLocation(tempPathTarget, HelperFunctions.MAP_OPTIONS_BUILD))
+                    {
+                        _stopped = true;
+                        _helperFunctions.Stopped = true;
+                        return;
+                    }
             }
             catch (Exception e)
             {
                 ZerGo0Debugger.Error(e, Context, this);
                 _stopped = true;
-                _helperFunctions.Stopped = true;
+                if (_helperFunctions != null) _helperFunctions.Stopped = true;
             }
-        }
-
-        public override Task Start()
-        {
-            _startLoc = Context.Player.GetLocation();
-            _helperFunctions = new HelperFunctions(Context, Inventory);
-
-            return null;
         }
 
         public override Task Stop()

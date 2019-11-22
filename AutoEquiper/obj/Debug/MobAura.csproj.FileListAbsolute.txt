@@ -1,0 +1,12 @@
+C:\Users\Faven\Desktop\Minebot\plugins\MobAuraPlugin.dll
+C:\Users\Faven\Desktop\Minebot\plugins\MobAuraPlugin.pdb
+C:\Users\Faven\Desktop\OQ Minebot Plugin Sources\ZerGo0 Plugins\MobAura\obj\Debug\MobAura.csprojResolveAssemblyReference.cache
+C:\Users\Faven\Desktop\OQ Minebot Plugin Sources\ZerGo0 Plugins\MobAura\obj\Debug\MobAura.csproj.CoreCompileInputs.cache
+C:\Users\Faven\Desktop\OQ Minebot Plugin Sources\ZerGo0 Plugins\MobAura\obj\Debug\MobAuraPlugin.dll
+C:\Users\Faven\Desktop\OQ Minebot Plugin Sources\ZerGo0 Plugins\MobAura\obj\Debug\MobAuraPlugin.pdb
+G:\Minebot\plugins\MobAuraPlugin.dll
+G:\Minebot\plugins\MobAuraPlugin.pdb
+G:\SourceCodes\OQ.MineBot.Plugins\MobAura\obj\Debug\MobAuraPlugin.dll
+G:\SourceCodes\OQ.MineBot.Plugins\MobAura\obj\Debug\MobAuraPlugin.pdb
+G:\SourceCodes\OQ.MineBot.Plugins\MobAura\obj\Debug\MobAura.csprojAssemblyReference.cache
+G:\SourceCodes\OQ.MineBot.Plugins\MobAura\obj\Debug\MobAura.csproj.CopyComplete

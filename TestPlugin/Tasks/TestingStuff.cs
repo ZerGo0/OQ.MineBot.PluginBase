@@ -4,8 +4,12 @@ using System.Threading.Tasks;
 
 using OQ.MineBot.PluginBase.Base;
 using OQ.MineBot.PluginBase.Base.Plugin.Tasks;
+using OQ.MineBot.PluginBase.Classes.Blocks;
 using OQ.MineBot.PluginBase.Classes.Entity.Mob;
 using OQ.MineBot.PluginBase.Movement.Events;
+using OQ.MineBot.Protocols.Classes.Base;
+
+using TestPlugin.Helpers;
 
 namespace TestPlugin.Tasks
 {
@@ -23,14 +27,7 @@ namespace TestPlugin.Tasks
         public override async Task Start()
         {
             _botName = Context.Player.GetUsername();
-            try
-            {
-                Testing();
-            }
-            catch (Exception e)
-            {
-                ZerGo0Debugger.Error(Context.Player.GetUsername(), e, this);
-            }
+            BlocksGlobal.BUILDING_BLOCKS = new[] {(ushort) 12};
         }
 
         public override async Task Stop()
@@ -40,28 +37,23 @@ namespace TestPlugin.Tasks
 
         public async Task OnTick()
         {
-            ZerGo0Debugger.Debug(Context.Player.GetUsername(), "Tick");
-            
+            try
+            {
+                var helperFunctions = new HelperFunctions(Context, Inventory);
+                await helperFunctions.GoToLocation(Context.Player.GetLocation().Offset(1), HelperFunctions.MAP_OPTIONS_BUILD);
+
+                var currentLoc = Context.Player.GetLocation();
+                await Context.Player.LookAtSmooth(new Location(currentLoc.X, currentLoc.Y + 2, currentLoc.Z + 1));
+            }
+            catch (Exception e)
+            {
+                ZerGo0Debugger.Error(Context.Player.GetUsername(), e, this);
+            }
         }
 
         public override bool Exec()
         {
             return true;
-        }
-
-        private void Testing()
-        {
-            Testing2();
-        }
-        
-        private void Testing2()
-        {
-            Testing3();
-        }
-        
-        private void Testing3()
-        {
-            throw new Exception("Test");
         }
     }
 }

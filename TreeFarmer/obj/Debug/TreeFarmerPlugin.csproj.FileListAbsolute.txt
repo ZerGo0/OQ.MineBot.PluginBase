@@ -1,0 +1,6 @@
+C:\Users\Faven\Desktop\Minebot\plugins\TreeFarmerPlugin.dll
+C:\Users\Faven\Desktop\Minebot\plugins\TreeFarmerPlugin.pdb
+G:\SourceCodes\OQ.MineBot.Plugins\TreeFarmer\obj\Debug\TreeFarmerPlugin.csprojAssemblyReference.cache
+G:\SourceCodes\OQ.MineBot.Plugins\TreeFarmer\obj\Debug\TreeFarmerPlugin.csproj.CopyComplete
+G:\SourceCodes\OQ.MineBot.Plugins\TreeFarmer\obj\Debug\TreeFarmerPlugin.dll
+G:\SourceCodes\OQ.MineBot.Plugins\TreeFarmer\obj\Debug\TreeFarmerPlugin.pdb

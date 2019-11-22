@@ -1,7 +1,8 @@
 G:\Minebot\plugins\AreaFiller.dll
 G:\Minebot\plugins\AreaFiller.pdb
-G:\SourceCodes\OQ.MineBot.Plugins\AreaFiller\obj\Debug\AreaFiller.csproj.CoreCompileInputs.cache
 G:\SourceCodes\OQ.MineBot.Plugins\AreaFiller\obj\Debug\AreaFiller.dll
 G:\SourceCodes\OQ.MineBot.Plugins\AreaFiller\obj\Debug\AreaFiller.pdb
 G:\SourceCodes\OQ.MineBot.Plugins\AreaFiller\obj\Debug\AreaFiller.csprojAssemblyReference.cache
 G:\SourceCodes\OQ.MineBot.Plugins\AreaFiller\obj\Debug\AreaFiller.csproj.CopyComplete
+C:\Users\Faven\Desktop\Minebot\plugins\AreaFiller.dll
+C:\Users\Faven\Desktop\Minebot\plugins\AreaFiller.pdb

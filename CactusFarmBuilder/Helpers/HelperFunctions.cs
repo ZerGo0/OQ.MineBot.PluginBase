@@ -244,9 +244,9 @@ namespace CactusFarmBuilder.Helpers
 
                 if (i > 40) return false;
                 i++;
-
-                var sword = _inventory.FindBest(EquipmentType.Sword);
-                if (sword != null) await sword.Select();
+                
+                var bestTool = _context.World.GetBlock(location);
+                if (bestTool != null) await bestTool.SelectTool();
 
                 await _context.Player.LookAtSmooth(location);
 
@@ -268,7 +268,8 @@ namespace CactusFarmBuilder.Helpers
 
         public async Task<bool> GoToLocation(ILocation location, MapOptions mapOptions = null)
         {
-            ZerGo0Debugger.Debug(_context.Player.GetUsername(), $"GoToLocation Destination: {location}");
+            ZerGo0Debugger.Debug(_context.Player.GetUsername(), 
+                $"GoToLocation Start: {_context.Player.GetLocation()} | GoToLocation Destination: {location}");
             var moveResult = await _context.Player.MoveTo(location, mapOptions).Task;
 
             if (moveResult.Result == MoveResultType.Completed)

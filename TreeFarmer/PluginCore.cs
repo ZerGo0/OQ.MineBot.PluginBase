@@ -10,16 +10,20 @@ using TreeFarmerPlugin.Tasks;
 
 namespace TreeFarmerPlugin
 {
-    [Plugin(1, "Tree Farmer", "Farms trees and shit.", "https://www.youtube.com/watch?v=6huwXOm3U6w")]
+#if DEBUG
+    [Plugin(2, "Tree Farmer", "(DEBUG BUILD)", "https://www.youtube.com/watch?v=6huwXOm3U6w")]
+#else
+    [Plugin(2, "Tree Farmer", "Farms trees and shit.", "https://www.youtube.com/watch?v=6huwXOm3U6w")]
+#endif
     public class PluginCore : IStartPlugin
     {
         public override void OnLoad(int version, int subversion, int buildversion)
         {
             Setting.Add(new StringSetting("Macro on inventory full",
                 "Starts the macro when the bots inventory is full.", ""));
-            Setting.Add(new BoolSetting("Replant", "Check this if you want to replant trees (type ignored)", false));
-            Setting.Add(new StringSetting("Start x y z", "Leave emtpy if you want to farm infinitely. (0 0 0)", ""));
-            Setting.Add(new StringSetting("End x y z", "Leave emtpy if you want to farm infinitely. (0 0 0)", ""));
+            Setting.Add(new BoolSetting("Replant", "Do you want to replant the tree? (type ignored)", false));
+            Setting.Add(new LocationSetting("Start x y z", "Leave it at 0 0 0 if you want to farm infinitely."));
+            Setting.Add(new LocationSetting("End x y z", "Leave it at 0 0 0 if you want to farm infinitely."));
         }
 
         public override PluginResponse OnEnable(IBotSettings botSettings)
@@ -27,50 +31,38 @@ namespace TreeFarmerPlugin
             if (!botSettings.loadWorld) return new PluginResponse(false, "'Load world' must be enabled.");
 
             if (botSettings.staticWorlds) return new PluginResponse(false, "'Shared worlds' should be disabled.");
-
-            if (string.IsNullOrWhiteSpace(Setting.At(2).Get<string>()) &&
-                string.IsNullOrWhiteSpace(Setting.At(3).Get<string>())) return new PluginResponse(true);
-
-            if (!Setting.At(2).Get<string>().Contains(' ') || !Setting.At(3).Get<string>().Contains(' '))
-                return new PluginResponse(false, "Invalid coordinates (does not contain ' ').");
-
-            var startSplit = Setting.At(2).Get<string>().Split(' ');
-            var endSplit = Setting.At(3).Get<string>().Split(' ');
-            if (startSplit.Length != 3 || endSplit.Length != 3)
-                return new PluginResponse(false, "Invalid coordinates (must be x y z).");
+            
+            if (!botSettings.loadInventory) return new PluginResponse(false, "'Load inventory' must be enabled.");
+            
+            if (Setting.At(2).Get<Location>() == null || Setting.At(3).Get<Location>() == null)
+                return new PluginResponse(false, "Invalid coordinates, please check your plugin settings.");
+            
+            ZerGo0Debugger.PluginSettings = Setting.GetCollection();
 
             return new PluginResponse(true);
         }
 
         public override void OnStart()
         {
-            var macro = new MacroSync();
+            var fullInvMacro = new MacroSync();
 
-            if (!string.IsNullOrWhiteSpace(Setting.At(2).Get<string>()) &&
-                !string.IsNullOrWhiteSpace(Setting.At(3).Get<string>()))
+            var fullInvMacroName = Setting.At(0).Get<string>();
+            if (fullInvMacroName.Contains(".macro"))
+                fullInvMacroName = fullInvMacroName.Replace(".macro", "");
+
+            if (!Setting.At(2).Get<Location>().Compare(new Location(0,0,0)) &&
+                !Setting.At(3).Get<Location>().Compare(new Location(0,0,0)))
             {
-#if (DEBUG)
-                Console.WriteLine("Got coords");
-#endif
-                var startSplit = Setting.At(2).Get<string>().Split(' ');
-                var endSplit = Setting.At(3).Get<string>().Split(' ');
-
-                RegisterTask(new MineArea(Setting.At(1).Get<bool>(),
-                    new Location(int.Parse(startSplit[0]), int.Parse(startSplit[1]), int.Parse(startSplit[2])),
-                    new Location(int.Parse(endSplit[0]), int.Parse(endSplit[1]), int.Parse(endSplit[2])), macro));
-                RegisterTask(new InventoryMonitor(Setting.At(0).Get<string>(), macro));
+                RegisterTask(new MineArea(Setting.At(2).Get<Location>(), 
+                    Setting.At(3).Get<Location>(), Setting.At(1).Get<bool>(),
+                    fullInvMacro));
+//                RegisterTask(new InventoryMonitor(Setting.At(0).Get<string>(), macro));
             }
             else
             {
-                RegisterTask(new Mine(Setting.At(1).Get<bool>(), macro));
-                RegisterTask(new InventoryMonitor(Setting.At(0).Get<string>(), macro));
+//                RegisterTask(new Mine(Setting.At(1).Get<bool>(), macro));
+//                RegisterTask(new InventoryMonitor(Setting.At(0).Get<string>(), macro));
             }
-        }
-
-        public override void OnStop()
-        {
-            Mine.BeingMined.Clear();
-            MineArea.Broken.Clear();
         }
     }
 
@@ -86,9 +78,9 @@ namespace TreeFarmerPlugin
             return !_macroTask.IsCompleted && !_macroTask.IsCanceled && !_macroTask.IsFaulted;
         }
 
-        public void Run(IPlayer player, string name)
+        public void Run(IBotContext context, string name)
         {
-            _macroTask = player.functions.StartMacro(name);
+            _macroTask = context.Functions.StartMacro(name);
         }
     }
 }

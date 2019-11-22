@@ -35,6 +35,11 @@ namespace CactusFarmBuilder.Tasks
         {
             try
             {
+                if (_startLoc == null) _startLoc = Context.Player.GetLocation();
+                if (_helperFunctions == null) _helperFunctions = new HelperFunctions(Context, Inventory);
+                
+                if (_startLoc == null || _helperFunctions == null) return;
+
                 if (!_helperFunctions.CheckItemCount(new ushort[] {12, 81, 287}, true)) return;
 
                 if (_layerCount >= _maxLayers)
@@ -55,51 +60,59 @@ namespace CactusFarmBuilder.Tasks
 
 #region 1st Layer
 
-                ZerGo0Debugger.Debug(Context.Player.GetUsername(), "1st Layer START");
-
-                if (!await FirstLayer())
-                {
-                    _stopped = true;
-                    return;
-                }
-
-                ZerGo0Debugger.Debug(Context.Player.GetUsername(), "1st Layer END");
+//                ZerGo0Debugger.Debug(Context.Player.GetUsername(), "1st Layer START");
+//
+//                if (!await FirstLayer())
+//                {
+//                    _stopped = true;
+//                    return;
+//                }
+//
+//                ZerGo0Debugger.Debug(Context.Player.GetUsername(), "1st Layer END");
 
 #endregion
 
-                if (_layerCount >= _maxLayers) return;
-                await _helperFunctions.GoToLocation(CurrentLoc().Offset(1), HelperFunctions.MAP_OPTIONS_BUILD);
+//                if (_layerCount >= _maxLayers) return;
+//                var tempPathTarget = CurrentLoc().Offset(1);
+//                if (!await _helperFunctions.GoToLocation(tempPathTarget, HelperFunctions.MAP_OPTIONS_BUILD))
+//                    if (!await _helperFunctions.GoToLocation(tempPathTarget, HelperFunctions.MAP_OPTIONS_BUILD))
+//                    {
+//                        _stopped = true;
+//                        _helperFunctions.Stopped = true;
+//                        return;
+//                    }
 
 #region 2nd Layer
 
-                ZerGo0Debugger.Debug(Context.Player.GetUsername(), "2nd Layer START");
-
-                if (!await SecondLayer())
-                {
-                    _stopped = true;
-                    return;
-                }
-
-                ZerGo0Debugger.Debug(Context.Player.GetUsername(), "2nd Layer END");
+//                ZerGo0Debugger.Debug(Context.Player.GetUsername(), "2nd Layer START");
+//
+//                if (!await SecondLayer())
+//                {
+//                    _stopped = true;
+//                    return;
+//                }
+//
+//                ZerGo0Debugger.Debug(Context.Player.GetUsername(), "2nd Layer END");
 
 #endregion
 
                 if (_layerCount >= _maxLayers) return;
-                await _helperFunctions.GoToLocation(CurrentLoc().Offset(1), HelperFunctions.MAP_OPTIONS_BUILD);
+                var tempPathTarget = CurrentLoc().Offset(1);
+                await _helperFunctions.GoToLocation(tempPathTarget, HelperFunctions.MAP_OPTIONS_BUILD);
+//                if (!await _helperFunctions.GoToLocation(tempPathTarget, HelperFunctions.MAP_OPTIONS_BUILD))
+//                    if (!await _helperFunctions.GoToLocation(tempPathTarget, HelperFunctions.MAP_OPTIONS_BUILD))
+//                    {
+//                        _stopped = true;
+//                        _helperFunctions.Stopped = true;
+//                        return;
+//                    }
             }
             catch (Exception e)
             {
                 ZerGo0Debugger.Error(e, Context, this);
                 _stopped = true;
+                if (_helperFunctions != null) _helperFunctions.Stopped = true;
             }
-        }
-
-        public override Task Start()
-        {
-            _startLoc = Context.Player.GetLocation();
-            _helperFunctions = new HelperFunctions(Context, Inventory);
-
-            return null;
         }
 
         public override Task Stop()

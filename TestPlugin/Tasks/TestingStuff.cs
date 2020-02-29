@@ -26,8 +26,6 @@ namespace TestPlugin.Tasks
 
         public override async Task Start()
         {
-            _botName = Context.Player.GetUsername();
-            BlocksGlobal.BUILDING_BLOCKS = new[] {(ushort) 12};
         }
 
         public override async Task Stop()
@@ -40,10 +38,7 @@ namespace TestPlugin.Tasks
             try
             {
                 var helperFunctions = new HelperFunctions(Context, Inventory);
-                await helperFunctions.GoToLocation(Context.Player.GetLocation().Offset(1), HelperFunctions.MAP_OPTIONS_BUILD);
-
-                var currentLoc = Context.Player.GetLocation();
-                await Context.Player.LookAtSmooth(new Location(currentLoc.X, currentLoc.Y + 2, currentLoc.Z + 1));
+                var closestGate = Context.World.FindClosest(50, 50, 107).Result;
             }
             catch (Exception e)
             {

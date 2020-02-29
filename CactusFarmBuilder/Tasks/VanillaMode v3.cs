@@ -9,7 +9,7 @@ using OQ.MineBot.PluginBase.Classes.Blocks;
 
 namespace CactusFarmBuilder.Tasks
 {
-    public class VanillaMode : ITask, ITickListener
+    public class VanillaMode_v3 : ITask, ITickListener
     {
         private readonly ushort[] _defaultBuldingBlocks;
         private readonly int _direction;
@@ -21,7 +21,7 @@ namespace CactusFarmBuilder.Tasks
         private ILocation _startLoc;
         private bool _stopped;
 
-        public VanillaMode(int speedmode, int maxlayers, int direction)
+        public VanillaMode_v3(int speedmode, int maxlayers, int direction)
         {
             _maxLayers = maxlayers;
             _direction = direction;
@@ -136,8 +136,9 @@ namespace CactusFarmBuilder.Tasks
             //Note: 1st Sandlayer
             if (!await _helperFunctions.CreateLayer(new[]
             {
-                CurrentLoc().Offset(1, 0, 1), CurrentLoc().Offset(-1, 0, 1),
-                CurrentLoc().Offset(-1, 0, -1), CurrentLoc().Offset(1, 0, -1)
+                CurrentLoc().Offset(2, 0, 1), CurrentLoc().Offset(0, 0, 1),
+                CurrentLoc().Offset(-2, 0, 1), CurrentLoc().Offset(-2, 0, -1),
+                CurrentLoc().Offset(0, 0, -1), CurrentLoc().Offset(2, 0, -1)
             }, 12, _tickDelay)) return false;
             ZerGo0Debugger.Debug(Context.Player.GetUsername(), "1st SandLayer DONE");
 
@@ -146,63 +147,64 @@ namespace CactusFarmBuilder.Tasks
             //Note: 1st Cactuslayer
             if (!await _helperFunctions.CreateLayer(new[]
             {
-                CurrentLoc().Offset(1, 1, 1), CurrentLoc().Offset(-1, 1, 1),
-                CurrentLoc().Offset(-1, 1, -1), CurrentLoc().Offset(1, 1, -1)
+                CurrentLoc().Offset(2, 1, 1), CurrentLoc().Offset(-2, 1, 1),
+                CurrentLoc().Offset(-2, 1, -1), CurrentLoc().Offset(2, 1, -1)
             }, 81, _tickDelay)) return false;
             ZerGo0Debugger.Debug(Context.Player.GetUsername(), "1st CactusLayer DONE");
 
             if (_stopped) return false;
-
-            //Note: 1st StringLayer
-            if (!await _helperFunctions.CreateLayer(new[]
-            {
-                CurrentLoc().Offset(0, 1, 1), CurrentLoc().Offset(0, 1, -1)
-            }, 287, _tickDelay)) return false;
-            ZerGo0Debugger.Debug(Context.Player.GetUsername(), "1st StringLayer DONE");
-
-            if (_stopped) return false;
-
-            _layerCount++;
 
             return true;
         }
 
         private async Task<bool> SecondLayer()
         {
-            //Note: 2nd Sandlayer
+            //Note: 2nd BOTTOM StringLayer
             if (!await _helperFunctions.CreateLayer(new[]
             {
-                CurrentLoc().Offset(0, 0, 1), CurrentLoc().Offset(0, 0, -1)
-            }, 12, _tickDelay)) return false;
-            ZerGo0Debugger.Debug(Context.Player.GetUsername(), "2nd SandLayer DONE");
+                CurrentLoc().Offset(2, 0, 1), CurrentLoc().Offset(-2, 0, 1),
+                CurrentLoc().Offset(-2, 0, -1), CurrentLoc().Offset(2, 0, -1)
+            }, 287, _tickDelay)) return false;
+            ZerGo0Debugger.Debug(Context.Player.GetUsername(), "2nd BOTTOM StringLayer DONE");
 
             if (_stopped) return false;
-
-            //Note: 2nd BOTTOM StringLayer
+            
+            //Note: 2nd BOTTOM 2 StringLayer
             if (!await _helperFunctions.CreateLayer(new[]
             {
                 CurrentLoc().Offset(1, 0, 1), CurrentLoc().Offset(-1, 0, 1),
                 CurrentLoc().Offset(-1, 0, -1), CurrentLoc().Offset(1, 0, -1)
             }, 287, _tickDelay)) return false;
-            ZerGo0Debugger.Debug(Context.Player.GetUsername(), "2nd BOTTOM StringLayer DONE");
+            ZerGo0Debugger.Debug(Context.Player.GetUsername(), "2nd BOTTOM 2 StringLayer DONE");
 
             if (_stopped) return false;
-
-            //Note: 2nd TOP StringLayer
+            
+            //Note: 2nd BOTTOM 3 StringLayer
             if (!await _helperFunctions.CreateLayer(new[]
             {
-                CurrentLoc().Offset(1, 1, 1), CurrentLoc().Offset(-1, 1, 1),
-                CurrentLoc().Offset(-1, 1, -1), CurrentLoc().Offset(1, 1, -1)
+                CurrentLoc().Offset(0, 0, 1), CurrentLoc().Offset(0, 0, -1)
             }, 287, _tickDelay)) return false;
-            ZerGo0Debugger.Debug(Context.Player.GetUsername(), "2nd TOP StringLayer DONE");
+            ZerGo0Debugger.Debug(Context.Player.GetUsername(), "2nd BOTTOM 3 StringLayer DONE");
+
+            if (_stopped) return false;
+            
+            //Note: 2nd TOP 1 StringLayer
+            if (!await _helperFunctions.CreateLayer(new[]
+            {
+                CurrentLoc().Offset(2, 1, 1), CurrentLoc().Offset(0, 1, 1),
+                CurrentLoc().Offset(-2, 1, 1), CurrentLoc().Offset(-2, 1, -1),
+                CurrentLoc().Offset(0, 1, -1), CurrentLoc().Offset(2, 1, -1)
+            }, 287, _tickDelay)) return false;
+            ZerGo0Debugger.Debug(Context.Player.GetUsername(), "2nd TOP 1 StringLayer DONE");
 
             if (_stopped) return false;
 
             //Note: 2nd BREAK BOTTOM StringLayer
             if (!await _helperFunctions.BreakBlocks(new[]
             {
-                CurrentLoc().Offset(1, 0, 1), CurrentLoc().Offset(-1, 0, 1),
-                CurrentLoc().Offset(-1, 0, -1), CurrentLoc().Offset(1, 0, -1)
+                CurrentLoc().Offset(2, 0, 1), CurrentLoc().Offset(0, 0, 1),
+                CurrentLoc().Offset(-2, 0, 1), CurrentLoc().Offset(-2, 0, -1),
+                CurrentLoc().Offset(0, 0, -1), CurrentLoc().Offset(2, 0, -1)
             }, _tickDelay)) return false;
             ZerGo0Debugger.Debug(Context.Player.GetUsername(), "2nd BREAK BOTTOM StringLayer DONE");
 
@@ -224,20 +226,20 @@ namespace CactusFarmBuilder.Tasks
 
         private async Task<bool> GoToNextStart()
         {
-            var nextStart = CurrentLoc().Offset(0, -1, -2);
+            var nextStart = CurrentLoc().Offset(0, -1, -4);
             switch (_direction)
             {
                 case 0:
                     nextStart = CurrentLoc().Offset(0, -1, -2);
                     break;
                 case 1:
-                    nextStart = CurrentLoc().Offset(+2, -1, 0);
+                    nextStart = CurrentLoc().Offset(+4, -1, 0);
                     break;
                 case 2:
                     nextStart = CurrentLoc().Offset(0, -1, 2);
                     break;
                 case 3:
-                    nextStart = CurrentLoc().Offset(-2, -1, 0);
+                    nextStart = CurrentLoc().Offset(-4, -1, 0);
                     break;
             }
 

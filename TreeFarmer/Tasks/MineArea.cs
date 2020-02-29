@@ -208,7 +208,8 @@ namespace TreeFarmerPlugin.Tasks
         {
             ZerGo0Debugger.Debug(Context.Player.GetUsername(), "SearchClosestTree START");
             var closestWoodBlock = await Context.World.FindClosest(50, 50, 17, 
-                CpuMode.Medium_Usage, block => _areaList.Contains(block.GetLocation()));
+                CpuMode.Medium_Usage, block => _areaList.Contains(block.GetLocation()) &&
+                                               !SharedTreeListContains(block.GetLocation()));
 
             ZerGo0Debugger.Debug(Context.Player.GetUsername(), "SearchClosestTree END");
             return closestWoodBlock == null ? null : _helperFunctions.GetWoodBlocks(closestWoodBlock.GetLocation()).ToList();
@@ -217,8 +218,15 @@ namespace TreeFarmerPlugin.Tasks
         private void AddTree(List<ILocation> woodBlockList)
         {
             if (woodBlockList == null || woodBlockList.Count < 1) return;
-
+            
             SharedTreeListAdd(woodBlockList);
+        }
+        
+        private List<int> GetCaneSlots(bool enchanted)
+        {
+            var window = Context.Containers.GetOpenWindow();
+            var sugarSlots = (from slot in window.GetSlots() where slot.Id == 338 && slot.IsStackFull() where (enchanted && slot.GetName().Contains("Enchanted")) || (!enchanted && !slot.GetName().Contains("Enchanted")) select slot.Index).ToList();
+            return sugarSlots;
         }
 
         private IEnumerable<ILocation> CreateAreaList(ILocation startLoc, ILocation endLoc)

@@ -7,9 +7,9 @@ using OQ.MineBot.PluginBase.Bot;
 namespace CactusFarmBuilder
 {
 #if DEBUG
-    [Plugin(7, "Cactus Farm Builder", "(DEBUG BUILD)", "https://www.youtube.com/watch?v=uVdLJZZzuBs")]
+    [Plugin(9, "Cactus Farm Builder", "(DEBUG BUILD)", "https://www.youtube.com/watch?v=uVdLJZZzuBs")]
 #else
-    [Plugin(7, "Cactus Farm Builder", "[BETA] Builds a cactus farm for you.",
+    [Plugin(9, "Cactus Farm Builder", "[BETA] Builds a cactus farm for you.",
         "https://www.youtube.com/watch?v=uVdLJZZzuBs")]
 #endif
     public class PluginCore : IStartPlugin
@@ -23,10 +23,10 @@ namespace CactusFarmBuilder
             Setting.Add(new LinkSetting("Don't forget to leave a Like! :)", "",
                 "https://www.minecraftbot.com/plugins.html"));
 
-            Setting.Add(new ComboSetting("Layout", "", new[] {"CropHopper", "CropHopper Creative Range", "Vanilla"},
-                0));
+            Setting.Add(new ComboSetting("Layout", "", new[] 
+                    {"CropHopper", "CropHopper Creative Range", "Vanilla", "Vanilla v2"}, 0));
             Setting.Add(new ComboSetting("Speed mode", null, new[] {"Slow", "Normal", "Fast"}, 3));
-            Setting.Add(new NumberSetting("Max layers", "1 Layer = Y+2", 50, 1, 127));
+            Setting.Add(new NumberSetting("Max layers", "1 Layer = Y+2 (Vanilla v2 = Y+4)", 50, 1, 127));
             Setting.Add(new ComboSetting("Extend in this direction", null, new[] {"North", "East", "South", "West"},
                 1));
 
@@ -35,6 +35,7 @@ namespace CactusFarmBuilder
             layoutPreviews.Add(new LinkSetting("CropHopper Creative Range Layout Showcase", "",
                 "https://i.imgur.com/L15mAwd.png"));
             layoutPreviews.Add(new LinkSetting("Vanilla Layout Showcase", "", "https://i.imgur.com/b2oivhu.png"));
+            layoutPreviews.Add(new LinkSetting("Vanilla v2 Layout Showcase", "", "https://i.imgur.com/7Uk9aue.png"));
             Setting.Add(layoutPreviews);
         }
 
@@ -87,6 +88,9 @@ namespace CactusFarmBuilder
                     break;
                 case 2:
                     RegisterTask(new VanillaMode(speedmode, maxlayers, direction));
+                    break;
+                case 3:
+                    RegisterTask(new VanillaMode_v2(speedmode, maxlayers, direction));
                     break;
             }
         }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Threading.Tasks;
 
 using OQ.MineBot.GUI.Protocol.Movement.Maps;
@@ -102,13 +103,27 @@ namespace CactusFarmBuilder.Helpers
 
         public bool IsBlockId(ILocation loc, int blockId)
         {
-            return _context.World.GetBlock(loc).GetId() != (ushort) blockId;
+            return _context.World.GetBlockId(loc) != (ushort) blockId;
         }
 
         public async Task<bool> PlaceBlockAt(ILocation location, int itemId, int tickdelay)
         {
-            if (_context.World.GetBlockId(location) == 0 && _context.World.GetBlockId(location.Offset(-1)) == 132)
-                return await PlaceBlockOn(location.Offset(-1), 1, itemId, tickdelay);
+            if (_context.World.GetBlockId(location) == 0)
+            {
+                if (_context.World.GetBlockId(location.Offset(1)) == 132 && 
+                    _context.World.GetBlockId(location.Offset(-1)) == 0)
+                    return await PlaceBlockOn(location.Offset(1), 0, itemId, tickdelay);
+                if (_context.World.GetBlockId(location.Offset(-1)) == 132)
+                    return await PlaceBlockOn(location.Offset(-1), 1, itemId, tickdelay);
+                if (_context.World.GetBlockId(location.Offset(0, 0, -1)) == 132)
+                    return await PlaceBlockOn(location.Offset(0, 0, -1), 3, itemId, tickdelay);
+                if (_context.World.GetBlockId(location.Offset(0, 0, 1)) == 132)
+                    return await PlaceBlockOn(location.Offset(0, 0, 1), 2, itemId, tickdelay);
+                if (_context.World.GetBlockId(location.Offset(-1, 0, 0)) == 132)
+                    return await PlaceBlockOn(location.Offset(-1, 0, 0), 5, itemId, tickdelay);
+                if (_context.World.GetBlockId(location.Offset(1, 0, 0)) == 132)
+                    return await PlaceBlockOn(location.Offset(1, 0, 0), 4, itemId, tickdelay);
+            }
 
             var i = 0;
             while (true)
@@ -317,6 +332,8 @@ namespace CactusFarmBuilder.Helpers
 
                 if (!await GoToLocation(CurrentLocation().Offset(-2), MAP_OPTIONS_MINE)) return false;
             }
+            
+            if (!await PlaceCactusBackToStart(tickdelay)) return false;
 
             return true;
         }

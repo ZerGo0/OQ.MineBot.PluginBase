@@ -17,7 +17,6 @@ G:\Minebot\plugins\DebugPlugin.pdb
 G:\SourceCodes\OQ.MineBot.Plugins\DebugPlugin\obj\Debug\DebugPlugin.DebugForm.resources
 G:\SourceCodes\OQ.MineBot.Plugins\DebugPlugin\obj\Debug\DebugPlugin.Properties.Resources.resources
 G:\SourceCodes\OQ.MineBot.Plugins\DebugPlugin\obj\Debug\DebugPlugin.csproj.GenerateResource.Cache
-G:\SourceCodes\OQ.MineBot.Plugins\DebugPlugin\obj\Debug\DebugPlugin.csproj.CoreCompileInputs.cache
 G:\SourceCodes\OQ.MineBot.Plugins\DebugPlugin\obj\Debug\DebugPlugin.dll
 G:\SourceCodes\OQ.MineBot.Plugins\DebugPlugin\obj\Debug\DebugPlugin.pdb
 G:\SourceCodes\OQ.MineBot.Plugins\DebugPlugin\obj\Debug\DebugPlugin.csprojAssemblyReference.cache

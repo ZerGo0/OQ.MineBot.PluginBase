@@ -48,6 +48,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tasks\CropHopperCreative.cs" />
     <Compile Include="Tasks\CropHopperDefault.cs" />
+    <Compile Include="Tasks\VanillaMode v2.cs" />
+    <Compile Include="Tasks\VanillaMode v3.cs" />
     <Compile Include="Tasks\VanillaMode.cs" />
     <Compile Include="ZerGo0Debugger.cs" />
   </ItemGroup>

@@ -4,3 +4,4 @@ G:\SourceCodes\OQ.MineBot.Plugins\AutoEquiper\obj\Debug\AutoEquiper.csprojAssemb
 G:\SourceCodes\OQ.MineBot.Plugins\AutoEquiper\obj\Debug\AutoEquiper.csproj.CopyComplete
 G:\SourceCodes\OQ.MineBot.Plugins\AutoEquiper\obj\Debug\AutoEquiper.dll
 G:\SourceCodes\OQ.MineBot.Plugins\AutoEquiper\obj\Debug\AutoEquiper.pdb
+G:\SourceCodes\OQ.MineBot.Plugins\AutoEquiper\obj\Debug\AutoEquiper.csproj.CoreCompileInputs.cache

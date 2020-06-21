@@ -1,8 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Reflection;
-
-using OQ.MineBot.PluginBase.Base;
+﻿using OQ.MineBot.PluginBase.Base;
 using OQ.MineBot.PluginBase.Base.Plugin;
 using OQ.MineBot.PluginBase.Bot;
 
@@ -15,16 +11,19 @@ namespace TestPlugin
     {
         public override void OnLoad(int version, int subversion, int buildversion)
         {
+            Setting.Add(new StringSetting("TARGET Username", "Enter the TARGET username here", ""));
         }
 
         public override PluginResponse OnEnable(IBotSettings botSettings)
         {
-            return new PluginResponse(true);
+            return string.IsNullOrWhiteSpace(Setting.GetValue<string>("TARGET Username"))
+                ? new PluginResponse(false, "Invalid TARGET Username, please check your plugin settings.")
+                : new PluginResponse(true);
         }
 
         public override void OnStart()
         {
-            RegisterTask(new TestingStuff());
+            RegisterTask(new TestingStuff(Setting.GetValue<string>("TARGET Username")));
         }
     }
 }

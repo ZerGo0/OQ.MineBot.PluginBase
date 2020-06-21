@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{E14A22D7-0D88-49E3-A4C1-F82D3FF0A79E}</ProjectGuid>
+    <ProjectGuid>{114AF3E4-510F-458B-BA65-C22B4AD12F57}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>PvPBotPlugin</RootNamespace>

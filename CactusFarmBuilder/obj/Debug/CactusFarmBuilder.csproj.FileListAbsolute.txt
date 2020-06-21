@@ -8,3 +8,4 @@ G:\SourceCodes\OQ.MineBot.Plugins\CactusFarmBuilder\obj\Debug\CactusFarmBuilder.
 G:\SourceCodes\OQ.MineBot.Plugins\CactusFarmBuilder\obj\Debug\CactusFarmBuilder.csproj.CopyComplete
 G:\SourceCodes\OQ.MineBot.Plugins\CactusFarmBuilder\obj\Debug\CactusFarmBuilder.dll
 G:\SourceCodes\OQ.MineBot.Plugins\CactusFarmBuilder\obj\Debug\CactusFarmBuilder.pdb
+G:\SourceCodes\OQ.MineBot.Plugins\CactusFarmBuilder\obj\Debug\CactusFarmBuilder.csproj.CoreCompileInputs.cache

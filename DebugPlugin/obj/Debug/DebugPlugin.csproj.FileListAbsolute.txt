@@ -21,3 +21,4 @@ G:\SourceCodes\OQ.MineBot.Plugins\DebugPlugin\obj\Debug\DebugPlugin.dll
 G:\SourceCodes\OQ.MineBot.Plugins\DebugPlugin\obj\Debug\DebugPlugin.pdb
 G:\SourceCodes\OQ.MineBot.Plugins\DebugPlugin\obj\Debug\DebugPlugin.csprojAssemblyReference.cache
 G:\SourceCodes\OQ.MineBot.Plugins\DebugPlugin\obj\Debug\DebugPlugin.csproj.CopyComplete
+G:\SourceCodes\OQ.MineBot.Plugins\DebugPlugin\obj\Debug\DebugPlugin.csproj.CoreCompileInputs.cache

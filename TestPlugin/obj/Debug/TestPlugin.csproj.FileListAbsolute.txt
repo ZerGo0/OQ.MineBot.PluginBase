@@ -7,3 +7,4 @@ G:\SourceCodes\OQ.MineBot.Plugins\TestPlugin\obj\Debug\TestPlugin.dll
 G:\SourceCodes\OQ.MineBot.Plugins\TestPlugin\obj\Debug\TestPlugin.pdb
 C:\Users\Faven\Desktop\Minebot\plugins\TestPlugin.dll
 C:\Users\Faven\Desktop\Minebot\plugins\TestPlugin.pdb
+G:\SourceCodes\OQ.MineBot.Plugins\TestPlugin\obj\Debug\TestPlugin.csproj.CoreCompileInputs.cache

@@ -10,3 +10,4 @@ G:\SourceCodes\OQ.MineBot.Plugins\MobAura\obj\Debug\MobAuraPlugin.dll
 G:\SourceCodes\OQ.MineBot.Plugins\MobAura\obj\Debug\MobAuraPlugin.pdb
 G:\SourceCodes\OQ.MineBot.Plugins\MobAura\obj\Debug\MobAura.csprojAssemblyReference.cache
 G:\SourceCodes\OQ.MineBot.Plugins\MobAura\obj\Debug\MobAura.csproj.CopyComplete
+G:\SourceCodes\OQ.MineBot.Plugins\MobAura\obj\Debug\MobAura.csproj.CoreCompileInputs.cache

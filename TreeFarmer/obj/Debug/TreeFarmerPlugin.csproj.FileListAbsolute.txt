@@ -4,3 +4,4 @@ G:\SourceCodes\OQ.MineBot.Plugins\TreeFarmer\obj\Debug\TreeFarmerPlugin.csprojAs
 G:\SourceCodes\OQ.MineBot.Plugins\TreeFarmer\obj\Debug\TreeFarmerPlugin.csproj.CopyComplete
 G:\SourceCodes\OQ.MineBot.Plugins\TreeFarmer\obj\Debug\TreeFarmerPlugin.dll
 G:\SourceCodes\OQ.MineBot.Plugins\TreeFarmer\obj\Debug\TreeFarmerPlugin.pdb
+G:\SourceCodes\OQ.MineBot.Plugins\TreeFarmer\obj\Debug\TreeFarmerPlugin.csproj.CoreCompileInputs.cache

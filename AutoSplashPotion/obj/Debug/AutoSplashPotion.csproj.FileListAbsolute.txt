@@ -4,3 +4,4 @@ G:\SourceCodes\OQ.MineBot.Plugins\AutoSplashPotion\obj\Debug\AutoSplashPotion.cs
 G:\SourceCodes\OQ.MineBot.Plugins\AutoSplashPotion\obj\Debug\AutoSplashPotion.csproj.CopyComplete
 G:\SourceCodes\OQ.MineBot.Plugins\AutoSplashPotion\obj\Debug\AutoSplashPotion.dll
 G:\SourceCodes\OQ.MineBot.Plugins\AutoSplashPotion\obj\Debug\AutoSplashPotion.pdb
+G:\SourceCodes\OQ.MineBot.Plugins\AutoSplashPotion\obj\Debug\AutoSplashPotion.csproj.CoreCompileInputs.cache

@@ -1,8 +1,0 @@
-G:\Minebot\plugins\MobAuraPlugin.dll
-G:\Minebot\plugins\MobAuraPlugin.pdb
-G:\SourceCodes\OQ.MineBot.Plugins\MobAura\obj\Release\MobAura.csprojAssemblyReference.cache
-G:\SourceCodes\OQ.MineBot.Plugins\MobAura\obj\Release\MobAura.csproj.CopyComplete
-G:\SourceCodes\OQ.MineBot.Plugins\MobAura\obj\Release\MobAuraPlugin.dll
-G:\SourceCodes\OQ.MineBot.Plugins\MobAura\obj\Release\MobAuraPlugin.pdb
-C:\Users\Faven\Desktop\Minebot\plugins\MobAuraPlugin.dll
-C:\Users\Faven\Desktop\Minebot\plugins\MobAuraPlugin.pdb

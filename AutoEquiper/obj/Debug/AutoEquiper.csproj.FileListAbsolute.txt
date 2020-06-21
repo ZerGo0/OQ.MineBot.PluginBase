@@ -1,7 +1,0 @@
-C:\Users\Faven\Desktop\Minebot\plugins\AutoEquiper.dll
-C:\Users\Faven\Desktop\Minebot\plugins\AutoEquiper.pdb
-G:\SourceCodes\OQ.MineBot.Plugins\AutoEquiper\obj\Debug\AutoEquiper.csprojAssemblyReference.cache
-G:\SourceCodes\OQ.MineBot.Plugins\AutoEquiper\obj\Debug\AutoEquiper.csproj.CopyComplete
-G:\SourceCodes\OQ.MineBot.Plugins\AutoEquiper\obj\Debug\AutoEquiper.dll
-G:\SourceCodes\OQ.MineBot.Plugins\AutoEquiper\obj\Debug\AutoEquiper.pdb
-G:\SourceCodes\OQ.MineBot.Plugins\AutoEquiper\obj\Debug\AutoEquiper.csproj.CoreCompileInputs.cache

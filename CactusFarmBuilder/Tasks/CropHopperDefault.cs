@@ -14,6 +14,7 @@ namespace CactusFarmBuilder.Tasks
         private readonly ushort[] _defaultBuldingBlocks;
         private readonly int _direction;
         private readonly int _maxLayers;
+        private readonly bool _ignoreFailSafe;
 
         private readonly int _tickDelay;
         private HelperFunctions _helperFunctions;
@@ -21,11 +22,12 @@ namespace CactusFarmBuilder.Tasks
         private ILocation _startLoc;
         private bool _stopped;
 
-        public CropHopperDefault(int speedmode, int maxlayers, int direction)
+        public CropHopperDefault(int speedmode, int maxlayers, int direction, bool ignoreFailSafe)
         {
             _maxLayers = maxlayers;
             _direction = direction;
             _tickDelay = speedmode;
+            _ignoreFailSafe = ignoreFailSafe;
 
             _defaultBuldingBlocks = BlocksGlobal.BUILDING_BLOCKS;
             BlocksGlobal.BUILDING_BLOCKS = new[] {(ushort) 12};

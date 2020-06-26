@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using OQ.MineBot.GUI.Protocol.Movement.Maps;
 using OQ.MineBot.PluginBase;
 using OQ.MineBot.PluginBase.Classes;
+using OQ.MineBot.PluginBase.Classes.Blocks;
 using OQ.MineBot.PluginBase.Classes.Entity.Player;
 using OQ.MineBot.PluginBase.Classes.Window;
 using OQ.MineBot.PluginBase.Classes.Window.Containers;
@@ -55,9 +56,10 @@ namespace CactusFarmBuilder.Helpers
             _ignoreFailSafe = ignoreFailSafe;
         }
 
-        public bool CheckItemCount(ushort itemId, bool creativeRefill = false)
+        public bool CheckItemCount(string blockname, bool creativeRefill = false)
         {
             if (Stopped) return false;
+            var blockId = Blocks.Instance.GetId(blockname);
             if (_inventory.GetAmountOfItem(itemId) < 1)
             {
                 if (_context.Player.GetGamemode() == Gamemodes.creative && creativeRefill)

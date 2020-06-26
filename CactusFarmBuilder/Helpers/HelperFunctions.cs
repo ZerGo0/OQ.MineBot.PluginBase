@@ -60,11 +60,11 @@ namespace CactusFarmBuilder.Helpers
         public bool CheckItemCount(string blockname, bool creativeRefill = false)
         {
             if (Stopped) return false;
-            if (blockname == "string") 
-                var blockIdNullable = (ushort) 287;
-            else 
-                var blockIdNullable = Blocks.Instance.GetId(blockname);
 
+            var blockIdNullable = Blocks.Instance.GetId(blockname);
+
+            if (blockname == "string")
+                blockIdNullable = 287;
 
             if (blockIdNullable != null)
             {

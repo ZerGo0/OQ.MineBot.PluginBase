@@ -82,18 +82,18 @@ namespace CactusFarmBuilder
             switch (mode)
             {
                 case 0:
-                    RegisterTask(new CropHopperDefault(speedmode, maxlayers, direction));
+                    RegisterTask(new CropHopperDefault(speedmode, maxlayers, direction, failSafe));
                     break;
                 case 1:
 #if DEBUG
-                    RegisterTask(new CropHopperCreative(speedmode, maxlayers, direction));
+                    RegisterTask(new CropHopperCreative(speedmode, maxlayers, direction, failSafe));
 #endif
                     break;
                 case 2:
-                    RegisterTask(new VanillaMode(speedmode, maxlayers, direction));
+                    RegisterTask(new VanillaMode(speedmode, maxlayers, direction, failSafe));
                     break;
                 case 3:
-                    RegisterTask(new VanillaMode_v2(speedmode, maxlayers, direction));
+                    RegisterTask(new VanillaMode_v2(speedmode, maxlayers, direction, failSafe));
                     break;
             }
         }

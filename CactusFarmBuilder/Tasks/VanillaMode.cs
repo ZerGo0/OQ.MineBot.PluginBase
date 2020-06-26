@@ -14,6 +14,7 @@ namespace CactusFarmBuilder.Tasks
         private readonly ushort[] _defaultBuldingBlocks;
         private readonly int _direction;
         private readonly int _maxLayers;
+        private readonly bool _ignoreFailSafe;
 
         private readonly int _tickDelay;
         private HelperFunctions _helperFunctions;

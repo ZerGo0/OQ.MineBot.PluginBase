@@ -145,7 +145,7 @@ namespace CactusFarmBuilder.Helpers
                 ZerGo0Debugger.Debug(_context.Player.GetUsername(), $"PlaceBlockAtLoc: {location} | " +
                                                                     $"BlockID: {_context.World.GetBlock(location).GetId()} | " +
                                                                     $"ItemID: {blockName}");
-                await _inventory.Select(blockName);
+                await _inventory.Select(blockId);
 
                 await _context.Player.LookAtSmooth(location);
 
@@ -153,7 +153,7 @@ namespace CactusFarmBuilder.Helpers
                 await _context.TickManager.Sleep(tickdelay);
 
                 var blockCheckCount = 0;
-                while (blockName != 4 && _context.World.GetBlock(location).GetId() == 4 &&
+                while (blockId != 4 && _context.World.GetBlock(location).GetId() == 4 &&
                        _context.World.GetBlock(location).GetId() != 0)
                 {
                     if (blockCheckCount > 15) return false;

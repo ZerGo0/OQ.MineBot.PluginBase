@@ -35,7 +35,7 @@ namespace CactusFarmBuilder.Tasks
         {
             try
             {
-                if (_startLoc == null) _startLoc = Context.Player.GetLocation();
+                _startLoc ??= Context.Player.GetLocation();
                 _helperFunctions ??= new HelperFunctions(Context, Inventory);
                 
                 if (_startLoc == null || _helperFunctions == null) return;

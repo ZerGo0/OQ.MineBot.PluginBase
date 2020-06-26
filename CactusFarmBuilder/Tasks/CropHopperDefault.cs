@@ -40,7 +40,7 @@ namespace CactusFarmBuilder.Tasks
                 
                 if (_startLoc == null || _helperFunctions == null) return;
                 
-                if (!_helperFunctions.CheckItemCount(new string[] {"Sand", "Cactus", "String"}, true)) return;
+                if (!_helperFunctions.CheckItemCount(new[] {"Sand", "Cactus", "String"}, true)) return;
 
                 if (_layerCount >= _maxLayers)
                 {

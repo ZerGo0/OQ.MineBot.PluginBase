@@ -89,7 +89,7 @@ namespace CactusFarmBuilder.Helpers
                 return true;
             }
 
-            ZerGo0Debugger.Info(_context.Player.GetUsername(), $"Missing {GetItemIdName(blockId)}");
+            ZerGo0Debugger.Info(_context.Player.GetUsername(), $"Missing {blockname}");
             return false;
 
         }
@@ -360,21 +360,6 @@ namespace CactusFarmBuilder.Helpers
         }
 
 #region Helper Functions
-
-        private static string GetItemIdName(int itemId)
-        {
-            switch (itemId)
-            {
-                case 12:
-                    return "Sand";
-                case 81:
-                    return "Cactus";
-                case 287:
-                    return "String";
-                default:
-                    return itemId.ToString();
-            }
-        }
 
         public ILocation CurrentLocation()
         {

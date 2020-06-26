@@ -47,7 +47,7 @@ namespace CactusFarmBuilder.Helpers
 
         public bool Stopped = false;
 
-        public HelperFunctions(IBotContext context, IInventory inventory)
+        public HelperFunctions(IBotContext context, IInventory inventory, bool ignoreFailSafe = false)
         {
             _context = context;
             _inventory = inventory;

@@ -118,6 +118,8 @@ namespace CactusFarmBuilder.Helpers
         public async Task<bool> PlaceBlockAt(ILocation location, string blockName, int tickdelay)
         {
             var blockIdNullable = Blocks.Instance.GetId(blockName);
+            if (blockNamee == "string")
+                blockIdNullable = 287;
             if (blockIdNullable == null) return false;
             var blockId = blockIdNullable.Value;
 

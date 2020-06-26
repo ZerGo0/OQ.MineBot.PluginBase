@@ -264,13 +264,13 @@ namespace CactusFarmBuilder.Helpers
 
         public async Task<bool> BreakBlock(ILocation location, int tickdelay)
         {
-            var i = 0;
+            var failSafeCount = 0;
             while (_context.World.GetBlockId(location) != 0)
             {
                 if (Stopped) return false;
 
-                if (i > 40) return false;
-                i++;
+                if (failSafeCount > 40) return false;
+                failSafeCount++;
                 
                 var bestTool = _context.World.GetBlock(location);
                 if (bestTool != null) await bestTool.SelectTool();

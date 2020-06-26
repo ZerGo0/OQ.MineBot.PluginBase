@@ -173,17 +173,21 @@ namespace CactusFarmBuilder.Helpers
             return true;
         }
 
-        public async Task<bool> PlaceBlocksAt(ILocation[] locations, int itemId, int tickdelay)
+        public async Task<bool> PlaceBlocksAt(ILocation[] locations, string blockName, int tickdelay)
         {
             foreach (var location in locations)
-                if (!await PlaceBlockAt(location, itemId, tickdelay))
+                if (!await PlaceBlockAt(location, blockName, tickdelay))
                     return false;
 
             return true;
         }
 
-        public async Task<bool> PlaceBlockOn(ILocation location, int blockFace, int itemId, int tickdelay)
+        public async Task<bool> PlaceBlockOn(ILocation location, int blockFace, string blockName, int tickdelay)
         {
+            var blockIdNullable = Blocks.Instance.GetId(blockName);
+            if (blockIdNullable == null) return false;
+            var blockId = blockIdNullable.Value;
+
             var locationOffset = location;
 
             switch (blockFace)
@@ -212,7 +216,7 @@ namespace CactusFarmBuilder.Helpers
             while (true)
             {
                 if (Stopped) return false;
-                if (!CheckItemCount((ushort) itemId, true)) continue;
+                if (!CheckItemCount((ushort)blockId, true)) continue;
 
                 if (i > 40) return false;
                 i++;
@@ -220,8 +224,8 @@ namespace CactusFarmBuilder.Helpers
 
                 ZerGo0Debugger.Debug(_context.Player.GetUsername(), $"PlaceBlockOnLoc: {locationOffset} | " +
                                                                     $"BlockID: {_context.World.GetBlock(locationOffset).GetId()} | " +
-                                                                    $"ItemID: {itemId}");
-                await _inventory.Select((ushort) itemId);
+                                                                    $"ItemID: {blockId}");
+                await _inventory.Select(blockId);
 
                 await _context.Player.LookAtSmooth(location);
 
@@ -229,7 +233,7 @@ namespace CactusFarmBuilder.Helpers
                 await _context.TickManager.Sleep(tickdelay);
 
                 var blockCheckCount = 0;
-                while (itemId != 4 && _context.World.GetBlock(locationOffset).GetId() == 4 &&
+                while (blockId != 4 && _context.World.GetBlock(locationOffset).GetId() == 4 &&
                        _context.World.GetBlock(locationOffset).GetId() != 0)
                 {
                     if (blockCheckCount > 15) return false;

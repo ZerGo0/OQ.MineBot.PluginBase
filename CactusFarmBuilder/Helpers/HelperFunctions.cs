@@ -216,7 +216,7 @@ namespace CactusFarmBuilder.Helpers
             while (true)
             {
                 if (Stopped) return false;
-                if (!CheckItemCount((ushort)blockId, true)) continue;
+                if (!CheckItemCount(blockName, true)) continue;
 
                 if (i > 40) return false;
                 i++;
@@ -253,10 +253,10 @@ namespace CactusFarmBuilder.Helpers
             return true;
         }
 
-        public async Task<bool> PlaceBlocksOn(ILocation[] locations, int blockFace, int itemId, int tickdelay)
+        public async Task<bool> PlaceBlocksOn(ILocation[] locations, int blockFace, string blockName, int tickdelay)
         {
             foreach (var location in locations)
-                if (!await PlaceBlockOn(location, blockFace, itemId, tickdelay))
+                if (!await PlaceBlockOn(location, blockFace, blockName, tickdelay))
                     return false;
 
             return true;
@@ -312,20 +312,20 @@ namespace CactusFarmBuilder.Helpers
             return false;
         }
 
-        public async Task<bool> CreateLayer(IEnumerable<ILocation> locList, int itemId, int tickDelay)
+        public async Task<bool> CreateLayer(IEnumerable<ILocation> locList, string blockName, int tickDelay)
         {
             var locations = new Queue<ILocation>(locList);
             while (locations.Count > 0)
             {
                 if (Stopped) return false;
 
-                if (!CheckItemCount((ushort) itemId, true)) continue;
+                if (!CheckItemCount(blockName, true)) continue;
 
                 var location = locations.Dequeue();
 
                 if (location == null || _context.World.GetBlockId(location) != 0) continue;
 
-                if (!await PlaceBlockAt(location, itemId, tickDelay)) return false;
+                if (!await PlaceBlockAt(location, blockName, tickDelay)) return false;
 
                 if (_context.World.GetBlockId(location) == 0) locations.Enqueue(location);
             }
@@ -358,7 +358,7 @@ namespace CactusFarmBuilder.Helpers
 
                 if (!CheckForPlaceableSpot(location)) continue;
 
-                if (!await PlaceBlockAt(location, 81, tickdelay)) return false;
+                if (!await PlaceBlockAt(location, "Cactus", tickdelay)) return false;
             }
 
             return true;

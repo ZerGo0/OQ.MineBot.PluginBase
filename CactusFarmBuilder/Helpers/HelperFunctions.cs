@@ -133,14 +133,14 @@ namespace CactusFarmBuilder.Helpers
                     return await PlaceBlockOn(location.Offset(1, 0, 0), 4, blockName, tickdelay);
             }
 
-            var i = 0;
+            var failSafeCount = 0;
             while (true)
             {
                 if (Stopped) return false;
                 if (!CheckItemCount(blockName, true)) continue;
 
-                if (i > 40) return false;
-                i++;
+                if (failSafeCount > 40) return false;
+                failSafeCount++;
 
                 ZerGo0Debugger.Debug(_context.Player.GetUsername(), $"PlaceBlockAtLoc: {location} | " +
                                                                     $"BlockID: {_context.World.GetBlock(location).GetId()} | " +
@@ -212,14 +212,14 @@ namespace CactusFarmBuilder.Helpers
                     break;
             }
 
-            var i = 0;
+            var failSafeCount = 0;
             while (true)
             {
                 if (Stopped) return false;
                 if (!CheckItemCount(blockName, true)) continue;
 
-                if (i > 40) return false;
-                i++;
+                if (failSafeCount > 40) return false;
+                failSafeCount++;
 
 
                 ZerGo0Debugger.Debug(_context.Player.GetUsername(), $"PlaceBlockOnLoc: {locationOffset} | " +

@@ -110,38 +110,42 @@ namespace CactusFarmBuilder.Helpers
             return _context.World.GetBlockId(loc) != (ushort) blockId;
         }
 
-        public async Task<bool> PlaceBlockAt(ILocation location, int itemId, int tickdelay)
+        public async Task<bool> PlaceBlockAt(ILocation location, string blockName, int tickdelay)
         {
+            var blockIdNullable = Blocks.Instance.GetId(blockName);
+            if (blockIdNullable == null) return false;
+            var blockId = blockIdNullable.Value;
+
             if (_context.World.GetBlockId(location) == 0)
             {
                 if (_context.World.GetBlockId(location.Offset(1)) == 132 && 
                     _context.World.GetBlockId(location.Offset(-1)) == 0)
-                    return await PlaceBlockOn(location.Offset(1), 0, itemId, tickdelay);
+                    return await PlaceBlockOn(location.Offset(1), 0, blockName, tickdelay);
                 if (_context.World.GetBlockId(location.Offset(-1)) == 132)
-                    return await PlaceBlockOn(location.Offset(-1), 1, itemId, tickdelay);
+                    return await PlaceBlockOn(location.Offset(-1), 1, blockName, tickdelay);
                 if (_context.World.GetBlockId(location.Offset(0, 0, -1)) == 132)
-                    return await PlaceBlockOn(location.Offset(0, 0, -1), 3, itemId, tickdelay);
+                    return await PlaceBlockOn(location.Offset(0, 0, -1), 3, blockName, tickdelay);
                 if (_context.World.GetBlockId(location.Offset(0, 0, 1)) == 132)
-                    return await PlaceBlockOn(location.Offset(0, 0, 1), 2, itemId, tickdelay);
+                    return await PlaceBlockOn(location.Offset(0, 0, 1), 2, blockName, tickdelay);
                 if (_context.World.GetBlockId(location.Offset(-1, 0, 0)) == 132)
-                    return await PlaceBlockOn(location.Offset(-1, 0, 0), 5, itemId, tickdelay);
+                    return await PlaceBlockOn(location.Offset(-1, 0, 0), 5, blockName, tickdelay);
                 if (_context.World.GetBlockId(location.Offset(1, 0, 0)) == 132)
-                    return await PlaceBlockOn(location.Offset(1, 0, 0), 4, itemId, tickdelay);
+                    return await PlaceBlockOn(location.Offset(1, 0, 0), 4, blockName, tickdelay);
             }
 
             var i = 0;
             while (true)
             {
                 if (Stopped) return false;
-                if (!CheckItemCount((ushort) itemId, true)) continue;
+                if (!CheckItemCount(blockName, true)) continue;
 
                 if (i > 40) return false;
                 i++;
 
                 ZerGo0Debugger.Debug(_context.Player.GetUsername(), $"PlaceBlockAtLoc: {location} | " +
                                                                     $"BlockID: {_context.World.GetBlock(location).GetId()} | " +
-                                                                    $"ItemID: {itemId}");
-                await _inventory.Select((ushort) itemId);
+                                                                    $"ItemID: {blockName}");
+                await _inventory.Select(blockName);
 
                 await _context.Player.LookAtSmooth(location);
 
@@ -149,7 +153,7 @@ namespace CactusFarmBuilder.Helpers
                 await _context.TickManager.Sleep(tickdelay);
 
                 var blockCheckCount = 0;
-                while (itemId != 4 && _context.World.GetBlock(location).GetId() == 4 &&
+                while (blockName != 4 && _context.World.GetBlock(location).GetId() == 4 &&
                        _context.World.GetBlock(location).GetId() != 0)
                 {
                     if (blockCheckCount > 15) return false;
@@ -161,7 +165,7 @@ namespace CactusFarmBuilder.Helpers
                 {
                     ZerGo0Debugger.Debug(_context.Player.GetUsername(), $"DONE PlaceBlockAtLoc: {location} | " +
                                                                         $"BlockID: {_context.World.GetBlock(location).GetId()} | " +
-                                                                        $"ItemID: {itemId}");
+                                                                        $"ItemID: {blockName}");
                     break;
                 }
             }

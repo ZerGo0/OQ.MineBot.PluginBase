@@ -31,7 +31,7 @@ namespace CactusFarmBuilder.Tasks
 
             _defaultBuldingBlocks = BlocksGlobal.BUILDING_BLOCKS;
 
-            var blockIdNullable = Blocks.Instance.GetId("Sand");
+            var blockIdNullable = Blocks.Instance.GetId("sand");
             if (blockIdNullable == null) return;
             var blockId = blockIdNullable.Value;
             BlocksGlobal.BUILDING_BLOCKS = new[] { blockId };
@@ -46,7 +46,7 @@ namespace CactusFarmBuilder.Tasks
                 
                 if (_startLoc == null || _helperFunctions == null) return;
 
-                if (!_helperFunctions.CheckItemCount(new[] {"Sand", "Cactus", "String"}, true)) return;
+                if (!_helperFunctions.CheckItemCount(new[] {"sand", "cactus", "String"}, true)) return;
 
                 if (_layerCount >= _maxLayers)
                 {
@@ -144,7 +144,7 @@ namespace CactusFarmBuilder.Tasks
             {
                 CurrentLoc().Offset(1, 0, 1), CurrentLoc().Offset(-1, 0, 1),
                 CurrentLoc().Offset(-1, 0, -1), CurrentLoc().Offset(1, 0, -1)
-            }, "Sand", _tickDelay)) return false;
+            }, "sand", _tickDelay)) return false;
             ZerGo0Debugger.Debug(Context.Player.GetUsername(), "1st SandLayer DONE");
 
             if (_stopped) return false;
@@ -154,7 +154,7 @@ namespace CactusFarmBuilder.Tasks
             {
                 CurrentLoc().Offset(1, 1, 1), CurrentLoc().Offset(-1, 1, 1),
                 CurrentLoc().Offset(-1, 1, -1), CurrentLoc().Offset(1, 1, -1)
-            }, "Cactus", _tickDelay)) return false;
+            }, "cactus", _tickDelay)) return false;
             ZerGo0Debugger.Debug(Context.Player.GetUsername(), "1st CactusLayer DONE");
 
             if (_stopped) return false;
@@ -179,7 +179,7 @@ namespace CactusFarmBuilder.Tasks
             if (!await _helperFunctions.CreateLayer(new[]
             {
                 CurrentLoc().Offset(0, 0, 1), CurrentLoc().Offset(0, 0, -1)
-            }, "Sand", _tickDelay)) return false;
+            }, "sand", _tickDelay)) return false;
             ZerGo0Debugger.Debug(Context.Player.GetUsername(), "2nd SandLayer DONE");
 
             if (_stopped) return false;

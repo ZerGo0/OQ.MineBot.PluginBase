@@ -29,8 +29,10 @@ namespace CactusFarmBuilder.Tasks
             _tickDelay = speedmode;
             _ignoreFailSafe = ignoreFailSafe;
 
-            _defaultBuldingBlocks = BlocksGlobal.BUILDING_BLOCKS;
-            BlocksGlobal.BUILDING_BLOCKS = new[] {(ushort) 12};
+            var blockIdNullable = Blocks.Instance.GetId("Sand");
+            if (blockIdNullable == null) return;
+            var blockId = blockIdNullable.Value;
+            BlocksGlobal.BUILDING_BLOCKS = new[] { blockId };
         }
 
         public async Task OnTick()

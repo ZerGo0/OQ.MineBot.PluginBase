@@ -44,7 +44,7 @@ namespace CactusFarmBuilder.Tasks
                 
                 if (_startLoc == null || _helperFunctions == null) return;
 
-                if (!_helperFunctions.CheckItemCount(new[] {"sand", "cactus", "String"}, true)) return;
+                if (!_helperFunctions.CheckItemCount(new[] {"sand", "cactus", "string"}, true)) return;
 
                 if (_layerCount >= _maxLayers)
                 {
@@ -168,7 +168,7 @@ namespace CactusFarmBuilder.Tasks
             {
                 CurrentLoc().Offset(2, 0, 1), CurrentLoc().Offset(-2, 0, 1),
                 CurrentLoc().Offset(-2, 0, -1), CurrentLoc().Offset(2, 0, -1)
-            }, "String", _tickDelay)) return false;
+            }, "string", _tickDelay)) return false;
             ZerGo0Debugger.Debug(Context.Player.GetUsername(), "2nd BOTTOM StringLayer DONE");
 
             if (_stopped) return false;
@@ -178,7 +178,7 @@ namespace CactusFarmBuilder.Tasks
             {
                 CurrentLoc().Offset(1, 0, 1), CurrentLoc().Offset(-1, 0, 1),
                 CurrentLoc().Offset(-1, 0, -1), CurrentLoc().Offset(1, 0, -1)
-            }, "String", _tickDelay)) return false;
+            }, "string", _tickDelay)) return false;
             ZerGo0Debugger.Debug(Context.Player.GetUsername(), "2nd BOTTOM 2 StringLayer DONE");
 
             if (_stopped) return false;
@@ -187,7 +187,7 @@ namespace CactusFarmBuilder.Tasks
             if (!await _helperFunctions.CreateLayer(new[]
             {
                 CurrentLoc().Offset(0, 0, 1), CurrentLoc().Offset(0, 0, -1)
-            }, "String", _tickDelay)) return false;
+            }, "string", _tickDelay)) return false;
             ZerGo0Debugger.Debug(Context.Player.GetUsername(), "2nd BOTTOM 3 StringLayer DONE");
 
             if (_stopped) return false;
@@ -198,7 +198,7 @@ namespace CactusFarmBuilder.Tasks
                 CurrentLoc().Offset(2, 1, 1), CurrentLoc().Offset(0, 1, 1),
                 CurrentLoc().Offset(-2, 1, 1), CurrentLoc().Offset(-2, 1, -1),
                 CurrentLoc().Offset(0, 1, -1), CurrentLoc().Offset(2, 1, -1)
-            }, "String", _tickDelay)) return false;
+            }, "string", _tickDelay)) return false;
             ZerGo0Debugger.Debug(Context.Player.GetUsername(), "2nd TOP 1 StringLayer DONE");
 
             if (_stopped) return false;

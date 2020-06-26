@@ -359,7 +359,7 @@ namespace CactusFarmBuilder.Helpers
 
                 if (!CheckForPlaceableSpot(location)) continue;
 
-                if (!await PlaceBlockAt(location, "Cactus", tickdelay)) return false;
+                if (!await PlaceBlockAt(location, "cactus", tickdelay)) return false;
             }
 
             return true;

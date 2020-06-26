@@ -144,7 +144,7 @@ namespace CactusFarmBuilder.Helpers
 
                 ZerGo0Debugger.Debug(_context.Player.GetUsername(), $"PlaceBlockAtLoc: {location} | " +
                                                                     $"BlockID: {_context.World.GetBlock(location).GetId()} | " +
-                                                                    $"ItemID: {blockName}");
+                                                                    $"Place BlockID: {blockName}");
                 await _inventory.Select(blockId);
 
                 await _context.Player.LookAtSmooth(location);
@@ -165,7 +165,7 @@ namespace CactusFarmBuilder.Helpers
                 {
                     ZerGo0Debugger.Debug(_context.Player.GetUsername(), $"DONE PlaceBlockAtLoc: {location} | " +
                                                                         $"BlockID: {_context.World.GetBlock(location).GetId()} | " +
-                                                                        $"ItemID: {blockName}");
+                                                                        $"Place BlockID: {blockName}");
                     break;
                 }
             }
@@ -224,7 +224,7 @@ namespace CactusFarmBuilder.Helpers
 
                 ZerGo0Debugger.Debug(_context.Player.GetUsername(), $"PlaceBlockOnLoc: {locationOffset} | " +
                                                                     $"BlockID: {_context.World.GetBlock(locationOffset).GetId()} | " +
-                                                                    $"BlockID: {blockId}");
+                                                                    $"Place BlockID: {blockId}");
                 await _inventory.Select(blockId);
 
                 await _context.Player.LookAtSmooth(location);
@@ -245,7 +245,7 @@ namespace CactusFarmBuilder.Helpers
                 {
                     ZerGo0Debugger.Debug(_context.Player.GetUsername(), $"DONE PlaceBlockOnLoc: {locationOffset} | " +
                                                                         $"BlockID: {_context.World.GetBlock(locationOffset).GetId()} | " +
-                                                                        $"BlockID: {blockId}");
+                                                                        $"Place BlockID: {blockId}");
                     break;
                 }
             }

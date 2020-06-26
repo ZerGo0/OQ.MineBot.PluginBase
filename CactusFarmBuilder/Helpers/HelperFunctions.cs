@@ -224,7 +224,7 @@ namespace CactusFarmBuilder.Helpers
 
                 ZerGo0Debugger.Debug(_context.Player.GetUsername(), $"PlaceBlockOnLoc: {locationOffset} | " +
                                                                     $"BlockID: {_context.World.GetBlock(locationOffset).GetId()} | " +
-                                                                    $"ItemID: {blockId}");
+                                                                    $"BlockID: {blockId}");
                 await _inventory.Select(blockId);
 
                 await _context.Player.LookAtSmooth(location);

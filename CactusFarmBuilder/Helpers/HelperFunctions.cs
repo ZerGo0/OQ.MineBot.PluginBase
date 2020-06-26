@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.Design;
+using System.Linq;
 using System.Threading.Tasks;
 
 using OQ.MineBot.GUI.Protocol.Movement.Maps;
@@ -94,13 +95,9 @@ namespace CactusFarmBuilder.Helpers
 
         }
 
-        public bool CheckItemCount(ushort[] itemIds, bool creativeRefill = false)
+        public bool CheckItemCount(string[] blockNames, bool creativeRefill = false)
         {
-            foreach (var itemId in itemIds)
-                if (!CheckItemCount(itemId, creativeRefill))
-                    return false;
-
-            return true;
+            return blockNames.All(blockName => CheckItemCount(blockName, creativeRefill));
         }
 
         public async Task WaitTillGrounded()

@@ -139,7 +139,7 @@ namespace CactusFarmBuilder.Helpers
                 if (Stopped) return false;
                 if (!CheckItemCount(blockName, true)) continue;
 
-                if (failSafeCount > 40) return false;
+                if (failSafeCount > 40 && !_ignoreFailSafe) return false;
                 failSafeCount++;
 
                 ZerGo0Debugger.Debug(_context.Player.GetUsername(), $"PlaceBlockAtLoc: {location} | " +
@@ -218,7 +218,7 @@ namespace CactusFarmBuilder.Helpers
                 if (Stopped) return false;
                 if (!CheckItemCount(blockName, true)) continue;
 
-                if (failSafeCount > 40) return false;
+                if (failSafeCount > 40 && !_ignoreFailSafe) return false;
                 failSafeCount++;
 
 
@@ -269,7 +269,7 @@ namespace CactusFarmBuilder.Helpers
             {
                 if (Stopped) return false;
 
-                if (failSafeCount > 40) return false;
+                if (failSafeCount > 40 && !_ignoreFailSafe) return false;
                 failSafeCount++;
                 
                 var bestTool = _context.World.GetBlock(location);

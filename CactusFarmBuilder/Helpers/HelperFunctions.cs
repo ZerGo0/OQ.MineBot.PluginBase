@@ -59,7 +59,13 @@ namespace CactusFarmBuilder.Helpers
         public bool CheckItemCount(string blockname, bool creativeRefill = false)
         {
             if (Stopped) return false;
-            var blockId = Blocks.Instance.GetId(blockname);
+            var blockIdNullable = Blocks.Instance.GetId(blockname);
+
+            if (blockIdNullable != null)
+            {
+                var blockId = blockIdNullable.Value;
+            }
+
             if (_inventory.GetAmountOfItem(blockId) >= 1) return true;
             if (_context.Player.GetGamemode() == Gamemodes.creative && creativeRefill)
             {

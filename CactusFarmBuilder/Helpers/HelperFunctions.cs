@@ -57,13 +57,13 @@ namespace CactusFarmBuilder.Helpers
             _ignoreFailSafe = ignoreFailSafe;
         }
 
-        public bool CheckItemCount(string blockname, bool creativeRefill = false)
+        public bool CheckItemCount(string blockName, bool creativeRefill = false)
         {
             if (Stopped) return false;
 
-            var blockIdNullable = Blocks.Instance.GetId(blockname);
+            var blockIdNullable = Blocks.Instance.GetId(blockName);
 
-            if (blockname == "string")
+            if (blockName == "string")
                 blockIdNullable = 287;
 
             if (blockIdNullable != null)
@@ -95,7 +95,7 @@ namespace CactusFarmBuilder.Helpers
                 }
             }
 
-            ZerGo0Debugger.Info(_context.Player.GetUsername(), $"Missing {blockname}");
+            ZerGo0Debugger.Info(_context.Player.GetUsername(), $"Missing {blockName}");
             return false;
 
         }
@@ -118,7 +118,7 @@ namespace CactusFarmBuilder.Helpers
         public async Task<bool> PlaceBlockAt(ILocation location, string blockName, int tickdelay)
         {
             var blockIdNullable = Blocks.Instance.GetId(blockName);
-            if (blockNamee == "string")
+            if (blockName == "string")
                 blockIdNullable = 287;
             if (blockIdNullable == null) return false;
             var blockId = blockIdNullable.Value;

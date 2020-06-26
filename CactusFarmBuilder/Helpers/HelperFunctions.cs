@@ -95,7 +95,7 @@ namespace CactusFarmBuilder.Helpers
 
         }
 
-        public bool CheckItemCount(string[] blockNames, bool creativeRefill = false)
+        public bool CheckItemCount(IEnumerable<string> blockNames, bool creativeRefill = false)
         {
             return blockNames.All(blockName => CheckItemCount(blockName, creativeRefill));
         }

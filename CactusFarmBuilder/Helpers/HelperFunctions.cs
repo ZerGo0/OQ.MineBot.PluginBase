@@ -52,6 +52,7 @@ namespace CactusFarmBuilder.Helpers
         {
             _context = context;
             _inventory = inventory;
+            _ignoreFailSafe = ignoreFailSafe;
         }
 
         public bool CheckItemCount(ushort itemId, bool creativeRefill = false)

@@ -65,6 +65,7 @@ namespace CactusFarmBuilder.Helpers
             if (blockIdNullable != null)
             {
                 var blockId = blockIdNullable.Value;
+                ZerGo0Debugger.Debug(_context.Player.GetUsername(), blockId.ToString());
 
                 if (_inventory.GetAmountOfItem(blockId) >= 1) return true;
                 if (_context.Player.GetGamemode() == Gamemodes.creative && creativeRefill)

@@ -60,35 +60,32 @@ namespace CactusFarmBuilder.Helpers
         {
             if (Stopped) return false;
             var blockId = Blocks.Instance.GetId(blockname);
-            if (_inventory.GetAmountOfItem(itemId) < 1)
+            if (_inventory.GetAmountOfItem(blockId) >= 1) return true;
+            if (_context.Player.GetGamemode() == Gamemodes.creative && creativeRefill)
             {
-                if (_context.Player.GetGamemode() == Gamemodes.creative && creativeRefill)
+                ZerGo0Debugger.Debug(_context.Player.GetUsername(), $"CreativeSetSlot {blockId.ToString()}");
+                switch (blockId)
                 {
-                    ZerGo0Debugger.Debug(_context.Player.GetUsername(), $"CreativeSetSlot {itemId.ToString()}");
-                    switch (itemId)
-                    {
-                        case 12:
-                            _context.Functions.CreativeSetSlot(36, SlotType.Create(_context, itemId, 64));
-                            break;
-                        case 81:
-                            _context.Functions.CreativeSetSlot(37, SlotType.Create(_context, itemId, 64));
-                            break;
-                        case 287:
-                            _context.Functions.CreativeSetSlot(38, SlotType.Create(_context, itemId, 64));
-                            break;
-                        default:
-                            _context.Functions.CreativeSetSlot(39, SlotType.Create(_context, itemId, 64));
-                            break;
-                    }
-
-                    return true;
+                    case 12:
+                        _context.Functions.CreativeSetSlot(36, SlotType.Create(_context, blockId, 64));
+                        break;
+                    case 81:
+                        _context.Functions.CreativeSetSlot(37, SlotType.Create(_context, blockId, 64));
+                        break;
+                    case 287:
+                        _context.Functions.CreativeSetSlot(38, SlotType.Create(_context, blockId, 64));
+                        break;
+                    default:
+                        _context.Functions.CreativeSetSlot(39, SlotType.Create(_context, blockId, 64));
+                        break;
                 }
 
-                ZerGo0Debugger.Info(_context.Player.GetUsername(), $"Missing {GetItemIdName(itemId)}");
-                return false;
+                return true;
             }
 
-            return true;
+            ZerGo0Debugger.Info(_context.Player.GetUsername(), $"Missing {GetItemIdName(blockId)}");
+            return false;
+
         }
 
         public bool CheckItemCount(ushort[] itemIds, bool creativeRefill = false)

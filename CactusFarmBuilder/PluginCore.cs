@@ -7,7 +7,7 @@ using OQ.MineBot.PluginBase.Bot;
 namespace CactusFarmBuilder
 {
 #if DEBUG
-    [Plugin(9, "Cactus Farm Builder", "(DEBUG BUILD)", "https://www.youtube.com/watch?v=uVdLJZZzuBs")]
+    [Plugin(10, "Cactus Farm Builder", "(DEBUG BUILD)", "https://www.youtube.com/watch?v=uVdLJZZzuBs")]
 #else
     [Plugin(9, "Cactus Farm Builder", "[BETA] Builds a cactus farm for you.",
         "https://www.youtube.com/watch?v=uVdLJZZzuBs")]
@@ -37,6 +37,8 @@ namespace CactusFarmBuilder
             layoutPreviews.Add(new LinkSetting("Vanilla Layout Showcase", "", "https://i.imgur.com/b2oivhu.png"));
             layoutPreviews.Add(new LinkSetting("Vanilla v2 Layout Showcase", "", "https://i.imgur.com/7Uk9aue.png"));
             Setting.Add(layoutPreviews);
+
+            Setting.Add(new BoolSetting("Disable Fail-Safe", "WARNING: This will disable the Fail-Safe, which means that the bot will NOT automatically stop if it fails to perform a certain action. This may result in a incorrect layout.", false));
         }
 
         public override PluginResponse OnEnable(IBotSettings botSettings)

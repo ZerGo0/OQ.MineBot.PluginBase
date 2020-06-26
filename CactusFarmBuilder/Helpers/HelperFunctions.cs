@@ -44,6 +44,7 @@ namespace CactusFarmBuilder.Helpers
 
         private readonly IBotContext _context;
         private readonly IInventory _inventory;
+        private readonly bool _ignoreFailSafe;
 
         public bool Stopped = false;
 

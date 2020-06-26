@@ -22,11 +22,12 @@ namespace CactusFarmBuilder.Tasks
         private ILocation _startLoc;
         private bool _stopped;
 
-        public VanillaMode(int speedmode, int maxlayers, int direction)
+        public VanillaMode(int speedmode, int maxlayers, int direction, bool ignoreFailSafe)
         {
             _maxLayers = maxlayers;
             _direction = direction;
             _tickDelay = speedmode;
+            _ignoreFailSafe = ignoreFailSafe;
 
             _defaultBuldingBlocks = BlocksGlobal.BUILDING_BLOCKS;
             BlocksGlobal.BUILDING_BLOCKS = new[] {(ushort) 12};

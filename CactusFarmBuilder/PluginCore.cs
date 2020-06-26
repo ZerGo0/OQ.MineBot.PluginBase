@@ -77,6 +77,7 @@ namespace CactusFarmBuilder
 
             var maxlayers = Setting.At(4).Get<int>();
             var direction = Setting.At(5).Get<int>();
+            var failSafe = Setting.Get("Disable Fail-Safe").Get<bool>();
 
             switch (mode)
             {

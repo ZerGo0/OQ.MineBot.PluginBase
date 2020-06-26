@@ -7,9 +7,9 @@ using OQ.MineBot.PluginBase.Bot;
 namespace AutoEquiper
 {
 #if DEBUG
-    [Plugin(2, "Auto Equiper", "(DEBUG BUILD)", "")]
+    [Plugin(3, "Auto Equiper", "(DEBUG BUILD)", "")]
 #else
-    [Plugin(2, "Auto Equiper", "Auto equips the selected items for you.", "")]
+    [Plugin(3, "Auto Equiper", "Auto equips the selected items for you.", "")]
 #endif
     public class PluginCore : IStartPlugin
     {

@@ -7,9 +7,9 @@ using OQ.MineBot.PluginBase.Bot;
 namespace AutoSplashPotion
 {
 #if DEBUG
-    [Plugin(1, "Auto Potion Thrower", "(DEBUG BUILD)", "")]
+    [Plugin(2, "Auto Potion Thrower", "(DEBUG BUILD)", "")]
 #else
-    [Plugin(1, "Auto Potion Thrower", "Throws a Splash Potion if it's under the health threshold.", "")]
+    [Plugin(2, "Auto Potion Thrower", "Throws a Splash Potion if it's under the health threshold.", "")]
 #endif
     public class PluginCore : IStartPlugin
     {

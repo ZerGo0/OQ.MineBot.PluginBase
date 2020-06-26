@@ -7,9 +7,9 @@ using OQ.MineBot.PluginBase.Bot;
 namespace MobAuraPlugin
 {
 #if DEBUG
-    [Plugin(5, "Mob Aura", "(DEBUG BUILD)", "https://www.youtube.com/watch?v=_c5K49y4eVc")]
+    [Plugin(6, "Mob Aura", "(DEBUG BUILD)", "https://www.youtube.com/watch?v=_c5K49y4eVc")]
 #else
-    [Plugin(5, "Mob Aura", "Attacks all mobs around the bot", "https://www.youtube.com/watch?v=_c5K49y4eVc")]
+    [Plugin(6, "Mob Aura", "Attacks all mobs around the bot", "https://www.youtube.com/watch?v=_c5K49y4eVc")]
 #endif
     public class PluginCore : IStartPlugin
     {

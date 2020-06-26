@@ -9,7 +9,7 @@ namespace CactusFarmBuilder
 #if DEBUG
     [Plugin(10, "Cactus Farm Builder", "(DEBUG BUILD)", "https://www.youtube.com/watch?v=uVdLJZZzuBs")]
 #else
-    [Plugin(9, "Cactus Farm Builder", "[BETA] Builds a cactus farm for you.",
+    [Plugin(10, "Cactus Farm Builder", "[BETA] Builds a cactus farm for you.",
         "https://www.youtube.com/watch?v=uVdLJZZzuBs")]
 #endif
     public class PluginCore : IStartPlugin

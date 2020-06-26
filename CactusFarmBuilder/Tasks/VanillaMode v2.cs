@@ -44,7 +44,7 @@ namespace CactusFarmBuilder.Tasks
                 
                 if (_startLoc == null || _helperFunctions == null) return;
 
-                if (!_helperFunctions.CheckItemCount(new[] {"sand", "Cactus", "String"}, true)) return;
+                if (!_helperFunctions.CheckItemCount(new[] {"sand", "cactus", "String"}, true)) return;
 
                 if (_layerCount >= _maxLayers)
                 {
@@ -153,7 +153,7 @@ namespace CactusFarmBuilder.Tasks
             {
                 CurrentLoc().Offset(2, 1, 1), CurrentLoc().Offset(-2, 1, 1),
                 CurrentLoc().Offset(-2, 1, -1), CurrentLoc().Offset(2, 1, -1)
-            }, "Cactus", _tickDelay)) return false;
+            }, "cactus", _tickDelay)) return false;
             ZerGo0Debugger.Debug(Context.Player.GetUsername(), "1st CactusLayer DONE");
 
             if (_stopped) return false;

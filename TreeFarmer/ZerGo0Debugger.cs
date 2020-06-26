@@ -69,7 +69,7 @@ namespace TreeFarmerPlugin
         private void TestHandler(object sender, UnhandledExceptionEventArgs args)
         {
             //Console.Clear();
-            Error((Exception) args.ExceptionObject, _context);
+            Error((Exception)args.ExceptionObject, _context);
         }
 
         public static void Error(Exception ex, IBotContext context = null, object classObj = null)
@@ -81,7 +81,7 @@ namespace TreeFarmerPlugin
             for (var i = 0; i < 30; i++) message += Environment.NewLine;
             ;
 
-#region General Stuff
+            #region General Stuff
 
             message += @"##################################################################################" + nL;
             message += @"#  _____           ___       ___      ___     _                                  #" + nL;
@@ -111,9 +111,9 @@ namespace TreeFarmerPlugin
                 $"Plugin Version: {typeof(PluginCore).GetCustomAttributesData()[0].ConstructorArguments[0].Value}" + nL;
             discordMessage += "" + nL;
 
-#endregion
+            #endregion
 
-#region Plugin Settings
+            #region Plugin Settings
 
             if (PluginSettings.Count > 0)
             {
@@ -136,9 +136,9 @@ namespace TreeFarmerPlugin
                 discordMessage += "" + nL;
             }
 
-#endregion
+            #endregion
 
-#region Bot Settings
+            #region Bot Settings
 
             if (context != null || _BOT_SETTINGS != null)
             {
@@ -187,7 +187,7 @@ namespace TreeFarmerPlugin
                 }
             }
 
-#endregion
+            #endregion
 
             if (classObj != null)
             {
@@ -251,7 +251,7 @@ namespace TreeFarmerPlugin
                 discordMessage += $"Inner Exception: {ex.InnerException.Message}" + nL;
             }
 
-            var stackTrace = ex.StackTrace.Split(new[] {"\r\n", "\r", "\n"}, StringSplitOptions.None);
+            var stackTrace = ex.StackTrace.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
             var strackTraceFirst = true;
             foreach (var line in stackTrace)
                 if (strackTraceFirst)
@@ -274,7 +274,7 @@ namespace TreeFarmerPlugin
 
             Console.WriteLine(message);
 
-            DiscordHelper.SendMessage(642764008717549569, "ZerGo0Debugger Crash Report", "",
+            DiscordHelper.SendMessage(726124124912484353, "ZerGo0Debugger Crash Report", "",
                 discordMessage, true, 0);
         }
 

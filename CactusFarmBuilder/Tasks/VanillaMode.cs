@@ -41,7 +41,6 @@ namespace CactusFarmBuilder.Tasks
         {
             try
             {
-                throw new Exception("Test EX");
                 _startLoc ??= Context.Player.GetLocation();
                 _helperFunctions ??= new HelperFunctions(Context, Inventory, _ignoreFailSafe);
                 

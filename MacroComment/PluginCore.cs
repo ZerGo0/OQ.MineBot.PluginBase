@@ -8,7 +8,7 @@ using OQ.MineBot.PluginBase.Base.Plugin;
 
 namespace MacroComment
 {
-    [Plugin(1, "Macro Comment", "This component displays the text that you enter as description, it also optionally allows you to output that text to the console.")]
+    [Plugin(1, "Macro Comment", "This component displays the text that you enter as the description.")]
     public class PluginCore : IStartPlugin
     {
         public override void OnLoad(int version, int subversion, int buildversion)
@@ -47,7 +47,7 @@ namespace MacroComment
 
         public override string GetDescription()
         {
-            return "This component displays the text that you enter as description, it also optionally allows you to output that text to the console.";
+            return "This component displays the text that you enter as the description, it also optionally allows you to output that text to the console.";
         }
 
         public override string GetInteractiveDescription()

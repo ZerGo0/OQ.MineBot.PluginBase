@@ -50,7 +50,7 @@ namespace MacroConsoleLog
             var variableValue = GetVariable<string>("variable_zergo0_console_message");
             return
                 string.IsNullOrWhiteSpace(variableValue) ? GetDescription()
-                    : $"I will output {variableValue}.";
+                    : $"I will output '{variableValue}' to the console of the bot.";
         }
 
         public override string Execute(IBotContext context)

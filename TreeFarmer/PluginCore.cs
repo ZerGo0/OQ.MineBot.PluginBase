@@ -22,8 +22,8 @@ namespace TreeFarmerPlugin
             Setting.Add(new StringSetting("Macro on inventory full",
                 "Starts the macro when the bots inventory is full.", ""));
             Setting.Add(new BoolSetting("Replant", "Do you want to replant the tree? (type ignored)", false));
-            Setting.Add(new LocationSetting("Start x y z", "Leave it at 0 0 0 if you want to farm infinitely."));
-            Setting.Add(new LocationSetting("End x y z", "Leave it at 0 0 0 if you want to farm infinitely."));
+            Setting.Add(new LocationSetting("Start X Y Z", "Leave it at 0 0 0 if you want to farm infinitely."));
+            Setting.Add(new LocationSetting("End X Y Z", "Leave it at 0 0 0 if you want to farm infinitely."));
         }
 
         public override PluginResponse OnEnable(IBotSettings botSettings)

@@ -118,7 +118,7 @@ namespace CactusFarmBuilder.Helpers
         {
             var blockIdNullable = Blocks.Instance.GetId(blockName);
             if (blockName == "string")
-                blockIdNullable = 287;
+                blockIdNullable = Items.Instance.GetId(blockName);
 
             if (blockIdNullable == null) return false;
             var blockId = blockIdNullable.Value;
@@ -193,7 +193,7 @@ namespace CactusFarmBuilder.Helpers
         {
             var blockIdNullable = Blocks.Instance.GetId(blockName);
             if (blockName == "string")
-                blockIdNullable = 287;
+                blockIdNullable = Items.Instance.GetId(blockName);
 
             if (blockIdNullable == null) return false;
             var blockId = blockIdNullable.Value;

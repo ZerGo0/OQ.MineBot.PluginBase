@@ -61,10 +61,10 @@ namespace MacroConsoleLog
             if (!GetVariable<bool>("variable_zergo0_comment_output_console_bool")) return "done";
             var commentText = GetVariable<string>("variable_zergo0_comment_text");
 
-            if (!string.IsNullOrWhiteSpace(GetVariable<string>("variable_zergo0_console_message")))
+            if (!string.IsNullOrWhiteSpace(commentText))
             {
                 Console.WriteLine($"{DateTime.Now.ToString("HH:mm:ss", CultureInfo.InvariantCulture)} " +
-                                  $"[{context.Player.GetUsername()}] {GetVariable<string>("variable_zergo0_console_message")}");
+                                  $"[{context.Player.GetUsername()}] {commentText}");
             }
 
             return "done";

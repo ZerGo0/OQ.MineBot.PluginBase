@@ -50,7 +50,7 @@ namespace TreeFarmerPlugin.Tasks
         {
             try
             {
-                if (_helperFunctions == null) _helperFunctions = new HelperFunctions(Context, Inventory);
+                _helperFunctions ??= new HelperFunctions(Context, Inventory);
 
                 if (!_debugBool)
                 {

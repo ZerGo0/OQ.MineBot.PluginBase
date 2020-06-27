@@ -8,7 +8,7 @@ using OQ.MineBot.PluginBase.Base.Plugin;
 
 namespace MacroConsoleLog
 {
-    [Plugin(1, "Macro Console Log", "Allows you to send messages via the macro to the console of the bot.")]
+    [Plugin(1, "Macro Comment", "Allows you to send messages via the macro to the console of the bot.")]
     public class PluginCore : IStartPlugin
     {
         public override void OnLoad(int version, int subversion, int buildversion)
@@ -16,9 +16,9 @@ namespace MacroConsoleLog
         }
     }
 
-    public class ZerGo0ConsoleLogMacroComponent : IExternalMacroComponent
+    public class ZerGo0CommentMacroComponent : IExternalMacroComponent
     {
-        public ZerGo0ConsoleLogMacroComponent()
+        public ZerGo0CommentMacroComponent()
         {
             Category = MacroComponentCategory.Misc;
             Outputs = new IMacroOutputCollection(
@@ -42,17 +42,17 @@ namespace MacroConsoleLog
 
         public override string GetInternalName()
         {
-            return "zergo0_consolelog_component";
+            return "zergo0_comment_component";
         }
 
         public override string GetDescription()
         {
-            return "This component allows you to send messages via a macro to the console of the bot";
+            return "This component displays the text that you enter as description, it also optionally allows you to output that text to the console.";
         }
 
         public override string GetInteractiveDescription()
         {
-            var variableValue = GetVariable<string>("variable_zergo0_console_message");
+            var variableValue = GetVariable<string>("variable_zergo0_comment_text");
             return
                 string.IsNullOrWhiteSpace(variableValue)
                     ? GetDescription()

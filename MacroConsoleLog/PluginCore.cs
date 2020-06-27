@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,19 +28,19 @@ namespace MacroConsoleLog
 
         public TestMacroComponent()
         {
-            this.Category = MacroComponentCategory.Misc;
-            this.Outputs = new IMacroOutputCollection(
+            Category = MacroComponentCategory.Misc;
+            Outputs = new IMacroOutputCollection(
                 new KeyValuePair<string, ExternalMacroOutput>("success", new ExternalMacroOutput("Success", "This output gets called once the call finishes", true)),
                 new KeyValuePair<string, ExternalMacroOutput>("output_internal_name", new ExternalMacroOutput("Error", "This output will never get called", false))
             );
-            this.Variables = new IMacroVariableCollection(
+            Variables = new IMacroVariableCollection(
                 new KeyValuePair<string, ExternalMacroVariable>("variable_internal_name1", new ExternalMacroVariable(typeof(string), "Message", "What message should we send to chat?", "my default message!"))
             );
         }
 
         public override string GetName()
         {
-            return "Test macro component";
+            return "ZerGo0.ConsoleLog";
         }
 
         public override string GetInternalName()
@@ -61,8 +62,9 @@ namespace MacroConsoleLog
 
         public override string Execute(IBotContext Context)
         {
-            Context.Functions.Chat("My message: " + GetVariable<string>("variable_internal_name1"));
-            return "success"; // or return "output_internal_name"
+            Console.WriteLine($"{DateTime.Now.ToString("HH:mm:ss", CultureInfo.InvariantCulture)} " +
+                              $"[{Context.Player.GetUsername()}] {GetVariable<string>("variable_internal_name1")}");
+            return "success";
         }
     }
 }

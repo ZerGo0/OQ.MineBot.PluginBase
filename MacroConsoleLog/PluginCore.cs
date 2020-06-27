@@ -45,6 +45,7 @@ namespace MacroConsoleLog
         {
             return "This component allows you to send messages via a macro to the console of the bot";
         }
+
         public override string GetInteractiveDescription()
         {
             var variableValue = GetVariable<string>("variable_zergo0_console_message");

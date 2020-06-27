@@ -11,7 +11,7 @@ using OQ.MineBot.PluginBase.Base.Plugin;
 
 namespace MacroConsoleLog
 {
-    [Plugin(1, "Macro Console Log", "Allows you to send message via the macro to the console of the bot.")]
+    [Plugin(1, "Macro Console Log", "Allows you to send messages via the macro to the console of the bot.")]
     public class PluginCore : IStartPlugin
     {
         public override void OnLoad(int version, int subversion, int buildversion) { }
@@ -27,7 +27,7 @@ namespace MacroConsoleLog
                 new KeyValuePair<string, ExternalMacroOutput>("success", new ExternalMacroOutput("Success", "This output gets called once the call finishes", true))
             );
             Variables = new IMacroVariableCollection(
-                new KeyValuePair<string, ExternalMacroVariable>("variable_zergo0_console_message", new ExternalMacroVariable(typeof(string), "Message", "What message should we send to chat?", "my default message!"))
+                new KeyValuePair<string, ExternalMacroVariable>("variable_zergo0_console_message", new ExternalMacroVariable(typeof(string), "Message", "What message should we send to bot console?", "Hello World!"))
             );
         }
 
@@ -43,14 +43,14 @@ namespace MacroConsoleLog
 
         public override string GetDescription()
         {
-            return "This is a test macro component";
+            return "This component allows you to send messages via a macro to the console of the bot";
         }
         public override string GetInteractiveDescription()
         {
             var variableValue = GetVariable<string>("variable_zergo0_console_message");
             return
                 string.IsNullOrWhiteSpace(variableValue) ? GetDescription()
-                    : $"I will say {variableValue}.";
+                    : $"I will output {variableValue}.";
         }
 
         public override string Execute(IBotContext context)

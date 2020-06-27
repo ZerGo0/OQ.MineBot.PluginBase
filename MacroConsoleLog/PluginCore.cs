@@ -12,10 +12,6 @@ namespace MacroConsoleLog
 {
     public class PluginCore : IStartPlugin
     {
-        /// <summary>
-        /// Should be used to check compatability with the
-        /// current version of the bot.
-        /// </summary>
         public override void OnLoad(int version, int subversion, int buildversion) { }
         public override PluginResponse OnEnable(IBotSettings botSettings)
         {

@@ -23,7 +23,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoSplashPotion", "AutoSpl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MacroComment", "MacroComment\MacroComment.csproj", "{6B06BEAD-D649-4E7A-B191-D8088758A1CE}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NewFolder1", "NewFolder1", "{78BD9528-9463-429B-BF6A-3745434FF972}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Macro Plugins", "Macro Plugins", "{78BD9528-9463-429B-BF6A-3745434FF972}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NewFolder1", "NewFolder1", "{087FB105-4D0D-4B35-9A40-3657CF70F5A6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -74,6 +76,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6B06BEAD-D649-4E7A-B191-D8088758A1CE} = {78BD9528-9463-429B-BF6A-3745434FF972}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C96D9A50-982E-4D6E-9E66-15D83965A8B7}

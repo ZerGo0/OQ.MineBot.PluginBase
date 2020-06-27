@@ -8,7 +8,7 @@ using OQ.MineBot.PluginBase.Base.Plugin;
 
 namespace MacroConsoleLog
 {
-    [Plugin(1, "Macro Comment", "Allows you to send messages via the macro to the console of the bot.")]
+    [Plugin(1, "Macro Comment", "This component displays the text that you enter as description, it also optionally allows you to output that text to the console.")]
     public class PluginCore : IStartPlugin
     {
         public override void OnLoad(int version, int subversion, int buildversion)

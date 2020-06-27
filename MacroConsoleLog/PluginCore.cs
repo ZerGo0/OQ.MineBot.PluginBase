@@ -6,21 +6,15 @@ using System.Text;
 using System.Threading.Tasks;
 
 using OQ.MineBot.PluginBase;
-using OQ.MineBot.PluginBase.Base;
 using OQ.MineBot.PluginBase.Base.Macro;
 using OQ.MineBot.PluginBase.Base.Plugin;
-using OQ.MineBot.PluginBase.Bot;
 
 namespace MacroConsoleLog
 {
-    [Plugin(1, "Macro Console Log", "[BETA] Builds a cactus farm for you.")]
+    [Plugin(1, "Macro Console Log", "Allows you to send message via the macro to the console of the bot.")]
     public class PluginCore : IStartPlugin
     {
         public override void OnLoad(int version, int subversion, int buildversion) { }
-        public override PluginResponse OnEnable(IBotSettings botSettings)
-        {
-            return base.OnEnable(botSettings);
-        }
     }
 
     public class TestMacroComponent : IExternalMacroComponent
@@ -30,8 +24,7 @@ namespace MacroConsoleLog
         {
             Category = MacroComponentCategory.Misc;
             Outputs = new IMacroOutputCollection(
-                new KeyValuePair<string, ExternalMacroOutput>("success", new ExternalMacroOutput("Success", "This output gets called once the call finishes", true)),
-                new KeyValuePair<string, ExternalMacroOutput>("output_internal_name", new ExternalMacroOutput("Error", "This output will never get called", false))
+                new KeyValuePair<string, ExternalMacroOutput>("success", new ExternalMacroOutput("Success", "This output gets called once the call finishes", true))
             );
             Variables = new IMacroVariableCollection(
                 new KeyValuePair<string, ExternalMacroVariable>("variable_zergo0_console_message", new ExternalMacroVariable(typeof(string), "Message", "What message should we send to chat?", "my default message!"))
@@ -45,7 +38,7 @@ namespace MacroConsoleLog
 
         public override string GetInternalName()
         {
-            return "ex:test_macro_component";
+            return "zergo0_consolelog_component";
         }
 
         public override string GetDescription()

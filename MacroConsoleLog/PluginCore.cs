@@ -34,7 +34,7 @@ namespace MacroConsoleLog
                 new KeyValuePair<string, ExternalMacroOutput>("output_internal_name", new ExternalMacroOutput("Error", "This output will never get called", false))
             );
             Variables = new IMacroVariableCollection(
-                new KeyValuePair<string, ExternalMacroVariable>("variable_internal_name1", new ExternalMacroVariable(typeof(string), "Message", "What message should we send to chat?", "my default message!"))
+                new KeyValuePair<string, ExternalMacroVariable>("variable_zergo0_console_message", new ExternalMacroVariable(typeof(string), "Message", "What message should we send to chat?", "my default message!"))
             );
         }
 
@@ -54,7 +54,7 @@ namespace MacroConsoleLog
         }
         public override string GetInteractiveDescription()
         {
-            var variableValue = GetVariable<string>("variable_internal_name1");
+            var variableValue = GetVariable<string>("variable_zergo0_console_message");
             return
                 string.IsNullOrWhiteSpace(variableValue) ? GetDescription()
                     : $"I will say {variableValue}.";
@@ -63,7 +63,7 @@ namespace MacroConsoleLog
         public override string Execute(IBotContext context)
         {
             Console.WriteLine($"{DateTime.Now.ToString("HH:mm:ss", CultureInfo.InvariantCulture)} " +
-                              $"[{context.Player.GetUsername()}] {GetVariable<string>("variable_internal_name1")}");
+                              $"[{context.Player.GetUsername()}] {GetVariable<string>("variable_zergo0_console_message")}");
             return "success";
         }
     }

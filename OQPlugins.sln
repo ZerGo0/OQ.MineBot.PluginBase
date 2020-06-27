@@ -25,8 +25,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoEquiper", "AutoEquiper\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoSplashPotion", "AutoSplashPotion\AutoSplashPotion.csproj", "{BB618D6A-F0B2-46D2-9733-FAEFD1C33DDD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MacroConsoleLog", "MacroConsoleLog\MacroConsoleLog.csproj", "{C8D08A16-C533-4F73-AC5F-186CCA216626}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MacroComment", "MacroComment\MacroComment.csproj", "{6B06BEAD-D649-4E7A-B191-D8088758A1CE}"
 EndProject
 Global
@@ -79,10 +77,6 @@ Global
 		{BB618D6A-F0B2-46D2-9733-FAEFD1C33DDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB618D6A-F0B2-46D2-9733-FAEFD1C33DDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BB618D6A-F0B2-46D2-9733-FAEFD1C33DDD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C8D08A16-C533-4F73-AC5F-186CCA216626}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C8D08A16-C533-4F73-AC5F-186CCA216626}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C8D08A16-C533-4F73-AC5F-186CCA216626}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C8D08A16-C533-4F73-AC5F-186CCA216626}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6B06BEAD-D649-4E7A-B191-D8088758A1CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6B06BEAD-D649-4E7A-B191-D8088758A1CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6B06BEAD-D649-4E7A-B191-D8088758A1CE}.Release|Any CPU.ActiveCfg = Release|Any CPU

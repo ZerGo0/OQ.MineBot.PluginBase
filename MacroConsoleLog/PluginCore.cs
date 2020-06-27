@@ -26,15 +26,18 @@ namespace MacroConsoleLog
                     new ExternalMacroOutput("Done", "This output gets called once the call finishes", true))
             );
             Variables = new IMacroVariableCollection(
-                new KeyValuePair<string, ExternalMacroVariable>("variable_zergo0_console_message",
-                    new ExternalMacroVariable(typeof(string), "Message", "What message should we send to bot console?",
-                        "Hello World!"))
+                new KeyValuePair<string, ExternalMacroVariable>("variable_zergo0_comment_text",
+                    new ExternalMacroVariable(typeof(string), "Comment Text", "What message should we display in the description of this component?",
+                        "Hello World!")),
+            new KeyValuePair<string, ExternalMacroVariable>("variable_zergo0_comment_output_console",
+                    new ExternalMacroVariable(typeof(bool), "Output to console?", "Should we also output the text to the console of the bot?",
+                        false))
             );
         }
 
         public override string GetName()
         {
-            return "ZerGo0.ConsoleLog";
+            return "ZerGo0.Comment";
         }
 
         public override string GetInternalName()

@@ -6,7 +6,7 @@ using OQ.MineBot.PluginBase;
 using OQ.MineBot.PluginBase.Base.Macro;
 using OQ.MineBot.PluginBase.Base.Plugin;
 
-namespace MacroConsoleLog
+namespace MacroComment
 {
     [Plugin(1, "Macro Comment", "This component displays the text that you enter as description, it also optionally allows you to output that text to the console.")]
     public class PluginCore : IStartPlugin

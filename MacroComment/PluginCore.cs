@@ -27,7 +27,7 @@ namespace MacroComment
             );
             Variables = new IMacroVariableCollection(
                 new KeyValuePair<string, ExternalMacroVariable>("variable_zergo0_comment_text",
-                    new ExternalMacroVariable(typeof(string), "Comment Text", "What message should we display in the description of this component?",
+                    new ExternalMacroVariable(typeof(string), "Comment Text", "Which message should we display in the description of this component?",
                         "Hello World!")),
             new KeyValuePair<string, ExternalMacroVariable>("variable_zergo0_comment_output_console_bool",
                     new ExternalMacroVariable(typeof(bool), "Output to console?", "Should we also output the text to the console of the bot?",

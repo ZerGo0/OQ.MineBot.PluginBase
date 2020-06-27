@@ -60,10 +60,10 @@ namespace MacroConsoleLog
                     : $"I will say {variableValue}.";
         }
 
-        public override string Execute(IBotContext Context)
+        public override string Execute(IBotContext context)
         {
             Console.WriteLine($"{DateTime.Now.ToString("HH:mm:ss", CultureInfo.InvariantCulture)} " +
-                              $"[{Context.Player.GetUsername()}] {GetVariable<string>("variable_internal_name1")}");
+                              $"[{context.Player.GetUsername()}] {GetVariable<string>("variable_internal_name1")}");
             return "success";
         }
     }

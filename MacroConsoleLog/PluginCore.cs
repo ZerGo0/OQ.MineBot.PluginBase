@@ -53,10 +53,7 @@ namespace MacroConsoleLog
         public override string GetInteractiveDescription()
         {
             var variableValue = GetVariable<string>("variable_zergo0_comment_text");
-            return
-                string.IsNullOrWhiteSpace(variableValue)
-                    ? GetDescription()
-                    : $"I will output '{variableValue}' to the console of the bot.";
+            return string.IsNullOrWhiteSpace(variableValue) ? GetDescription() : variableValue;
         }
 
         public override string Execute(IBotContext context)

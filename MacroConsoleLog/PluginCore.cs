@@ -24,7 +24,7 @@ namespace MacroConsoleLog
         {
             Category = MacroComponentCategory.Misc;
             Outputs = new IMacroOutputCollection(
-                new KeyValuePair<string, ExternalMacroOutput>("success", new ExternalMacroOutput("Success", "This output gets called once the call finishes", true))
+                new KeyValuePair<string, ExternalMacroOutput>("done", new ExternalMacroOutput("Done", "This output gets called once the call finishes", true))
             );
             Variables = new IMacroVariableCollection(
                 new KeyValuePair<string, ExternalMacroVariable>("variable_zergo0_console_message", new ExternalMacroVariable(typeof(string), "Message", "What message should we send to bot console?", "Hello World!"))

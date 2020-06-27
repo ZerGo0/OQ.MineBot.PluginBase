@@ -123,9 +123,9 @@ namespace DebugPlugin
                     {
                         try
                         {
-#region Bot General Stuff
+                            #region Bot General Stuff
 
-#region Bot Hunger Update
+                            #region Bot Hunger Update
 
                             if (_oldHealth != (int) context.Player.GetHealth() || !_oldHealthFirstTime)
                             {
@@ -136,9 +136,9 @@ namespace DebugPlugin
                                 _oldHealthFirstTime = true;
                             }
 
-#endregion
+                            #endregion
 
-#region Bot Location
+                            #region Bot Location
 
                             //Update it only when needed
                             if (CurrentLocation().Distance(_currentLocation) > 0 || _currentLocation == null)
@@ -148,9 +148,9 @@ namespace DebugPlugin
                                 _currentLocation = CurrentLocation();
                             }
 
-#endregion
+                            #endregion
 
-#region Bot Dimension
+                            #region Bot Dimension
 
                             //TODO: Add this back when it get's added to the IPlayerController.cs
                             //Update it only when needed
@@ -161,9 +161,9 @@ namespace DebugPlugin
                             //     _oldDimension = player.status.entity.dimension.ToString();
                             // }
 
-#endregion
+                            #endregion
 
-#region Bot Gamemode
+                            #region Bot Gamemode
 
                             //TODO: Check if it get's fixed in the next updates, it doesn't update the
                             //TODO: value when the gamemode get's change ingame
@@ -176,9 +176,9 @@ namespace DebugPlugin
                                 _oldGamemode = context.Player.GetGamemode().ToString();
                             }
 
-#endregion
+                            #endregion
 
-#region Bot Alive
+                            #region Bot Alive
 
                             if (context.Player.IsDead() && _setAlive)
                             {
@@ -197,9 +197,9 @@ namespace DebugPlugin
                                 _setAlive = true;
                             }
 
-#endregion
+                            #endregion
 
-#region Bot Grounded
+                            #region Bot Grounded
 
                             if (context.Player.PhysicsEngine.isGrounded != _oldGrounded || !_oldGroundedFirstTime)
                             {
@@ -210,10 +210,10 @@ namespace DebugPlugin
                                 _oldGroundedFirstTime = true;
                             }
 
-#endregion
+                            #endregion
 
 
-#region Bot in Water
+                            #region Bot in Water
 
                             if (context.Player.PhysicsEngine.inWater != _oldInWater || !_oldInWaterFirstTime)
                             {
@@ -224,9 +224,9 @@ namespace DebugPlugin
                                 _oldInWaterFirstTime = true;
                             }
 
-#endregion
+                            #endregion
 
-#region Bot Jumping
+                            #region Bot Jumping
 
                             if (context.Player.PhysicsEngine.jumping != _oldJumping || !_oldJumpingFirstTime)
                             {
@@ -237,13 +237,13 @@ namespace DebugPlugin
                                 _oldJumpingFirstTime = true;
                             }
 
-#endregion
+                            #endregion
 
-#endregion
+                            #endregion
 
-#region Bot Inv Stuff
+                            #region Bot Inv Stuff
 
-#region Bot Inv Full
+                            #region Bot Inv Full
 
                             if (context.Containers.GetInventory().IsFull() && _oldInvFull ||
                                 context.Containers.GetInventory().IsFull() && !_oldInvFullFirstTime)
@@ -264,9 +264,9 @@ namespace DebugPlugin
                                 _oldInvFull = true;
                             }
 
-#endregion
+                            #endregion
 
-#region Bot Free/Used Slots Firsttime
+                            #region Bot Free/Used Slots Firsttime
 
                             if (!_oldInvFSlotsFirstTime)
                             {
@@ -294,9 +294,9 @@ namespace DebugPlugin
                                 _oldInvFSlotsFirstTime = true;
                             }
 
-#endregion
+                            #endregion
 
-#region Bot Held Item ID
+                            #region Bot Held Item ID
 
                             var helditemid = context.Player.GetHeldSlot().Id;
 
@@ -308,9 +308,9 @@ namespace DebugPlugin
                                 _oldHeldItemId = helditemid;
                             }
 
-#endregion
+                            #endregion
 
-#region Bot Held Item NBT
+                            #region Bot Held Item NBT
 
                             var helditemnbt = context.Player.GetHeldSlot().Nbt;
 
@@ -336,9 +336,9 @@ namespace DebugPlugin
                                 _oldHeldItemNbtFirstTime = true;
                             }
 
-#endregion
+                            #endregion
 
-#region Bot Held Item Count
+                            #region Bot Held Item Count
 
                             var helditemcount = context.Player.GetHeldSlot().Count;
 
@@ -350,9 +350,9 @@ namespace DebugPlugin
                                 _oldHeldItemCount = helditemcount;
                             }
 
-#endregion
+                            #endregion
 
-#region Bot Held Item Slot
+                            #region Bot Held Item Slot
 
                             if (context.Player.GetHeldSlot().Index != _oldHeldItemSlot)
                             {
@@ -362,13 +362,13 @@ namespace DebugPlugin
                                 _oldHeldItemSlot = context.Player.GetHeldSlot().Index;
                             }
 
-#endregion
+                            #endregion
 
-#endregion
+                            #endregion
 
-#region Bot Closest Stuff
+                            #region Bot Closest Stuff
 
-#region Bot Closest Player
+                            #region Bot Closest Player
 
                             var playeraround = context.Entities.GetClosestPlayer();
 
@@ -410,9 +410,9 @@ namespace DebugPlugin
                                 Closest_Player_Dist_Text.Clear();
                             }
 
-#endregion
+                            #endregion
 
-#region Bot Closest Mob
+                            #region Bot Closest Mob
 
                             var mobaround = context.Entities.GetClosestMob();
 
@@ -448,9 +448,9 @@ namespace DebugPlugin
                                 Closest_Mob_Dist_Text.Clear();
                             }
 
-#endregion
+                            #endregion
 
-#region Bot Closest Target
+                            #region Bot Closest Target
 
                             var targetObject = context.Entities.GetClosestObject();
 
@@ -494,11 +494,11 @@ namespace DebugPlugin
                                 Targetable_Player_Dist_Text.Clear();
                             }
 
-#endregion
+                            #endregion
 
-#endregion
+                            #endregion
 
-#region Window Stuff
+                            #region Window Stuff
 
                             var winSlotsUsed = 0;
                             for (var getwindowid = 9999; getwindowid > 0; getwindowid--)
@@ -599,9 +599,9 @@ namespace DebugPlugin
                                     break;
                                 }
 
-#endregion
+                            #endregion
 
-#region Path Stuff
+                            #region Path Stuff
 
                             if (context.Player.PhysicsEngine.path != null)
                                 if (context.Player.PhysicsEngine.path.Target.ToString() != _oldPathTarget ||
@@ -712,7 +712,7 @@ namespace DebugPlugin
                             //
                             //Console.WriteLine("\n");
 
-#endregion
+                            #endregion
                         }
                         catch (Exception e)
                         {
@@ -744,7 +744,7 @@ namespace DebugPlugin
                     }
                     else
                     {
-#region Bot Free/Used Slots
+                        #region Bot Free/Used Slots
 
                         var freeinvslots = 0;
                         for (var invslot = 9; invslot <= 44; invslot++)
@@ -766,7 +766,7 @@ namespace DebugPlugin
                             Bot_Inv_USlots_Text.AppendText(_oldInvUSlots.ToString());
                         }
 
-#endregion
+                        #endregion
                     }
                 });
             }
@@ -844,16 +844,16 @@ namespace DebugPlugin
             }
         }
 
-#region Functions
+        #region Functions
 
         private ILocation CurrentLocation()
         {
             return _context.Player.GetLocation();
         }
 
-#endregion
+        #endregion
 
-#region GUI Stuff
+        #region GUI Stuff
 
         private readonly Queue<string> _logQueue = new Queue<string>();
         private const int LogMax = 100;
@@ -925,6 +925,6 @@ namespace DebugPlugin
             }
         }
 
-#endregion
+        #endregion
     }
 }

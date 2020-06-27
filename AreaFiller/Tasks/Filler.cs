@@ -106,7 +106,7 @@ namespace AreaFiller.Tasks
                    Inventory.GetAmountOfItem((ushort) _fillerId) > 0;
         }
 
-#region Functions
+        #region Functions
 
         private ILocation GetClosestBlock()
         {
@@ -165,11 +165,11 @@ namespace AreaFiller.Tasks
             }
         }
 
-#endregion
+        #endregion
 
-#region Helper Functions
+        #region Helper Functions
 
-#region CurrentLayer Lock Stuff
+        #region CurrentLayer Lock Stuff
 
         private void CurrentLayerAdd(ILocation location)
         {
@@ -217,7 +217,7 @@ namespace AreaFiller.Tasks
             return count;
         }
 
-#endregion
+        #endregion
 
         private double DistancePos(IPosition startPos, IPosition endPos)
         {
@@ -229,6 +229,6 @@ namespace AreaFiller.Tasks
             return Context.Player.GetPosition().Offset(1.62);
         }
 
-#endregion
+        #endregion
     }
 }

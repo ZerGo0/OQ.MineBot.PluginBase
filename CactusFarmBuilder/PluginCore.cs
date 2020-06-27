@@ -23,8 +23,8 @@ namespace CactusFarmBuilder
             Setting.Add(new LinkSetting("Don't forget to leave a Like! :)", "",
                 "https://www.minecraftbot.com/plugins.html"));
 
-            Setting.Add(new ComboSetting("Layout", "", new[] 
-                    {"CropHopper", "CropHopper Creative Range", "Vanilla", "Vanilla v2"}, 0));
+            Setting.Add(new ComboSetting("Layout", "", new[]
+                {"CropHopper", "CropHopper Creative Range", "Vanilla", "Vanilla v2"}, 0));
             Setting.Add(new ComboSetting("Speed mode", null, new[] {"Slow", "Normal", "Fast"}, 3));
             Setting.Add(new NumberSetting("Max layers", "1 Layer = Y+2 (Vanilla v2 = Y+4)", 50, 1, 127));
             Setting.Add(new ComboSetting("Extend in this direction", null, new[] {"North", "East", "South", "West"},
@@ -38,7 +38,9 @@ namespace CactusFarmBuilder
             layoutPreviews.Add(new LinkSetting("Vanilla v2 Layout Showcase", "", "https://i.imgur.com/7Uk9aue.png"));
             Setting.Add(layoutPreviews);
 
-            Setting.Add(new BoolSetting("Disable Fail-Safe", "WARNING: This will disable the Fail-Safe, which means that the bot will NOT automatically stop if it fails to perform a certain action. This may result in a incorrect layout.", false));
+            Setting.Add(new BoolSetting("Disable Fail-Safe",
+                "WARNING: This will disable the Fail-Safe, which means that the bot will NOT automatically stop if it fails to perform a certain action. This may result in a incorrect layout.",
+                false));
         }
 
         public override PluginResponse OnEnable(IBotSettings botSettings)

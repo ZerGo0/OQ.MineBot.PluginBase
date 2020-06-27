@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -382,12 +381,12 @@ namespace TreeFarmerPlugin.Helpers
         {
             var tempBlocksAround = new List<ILocation>
             {
-                new Location(location.X, location.Y - 1, location.Z),    /*Bottom*/
-                new Location(location.X, location.Y + 1, location.Z),    /*Top*/
-                new Location(location.X, location.Y, location.Z - 1),    /*North*/
-                new Location(location.X, location.Y, location.Z + 1),    /*South*/
-                new Location(location.X - 1, location.Y, location.Z),    /*West*/
-                new Location(location.X + 1, location.Y, location.Z)     /*East*/
+                new Location(location.X, location.Y - 1, location.Z), /*Bottom*/
+                new Location(location.X, location.Y + 1, location.Z), /*Top*/
+                new Location(location.X, location.Y, location.Z - 1), /*North*/
+                new Location(location.X, location.Y, location.Z + 1), /*South*/
+                new Location(location.X - 1, location.Y, location.Z), /*West*/
+                new Location(location.X + 1, location.Y, location.Z) /*East*/
             };
 
             return tempBlocksAround.Where(loc => _context.World.GetBlockId(loc) != 0 &&
@@ -397,13 +396,13 @@ namespace TreeFarmerPlugin.Helpers
 
         public IEnumerable<ILocation> GetWoodBlocks(ILocation blockLocation)
         {
-            ZerGo0Debugger.Debug(_context.Player.GetUsername(), 
+            ZerGo0Debugger.Debug(_context.Player.GetUsername(),
                 $"Starting to check for woodblock at: {blockLocation}");
-            
+
             var woodBlockList = new List<ILocation>();
             var blockQueue = new Queue<ILocation>();
             var checkedBlockList = new List<ILocation>();
-            
+
             blockQueue.Enqueue(blockLocation);
             if (_context.World.GetBlockId(blockLocation) == 17) woodBlockList.Add(blockLocation);
 
@@ -417,16 +416,16 @@ namespace TreeFarmerPlugin.Helpers
                 {
                     if (_context.World.GetBlockId(block) == 17)
                         woodBlockList.Add(block);
-                    
+
                     checkedBlockList.Add(block);
                     blockQueue.Enqueue(block);
                 }
             }
-            
+
             return woodBlockList;
         }
 
-#region Helper Functions
+        #region Helper Functions
 
         private static string GetItemIdName(int itemId)
         {
@@ -473,6 +472,6 @@ namespace TreeFarmerPlugin.Helpers
             };
         }
 
-#endregion
+        #endregion
     }
 }

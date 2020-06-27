@@ -20,18 +20,19 @@ namespace TreeFarmerPlugin.Tasks
         public static Dictionary<ILocation, bool> ReplantList = new Dictionary<ILocation, bool>();
         public static readonly object REPLANTLIST_LOCK_ONJ = new object();
         public static readonly object SCANNING_LOCK_ONJ = new object();
-        
-        private readonly ILocation _startLoc;
-        private readonly ILocation _endLoc;
-        private readonly bool _replant;
-        private readonly MacroSync _fullInvMacro;
         private readonly List<ILocation> _areaList;
+        private readonly ILocation _endLoc;
+        private readonly MacroSync _fullInvMacro;
+        private readonly bool _replant;
+
+        private readonly ILocation _startLoc;
 
         private bool _debugBool;
-        private bool _stopped;
-        private List<ILocation> _localTreeLocs;
-        private List<ILocation> _tempTreeLocs;
         private HelperFunctions _helperFunctions;
+        private List<ILocation> _localTreeLocs;
+        private bool _stopped;
+        private List<ILocation> _tempTreeLocs;
+
         public MineArea(ILocation startLoc, ILocation endLoc, bool replant, MacroSync fullInvMacro)
         {
             _startLoc = startLoc;
@@ -45,27 +46,12 @@ namespace TreeFarmerPlugin.Tasks
             BlocksGlobal.BUILDING_BLOCKS = buildingBlocks.ToArray();
         }
 
-        public override Task Stop()
-        {
-            SharedTreeListReset();
-            ReplantListReset();
-            _stopped = true;
-
-            return null;
-        }
-
-        public override bool Exec()
-        {
-            return !Context.Player.IsDead() && !Context.Player.State.Eating && !_fullInvMacro.IsMacroRunning() &&
-                   !_stopped;
-        }
-
         public async Task OnTick()
         {
             try
             {
                 if (_helperFunctions == null) _helperFunctions = new HelperFunctions(Context, Inventory);
-                
+
                 if (!_debugBool)
                 {
                     if (_localTreeLocs == null)
@@ -76,17 +62,21 @@ namespace TreeFarmerPlugin.Tasks
                         {
                             ZerGo0Debugger.Debug(Context.Player.GetUsername(), "tree == null");
                             var tempTree = await SearchClosestTree();
-                            
+
                             if (tempTree == null || SharedTreeListContains(tempTree))
                             {
-                                ZerGo0Debugger.Debug(Context.Player.GetUsername(), "tempTree == null || SharedTreeListContains(tempTree)");
+                                ZerGo0Debugger.Debug(Context.Player.GetUsername(),
+                                    "tempTree == null || SharedTreeListContains(tempTree)");
                                 if (!await ReplantSapling()) await GoToSafeSpot();
                             }
                             else
+                            {
                                 AddTree(tempTree);
-                            
+                            }
+
                             return;
                         }
+
                         _localTreeLocs = tree;
                         _tempTreeLocs = tree;
                     }
@@ -109,11 +99,13 @@ namespace TreeFarmerPlugin.Tasks
                     }
 
                     ZerGo0Debugger.Debug(Context.Player.GetUsername(), "BreakBlock");
-                    if (!await _helperFunctions.GoToLocation(woodBlock.Offset(-1), HelperFunctions.MAP_OPTIONS_MINE_BUILD)) return;
-                    if (World.GetBlockId(woodBlock) != 0) 
-                        if (!await _helperFunctions.BreakBlock(woodBlock)) return;
+                    if (!await _helperFunctions.GoToLocation(woodBlock.Offset(-1),
+                        HelperFunctions.MAP_OPTIONS_MINE_BUILD)) return;
+                    if (World.GetBlockId(woodBlock) != 0)
+                        if (!await _helperFunctions.BreakBlock(woodBlock))
+                            return;
                     _localTreeLocs.Remove(woodBlock);
-                    
+
 //                    _debugBool = true;
                 }
             }
@@ -123,12 +115,27 @@ namespace TreeFarmerPlugin.Tasks
             }
         }
 
+        public override Task Stop()
+        {
+            SharedTreeListReset();
+            ReplantListReset();
+            _stopped = true;
+
+            return null;
+        }
+
+        public override bool Exec()
+        {
+            return !Context.Player.IsDead() && !Context.Player.State.Eating && !_fullInvMacro.IsMacroRunning() &&
+                   !_stopped;
+        }
+
         private async Task GoToSafeSpot()
         {
-            ZerGo0Debugger.Debug(Context.Player.GetUsername(), $"GoToSafeSpot START");
-            if (ReplantList == null || ReplantListCount() < 1 || 
+            ZerGo0Debugger.Debug(Context.Player.GetUsername(), "GoToSafeSpot START");
+            if (ReplantList == null || ReplantListCount() < 1 ||
                 Context.World.GetBlockId(CurrentLoc()) != 6) return;
-            
+
             var replantLoc = ReplantListClosest(true);
             if (replantLoc == null) return;
 
@@ -143,40 +150,43 @@ namespace TreeFarmerPlugin.Tasks
             if (location == null) return null;
 
             for (var x = location.X - 7; x <= location.X + 7; x++)
-                for (var z = location.Z - 7; z <= location.Z + 7; z++)
-                    for (var y = location.Y - 3; y <= location.Y + 3; y++)
-                    {
-                        var tempLoc = new Location(x, y, z);
-                        if (tempLoc.Distance(CurrentLoc()) > 3 && Context.World.GetBlockId(tempLoc) == 0 &&
-                            Context.World.GetBlockId(tempLoc.Offset(-1)) != 0)
-                            return tempLoc;
-                    }
+            for (var z = location.Z - 7; z <= location.Z + 7; z++)
+            for (var y = location.Y - 3; y <= location.Y + 3; y++)
+            {
+                var tempLoc = new Location(x, y, z);
+                if (tempLoc.Distance(CurrentLoc()) > 3 && Context.World.GetBlockId(tempLoc) == 0 &&
+                    Context.World.GetBlockId(tempLoc.Offset(-1)) != 0)
+                    return tempLoc;
+            }
 
             return null;
         }
 
         private async Task<bool> ReplantSapling()
         {
-            ZerGo0Debugger.Debug(Context.Player.GetUsername(), $"ReplantSapling START");
+            ZerGo0Debugger.Debug(Context.Player.GetUsername(), "ReplantSapling START");
             if (ReplantList == null || ReplantListCount() < 1) return false;
-            
-            
+
+
             var replantLoc = ReplantListClosest();
             if (replantLoc == null || Context.World.GetBlockId(replantLoc) != 0) return false;
-            ZerGo0Debugger.Debug(Context.Player.GetUsername(), $"replantLoc == null || Context.World.GetBlockId(replantLoc) != 0");
+            ZerGo0Debugger.Debug(Context.Player.GetUsername(),
+                "replantLoc == null || Context.World.GetBlockId(replantLoc) != 0");
             ReplantListSet(replantLoc, true);
             if (!await _helperFunctions.GoToLocation(replantLoc.Offset(-1), HelperFunctions.MAP_OPTIONS_MINE_BUILD))
             {
                 ReplantListSet(replantLoc, false);
                 return false;
             }
+
             if (!await _helperFunctions.PlaceBlockAt(replantLoc, 6, 0))
             {
                 ReplantListSet(replantLoc, false);
                 return false;
             }
+
             ReplantListSet(replantLoc, false);
-            ZerGo0Debugger.Debug(Context.Player.GetUsername(), $"ReplantSapling END");
+            ZerGo0Debugger.Debug(Context.Player.GetUsername(), "ReplantSapling END");
 
             return true;
         }
@@ -185,20 +195,22 @@ namespace TreeFarmerPlugin.Tasks
         {
             var replantLoc = GetReplantLoc(woodBlocks).FirstOrDefault();
 
-            return replantLoc == null ? null : woodBlocks.OrderByDescending(location => 
-                replantLoc.Distance(location)).ToList();
+            return replantLoc == null
+                ? null
+                : woodBlocks.OrderByDescending(location =>
+                    replantLoc.Distance(location)).ToList();
         }
 
         private List<ILocation> GetReplantLoc(List<ILocation> woodBlocks)
         {
             var replantLocs = woodBlocks?.FindAll(location => location != null &&
-                                                   Context.World.GetBlockId(location) == 17 &&
-                                                   (Context.World.GetBlockId(location.Offset(-1)) == 2 ||
-                                                    Context.World.GetBlockId(location.Offset(-1)) == 3));
+                                                              Context.World.GetBlockId(location) == 17 &&
+                                                              (Context.World.GetBlockId(location.Offset(-1)) == 2 ||
+                                                               Context.World.GetBlockId(location.Offset(-1)) == 3));
 
             if (replantLocs == null) return null;
-            
-            foreach (var replantLoc in replantLocs.Where(replantLoc => !ReplantListContains(replantLoc))) 
+
+            foreach (var replantLoc in replantLocs.Where(replantLoc => !ReplantListContains(replantLoc)))
                 ReplantListAdd(replantLoc);
 
             return replantLocs;
@@ -207,25 +219,31 @@ namespace TreeFarmerPlugin.Tasks
         private async Task<List<ILocation>> SearchClosestTree()
         {
             ZerGo0Debugger.Debug(Context.Player.GetUsername(), "SearchClosestTree START");
-            var closestWoodBlock = await Context.World.FindClosest(50, 50, 17, 
+            var closestWoodBlock = await Context.World.FindClosest(50, 50, 17,
                 CpuMode.Medium_Usage, block => _areaList.Contains(block.GetLocation()) &&
                                                !SharedTreeListContains(block.GetLocation()));
 
             ZerGo0Debugger.Debug(Context.Player.GetUsername(), "SearchClosestTree END");
-            return closestWoodBlock == null ? null : _helperFunctions.GetWoodBlocks(closestWoodBlock.GetLocation()).ToList();
+            return closestWoodBlock == null
+                ? null
+                : _helperFunctions.GetWoodBlocks(closestWoodBlock.GetLocation()).ToList();
         }
 
         private void AddTree(List<ILocation> woodBlockList)
         {
             if (woodBlockList == null || woodBlockList.Count < 1) return;
-            
+
             SharedTreeListAdd(woodBlockList);
         }
-        
+
         private List<int> GetCaneSlots(bool enchanted)
         {
             var window = Context.Containers.GetOpenWindow();
-            var sugarSlots = (from slot in window.GetSlots() where slot.Id == 338 && slot.IsStackFull() where (enchanted && slot.GetName().Contains("Enchanted")) || (!enchanted && !slot.GetName().Contains("Enchanted")) select slot.Index).ToList();
+            var sugarSlots = (from slot in window.GetSlots()
+                where slot.Id == 338 && slot.IsStackFull()
+                where enchanted && slot.GetName().Contains("Enchanted") ||
+                      !enchanted && !slot.GetName().Contains("Enchanted")
+                select slot.Index).ToList();
             return sugarSlots;
         }
 
@@ -236,11 +254,11 @@ namespace TreeFarmerPlugin.Tasks
             var xCoords = new[] {startLoc.X, endLoc.X};
             var yCoords = new[] {startLoc.Y, endLoc.Y};
             var zCoords = new[] {startLoc.Z, endLoc.Z};
-            
+
             for (var y = yCoords.Min(); y <= yCoords.Max(); y++)
-                for (var x = xCoords.Min(); x <= xCoords.Max(); x++)
-                    for (var z = zCoords.Min(); z <= zCoords.Max(); z++)
-                        tempList.Add(new Location(x, y, z));
+            for (var x = xCoords.Min(); x <= xCoords.Max(); x++)
+            for (var z = zCoords.Min(); z <= zCoords.Max(); z++)
+                tempList.Add(new Location(x, y, z));
 
             return tempList;
         }
@@ -250,7 +268,7 @@ namespace TreeFarmerPlugin.Tasks
             return Context.Player.GetLocation();
         }
 
-#region SharedBlockList Lock Stuff
+        #region SharedBlockList Lock Stuff
 
         private List<ILocation> GetClosestTree()
         {
@@ -268,15 +286,15 @@ namespace TreeFarmerPlugin.Tasks
 
                 if (treeClosest == null) return null;
                 ZerGo0Debugger.Debug(Context.Player.GetUsername(), "GetClosestTree treeClosest == null");
-                
+
                 SharedTrees[treeClosest] = true;
-                
+
                 var sortedByReplantLoc = SortByReplantLoc(treeClosest);
 
                 if (sortedByReplantLoc != null)
                     treeClosest = sortedByReplantLoc;
             }
-            
+
             ZerGo0Debugger.Debug(Context.Player.GetUsername(), "GetClosestTree END");
 
             return treeClosest;
@@ -314,14 +332,14 @@ namespace TreeFarmerPlugin.Tasks
 
             return contains;
         }
-        
+
         private bool SharedTreeListContains(List<ILocation> locations)
         {
             if (SharedTrees == null) return false;
 
             lock (SHAREDTREES_LOCK_ONJ)
             {
-                if (locations.Select(location => SharedTrees.Keys.Any(list => 
+                if (locations.Select(location => SharedTrees.Keys.Any(list =>
                     list.Contains(location))).Any(contains => contains))
                     return true;
             }
@@ -352,9 +370,9 @@ namespace TreeFarmerPlugin.Tasks
             }
         }
 
-#endregion
-        
-#region ReplantList Lock Stuff
+        #endregion
+
+        #region ReplantList Lock Stuff
 
         private void ReplantListAdd(ILocation location)
         {
@@ -389,7 +407,7 @@ namespace TreeFarmerPlugin.Tasks
                 else
                     closestLoc = ReplantList.OrderBy(pair => pair.Key.Distance(CurrentLoc()))
                         .FirstOrDefault(pair => !pair.Value && Context.World.GetBlockId(pair.Key) == 0).Key;
-            
+
                 ZerGo0Debugger.Debug(Context.Player.GetUsername(), $"closestLoc: {closestLoc}");
             }
 
@@ -412,16 +430,16 @@ namespace TreeFarmerPlugin.Tasks
         private bool ReplantListSet(ILocation location, bool value)
         {
             if (ReplantList == null) return false;
-            
+
             lock (REPLANTLIST_LOCK_ONJ)
             {
-                var replantLoc= ReplantList.FirstOrDefault(pair => pair.Key.Compare(location)).Key;
+                var replantLoc = ReplantList.FirstOrDefault(pair => pair.Key.Compare(location)).Key;
                 if (replantLoc == null) return false;
                 ReplantList[replantLoc] = value;
                 return true;
             }
         }
-        
+
 
         private int ReplantListCount()
         {
@@ -446,6 +464,6 @@ namespace TreeFarmerPlugin.Tasks
             }
         }
 
-#endregion
+        #endregion
     }
 }

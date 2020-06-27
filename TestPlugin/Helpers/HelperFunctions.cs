@@ -243,7 +243,7 @@ namespace TestPlugin.Helpers
 
                 if (i > 40) return false;
                 i++;
-                
+
                 var bestTool = _context.World.GetBlock(location);
                 if (bestTool != null) await bestTool.SelectTool();
 
@@ -333,7 +333,7 @@ namespace TestPlugin.Helpers
             return true;
         }
 
-#region Helper Functions
+        #region Helper Functions
 
         private static string GetItemIdName(int itemId)
         {
@@ -380,6 +380,6 @@ namespace TestPlugin.Helpers
             };
         }
 
-#endregion
+        #endregion
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Windows.Forms;
 
 using OQ.MineBot.PluginBase;
@@ -38,7 +37,7 @@ namespace DebugPlugin
         public PluginResponse OnRequest(IBotContext context, bool macro = false)
         {
             ShowForm(context);
-            
+
             return new PluginResponse(true);
         }
 
@@ -46,7 +45,7 @@ namespace DebugPlugin
         {
             foreach (var context in contexts)
                 OnRequest(context);
-            
+
             return new PluginResponse(true);
         }
 

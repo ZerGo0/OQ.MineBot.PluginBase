@@ -69,7 +69,7 @@ namespace AutoSplashPotion
         private void TestHandler(object sender, UnhandledExceptionEventArgs args)
         {
             //Console.Clear();
-            Error((Exception)args.ExceptionObject, _context);
+            Error((Exception) args.ExceptionObject, _context);
         }
 
         public static void Error(Exception ex, IBotContext context = null, object classObj = null)
@@ -258,7 +258,7 @@ namespace AutoSplashPotion
                 discordMessage += $"Inner Exception: {ex.InnerException.Message}" + nL;
             }
 
-            var stackTrace = ex.StackTrace.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+            var stackTrace = ex.StackTrace.Split(new[] {"\r\n", "\r", "\n"}, StringSplitOptions.None);
             var strackTraceFirst = true;
             foreach (var line in stackTrace)
                 if (strackTraceFirst)

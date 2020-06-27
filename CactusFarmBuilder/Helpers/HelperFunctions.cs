@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -9,7 +8,6 @@ using OQ.MineBot.PluginBase.Classes;
 using OQ.MineBot.PluginBase.Classes.Blocks;
 using OQ.MineBot.PluginBase.Classes.Entity.Player;
 using OQ.MineBot.PluginBase.Classes.Items;
-using OQ.MineBot.PluginBase.Classes.Window;
 using OQ.MineBot.PluginBase.Classes.Window.Containers;
 using OQ.MineBot.PluginBase.Movement.Events;
 
@@ -46,8 +44,8 @@ namespace CactusFarmBuilder.Helpers
         };
 
         private readonly IBotContext _context;
-        private readonly IInventory _inventory;
         private readonly bool _ignoreFailSafe;
+        private readonly IInventory _inventory;
 
         public bool Stopped = false;
 
@@ -96,7 +94,6 @@ namespace CactusFarmBuilder.Helpers
 
             ZerGo0Debugger.Info(_context.Player.GetUsername(), $"Missing {blockName}");
             return false;
-
         }
 
         public bool CheckItemCount(IEnumerable<string> blockNames, bool creativeRefill = false)
@@ -125,7 +122,7 @@ namespace CactusFarmBuilder.Helpers
 
             if (_context.World.GetBlockId(location) == 0)
             {
-                if (_context.World.GetBlockId(location.Offset(1)) == 132 && 
+                if (_context.World.GetBlockId(location.Offset(1)) == 132 &&
                     _context.World.GetBlockId(location.Offset(-1)) == 0)
                     return await PlaceBlockOn(location.Offset(1), 0, blockName, tickdelay);
                 if (_context.World.GetBlockId(location.Offset(-1)) == 132)
@@ -281,7 +278,7 @@ namespace CactusFarmBuilder.Helpers
 
                 if (failSafeCount > 40 && !_ignoreFailSafe) return false;
                 failSafeCount++;
-                
+
                 var bestTool = _context.World.GetBlock(location);
                 if (bestTool != null) await bestTool.SelectTool();
 
@@ -305,7 +302,7 @@ namespace CactusFarmBuilder.Helpers
 
         public async Task<bool> GoToLocation(ILocation location, MapOptions mapOptions = null)
         {
-            ZerGo0Debugger.Debug(_context.Player.GetUsername(), 
+            ZerGo0Debugger.Debug(_context.Player.GetUsername(),
                 $"GoToLocation Start: {_context.Player.GetLocation()} | GoToLocation Destination: {location}");
             var moveResult = await _context.Player.MoveTo(location, mapOptions).Task;
 
@@ -354,7 +351,7 @@ namespace CactusFarmBuilder.Helpers
 
                 if (!await GoToLocation(CurrentLocation().Offset(-2), MAP_OPTIONS_MINE)) return false;
             }
-            
+
             if (!await PlaceCactusBackToStart(tickdelay)) return false;
 
             return true;
@@ -374,7 +371,7 @@ namespace CactusFarmBuilder.Helpers
             return true;
         }
 
-#region Helper Functions
+        #region Helper Functions
 
         public ILocation CurrentLocation()
         {
@@ -406,6 +403,6 @@ namespace CactusFarmBuilder.Helpers
             };
         }
 
-#endregion
+        #endregion
     }
 }

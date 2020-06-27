@@ -33,11 +33,6 @@ namespace TestPlugin.Tasks
             _username = username;
         }
 
-        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-        {
-            Console.WriteLine("Test");
-        }
-
         public async Task OnTick()
         {
             throw new NullReferenceException();
@@ -64,6 +59,11 @@ namespace TestPlugin.Tasks
             {
                 ZerGo0Debugger.Error(Context.Player.GetUsername(), e, this);
             }
+        }
+
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            Console.WriteLine("Test");
         }
 
         public override async Task Start()

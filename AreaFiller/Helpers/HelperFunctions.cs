@@ -408,7 +408,7 @@ namespace AreaFiller.Helpers
             return currentLayer;
         }
 
-#region Helper Functions
+        #region Helper Functions
 
         private static string GetItemIdName(int itemId)
         {
@@ -455,6 +455,6 @@ namespace AreaFiller.Helpers
             };
         }
 
-#endregion
+        #endregion
     }
 }

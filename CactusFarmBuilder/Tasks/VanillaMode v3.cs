@@ -13,8 +13,8 @@ namespace CactusFarmBuilder.Tasks
     {
         private readonly ushort[] _defaultBuldingBlocks;
         private readonly int _direction;
-        private readonly int _maxLayers;
         private readonly bool _ignoreFailSafe;
+        private readonly int _maxLayers;
 
         private readonly int _tickDelay;
         private HelperFunctions _helperFunctions;
@@ -32,7 +32,7 @@ namespace CactusFarmBuilder.Tasks
             var blockIdNullable = Blocks.Instance.GetId("sand");
             if (blockIdNullable == null) return;
             var blockId = blockIdNullable.Value;
-            BlocksGlobal.BUILDING_BLOCKS = new[] { blockId };
+            BlocksGlobal.BUILDING_BLOCKS = new[] {blockId};
         }
 
         public async Task OnTick()
@@ -41,7 +41,7 @@ namespace CactusFarmBuilder.Tasks
             {
                 _startLoc ??= Context.Player.GetLocation();
                 _helperFunctions ??= new HelperFunctions(Context, Inventory, _ignoreFailSafe);
-                
+
                 if (_startLoc == null || _helperFunctions == null) return;
 
                 if (!_helperFunctions.CheckItemCount(new[] {"sand", "cactus", "string"}, true)) return;
@@ -62,7 +62,7 @@ namespace CactusFarmBuilder.Tasks
                     return;
                 }
 
-#region 1st Layer
+                #region 1st Layer
 
                 ZerGo0Debugger.Debug(Context.Player.GetUsername(), "1st Layer START");
 
@@ -74,7 +74,7 @@ namespace CactusFarmBuilder.Tasks
 
                 ZerGo0Debugger.Debug(Context.Player.GetUsername(), "1st Layer END");
 
-#endregion
+                #endregion
 
                 if (_layerCount >= _maxLayers) return;
                 var tempPathTarget = CurrentLoc().Offset(1);
@@ -86,7 +86,7 @@ namespace CactusFarmBuilder.Tasks
                         return;
                     }
 
-#region 2nd Layer
+                #region 2nd Layer
 
                 ZerGo0Debugger.Debug(Context.Player.GetUsername(), "2nd Layer START");
 
@@ -98,7 +98,7 @@ namespace CactusFarmBuilder.Tasks
 
                 ZerGo0Debugger.Debug(Context.Player.GetUsername(), "2nd Layer END");
 
-#endregion
+                #endregion
 
                 if (_layerCount >= _maxLayers) return;
                 tempPathTarget = CurrentLoc().Offset(1);
@@ -108,7 +108,6 @@ namespace CactusFarmBuilder.Tasks
                     {
                         _stopped = true;
                         _helperFunctions.Stopped = true;
-                        return;
                     }
             }
             catch (Exception e)
@@ -133,7 +132,7 @@ namespace CactusFarmBuilder.Tasks
             return !Context.Player.IsDead() && !Context.Player.State.Eating && !_stopped;
         }
 
-#region Layers
+        #region Layers
 
         private async Task<bool> FirstLayer()
         {
@@ -172,7 +171,7 @@ namespace CactusFarmBuilder.Tasks
             ZerGo0Debugger.Debug(Context.Player.GetUsername(), "2nd BOTTOM StringLayer DONE");
 
             if (_stopped) return false;
-            
+
             //Note: 2nd BOTTOM 2 StringLayer
             if (!await _helperFunctions.CreateLayer(new[]
             {
@@ -182,7 +181,7 @@ namespace CactusFarmBuilder.Tasks
             ZerGo0Debugger.Debug(Context.Player.GetUsername(), "2nd BOTTOM 2 StringLayer DONE");
 
             if (_stopped) return false;
-            
+
             //Note: 2nd BOTTOM 3 StringLayer
             if (!await _helperFunctions.CreateLayer(new[]
             {
@@ -191,7 +190,7 @@ namespace CactusFarmBuilder.Tasks
             ZerGo0Debugger.Debug(Context.Player.GetUsername(), "2nd BOTTOM 3 StringLayer DONE");
 
             if (_stopped) return false;
-            
+
             //Note: 2nd TOP 1 StringLayer
             if (!await _helperFunctions.CreateLayer(new[]
             {
@@ -219,9 +218,9 @@ namespace CactusFarmBuilder.Tasks
             return true;
         }
 
-#endregion
+        #endregion
 
-#region Helper Functions
+        #region Helper Functions
 
         private ILocation CurrentLoc()
         {
@@ -250,6 +249,6 @@ namespace CactusFarmBuilder.Tasks
             return await _helperFunctions.GoToLocation(nextStart, HelperFunctions.MAP_OPTIONS_MINE);
         }
 
-#endregion
+        #endregion
     }
 }

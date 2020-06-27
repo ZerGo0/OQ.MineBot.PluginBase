@@ -58,14 +58,11 @@ namespace MacroConsoleLog
 
         public override string Execute(IBotContext context)
         {
-            if (GetVariable<bool>("variable_zergo0_comment_output_console_bool"))
+            if (!GetVariable<bool>("variable_zergo0_comment_output_console_bool")) return "done";
+            var commentText = GetVariable<string>("variable_zergo0_comment_text");
+
+            if (!string.IsNullOrWhiteSpace(GetVariable<string>("variable_zergo0_console_message")))
             {
-                var variableValue = GetVariable<string>("variable_zergo0_comment_text");
-
-                if (!string.IsNullOrWhiteSpace(GetVariable<string>("variable_zergo0_console_message")))
-                {
-
-                }
                 Console.WriteLine($"{DateTime.Now.ToString("HH:mm:ss", CultureInfo.InvariantCulture)} " +
                                   $"[{context.Player.GetUsername()}] {GetVariable<string>("variable_zergo0_console_message")}");
             }

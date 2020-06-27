@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CactusFarmBuilder", "Cactus
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebugPlugin", "DebugPlugin\DebugPlugin.csproj", "{C8E72344-6E7E-4EE1-8099-C7578FA37525}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscordCommander", "DiscordCommanderPlugin\DiscordCommander.csproj", "{35E8AC6F-3E1F-467A-BFDE-8BAA1564FCE7}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MobAura", "MobAura\MobAura.csproj", "{E14A22D7-0D88-49E3-A4C1-F82D3FF0A79E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TreeFarmerPlugin", "TreeFarmer\TreeFarmerPlugin.csproj", "{84AF6FDF-3FBF-4F3F-99AE-0D56C3769B6F}"
@@ -43,10 +41,6 @@ Global
 		{C8E72344-6E7E-4EE1-8099-C7578FA37525}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C8E72344-6E7E-4EE1-8099-C7578FA37525}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C8E72344-6E7E-4EE1-8099-C7578FA37525}.Release|Any CPU.Build.0 = Release|Any CPU
-		{35E8AC6F-3E1F-467A-BFDE-8BAA1564FCE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{35E8AC6F-3E1F-467A-BFDE-8BAA1564FCE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{35E8AC6F-3E1F-467A-BFDE-8BAA1564FCE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{35E8AC6F-3E1F-467A-BFDE-8BAA1564FCE7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E14A22D7-0D88-49E3-A4C1-F82D3FF0A79E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E14A22D7-0D88-49E3-A4C1-F82D3FF0A79E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E14A22D7-0D88-49E3-A4C1-F82D3FF0A79E}.Release|Any CPU.ActiveCfg = Release|Any CPU

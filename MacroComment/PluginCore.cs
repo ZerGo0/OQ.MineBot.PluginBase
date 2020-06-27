@@ -28,7 +28,7 @@ namespace MacroComment
             Variables = new IMacroVariableCollection(
                 new KeyValuePair<string, ExternalMacroVariable>("variable_zergo0_comment_title",
                     new ExternalMacroVariable(typeof(string), "Comment Component Title", "Which text should we display as the title of this component?",
-                        "Hello World!")),
+                        "")),
                 new KeyValuePair<string, ExternalMacroVariable>("variable_zergo0_comment_text",
                     new ExternalMacroVariable(typeof(string), "Comment Text", "Which text should we display as the description of this component?",
                         "Hello World!")),
@@ -40,8 +40,8 @@ namespace MacroComment
 
         public override string GetName()
         {
-            var variableValue = GetVariable<string>("variable_zergo0_comment_title");
-            return string.IsNullOrWhiteSpace(variableValue) ? "ZerGo0.Comment" : variableValue;
+            var commentTitle = GetVariable<string>("variable_zergo0_comment_title");
+            return string.IsNullOrWhiteSpace(commentTitle) ? "ZerGo0.Comment" : commentTitle;
         }
 
         public override string GetInternalName()

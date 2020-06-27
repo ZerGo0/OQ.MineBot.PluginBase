@@ -17,10 +17,10 @@ namespace MacroConsoleLog
         public override void OnLoad(int version, int subversion, int buildversion) { }
     }
 
-    public class TestMacroComponent : IExternalMacroComponent
+    public class ZerGo0ConsoleLogMacroComponent : IExternalMacroComponent
     {
 
-        public TestMacroComponent()
+        public ZerGo0ConsoleLogMacroComponent()
         {
             Category = MacroComponentCategory.Misc;
             Outputs = new IMacroOutputCollection(

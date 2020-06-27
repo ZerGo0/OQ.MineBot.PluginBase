@@ -8,6 +8,7 @@ using OQ.MineBot.PluginBase;
 using OQ.MineBot.PluginBase.Classes;
 using OQ.MineBot.PluginBase.Classes.Blocks;
 using OQ.MineBot.PluginBase.Classes.Entity.Player;
+using OQ.MineBot.PluginBase.Classes.Items;
 using OQ.MineBot.PluginBase.Classes.Window;
 using OQ.MineBot.PluginBase.Classes.Window.Containers;
 using OQ.MineBot.PluginBase.Movement.Events;
@@ -63,7 +64,7 @@ namespace CactusFarmBuilder.Helpers
 
             var blockIdNullable = Blocks.Instance.GetId(blockName);
             if (blockName == "string")
-                blockIdNullable = 287;
+                blockIdNullable = Items.Instance.GetId(blockName);
 
             if (blockIdNullable != null)
             {

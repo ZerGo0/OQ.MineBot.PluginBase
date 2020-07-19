@@ -4,6 +4,7 @@ using OQ.MineBot.PluginBase;
 using OQ.MineBot.PluginBase.Base;
 using OQ.MineBot.PluginBase.Base.Plugin;
 using OQ.MineBot.PluginBase.Bot;
+using OQ.MineBot.PluginBase.Classes;
 using OQ.MineBot.Protocols.Classes.Base;
 
 using TreeFarmerPlugin.Tasks;
@@ -11,9 +12,9 @@ using TreeFarmerPlugin.Tasks;
 namespace TreeFarmerPlugin
 {
 #if DEBUG
-    [Plugin(2, "Tree Farmer", "(DEBUG BUILD)", "https://www.youtube.com/watch?v=6huwXOm3U6w")]
+    [Plugin(3, "Tree Farmer", "(DEBUG BUILD)", "https://www.youtube.com/watch?v=6huwXOm3U6w")]
 #else
-    [Plugin(2, "Tree Farmer", "Farms trees and shit.", "https://www.youtube.com/watch?v=6huwXOm3U6w")]
+    [Plugin(3, "Tree Farmer", "Farms trees and shit.", "https://www.youtube.com/watch?v=6huwXOm3U6w")]
 #endif
     public class PluginCore : IStartPlugin
     {
@@ -34,7 +35,7 @@ namespace TreeFarmerPlugin
 
             if (!botSettings.loadInventory) return new PluginResponse(false, "'Load inventory' must be enabled.");
 
-            if (Setting.At(2).Get<Location>() == null || Setting.At(3).Get<Location>() == null)
+            if (Setting.At(2).Get<ILocation>() == null || Setting.At(3).Get<ILocation>() == null)
                 return new PluginResponse(false, "Invalid coordinates, please check your plugin settings.");
 
             ZerGo0Debugger.PluginSettings = Setting.GetCollection();
@@ -50,11 +51,11 @@ namespace TreeFarmerPlugin
             if (fullInvMacroName.Contains(".macro"))
                 fullInvMacroName = fullInvMacroName.Replace(".macro", "");
 
-            if (!Setting.At(2).Get<Location>().Compare(new Location(0, 0, 0)) &&
-                !Setting.At(3).Get<Location>().Compare(new Location(0, 0, 0)))
+            if (!Setting.At(2).Get<ILocation>().Compare(new Location(0, 0, 0)) &&
+                !Setting.At(3).Get<ILocation>().Compare(new Location(0, 0, 0)))
             {
-                RegisterTask(new MineArea(Setting.At(2).Get<Location>(),
-                    Setting.At(3).Get<Location>(), Setting.At(1).Get<bool>(),
+                RegisterTask(new MineArea(Setting.At(2).Get<ILocation>(),
+                    Setting.At(3).Get<ILocation>(), Setting.At(1).Get<bool>(),
                     fullInvMacro));
 //                RegisterTask(new InventoryMonitor(Setting.At(0).Get<string>(), macro));
             }

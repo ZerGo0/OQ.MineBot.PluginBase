@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ using OQ.MineBot.PluginBase.Classes;
 using OQ.MineBot.PluginBase.Classes.Entity.Player;
 using OQ.MineBot.PluginBase.Classes.Window.Containers;
 using OQ.MineBot.PluginBase.Movement.Events;
+using OQ.MineBot.PluginBase.Movement.Maps;
 using OQ.MineBot.Protocols.Classes.Base;
 
 namespace TreeFarmerPlugin.Helpers
@@ -48,7 +50,12 @@ namespace TreeFarmerPlugin.Helpers
             SafeMove = true,
             Look = true,
             Build = true,
-            Mine = true
+            Mine = true,
+            /*AdditionalWeights = new MapOptionWeights
+            {
+                BlockPlace = 15,
+                BlockDig = -15,
+            },*/
         };
 
         private readonly IBotContext _context;

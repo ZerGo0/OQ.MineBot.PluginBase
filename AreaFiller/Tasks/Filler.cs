@@ -39,7 +39,12 @@ namespace AreaFiller.Tasks
 
             DoingStuff ??= new List<string>();
 
-            if (_startLoc.Y <= _endLoc.Y)
+            var yCoords = new[] { startLoc.Y, endLoc.Y };
+            for (var y = yCoords.Min(); y <= yCoords.Max(); y++)
+
+
+
+                if (_startLoc.Y <= _endLoc.Y)
             {
                 CurrentLayerY = (int) startLoc.Y;
                 MaxLayerY = (int) endLoc.Y;

@@ -74,7 +74,7 @@ namespace AreaFiller
             if (fillerIdString == null)
             {
                 //Should never happen?
-                new PluginResponse(false, "Invalid Building Block ID, please check your plugin settings.");
+                new PluginResponse(false, "D Invalid Building Block ID, please check your plugin settings.");
                 return;
             }
 

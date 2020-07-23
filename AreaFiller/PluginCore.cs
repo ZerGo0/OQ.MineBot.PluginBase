@@ -78,6 +78,8 @@ namespace AreaFiller
                 return;
             }
 
+            ZerGo0Debugger.Debug("DEBUG", $"fillerIdString: {fillerIdString}");
+
             RegisterTask(new Filler(Setting.At(0).Get<Location>(), Setting.At(1).Get<Location>(),
                 fillerIdString, fillermacro));
             RegisterTask(new InventoryMonitor(fillerIdString, fillerMacroName, fillermacro));

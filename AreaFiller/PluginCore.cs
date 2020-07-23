@@ -7,6 +7,8 @@ using OQ.MineBot.PluginBase;
 using OQ.MineBot.PluginBase.Base;
 using OQ.MineBot.PluginBase.Base.Plugin;
 using OQ.MineBot.PluginBase.Bot;
+using OQ.MineBot.PluginBase.Classes.Blocks;
+using OQ.MineBot.PluginBase.Classes.Items;
 using OQ.MineBot.Protocols.Classes.Base;
 
 namespace AreaFiller
@@ -40,7 +42,8 @@ namespace AreaFiller
                 return new PluginResponse(false, "Invalid coordinates, please check your plugin settings.");
 
             if (string.IsNullOrWhiteSpace(Setting.At(2).Get<string>()) ||
-                !int.TryParse(Setting.At(2).Get<string>(), out _) && !Setting.At(2).Get<string>().Contains("minecraft:"))
+                !int.TryParse(Setting.At(2).Get<string>(), out _) && !Setting.At(2).Get<string>().Contains("minecraft:") ||
+                Blocks.Instance.GetId(Setting.At(2).Get<string>()) == null && Setting.At(2).Get<string>().Contains("minecraft:"))
                 return new PluginResponse(false, "Invalid Building Block ID, please check your plugin settings.");
 
             if (!Setting.At(2).Get<string>().All(char.IsDigit))
@@ -59,6 +62,9 @@ namespace AreaFiller
             if (fillerMacroName.Contains(".macro"))
                 fillerMacroName = fillerMacroName.Replace(".macro", "");
 
+            var blockIdNullable = Blocks.Instance.GetId(Setting.At(2).Get<string>());
+            if 
+
             RegisterTask(new Filler(Setting.At(0).Get<Location>(), Setting.At(1).Get<Location>(),
                 Setting.At(2).Get<string>(), fillermacro));
             RegisterTask(new InventoryMonitor(Setting.At(2).Get<string>(), fillerMacroName, fillermacro));
@@ -67,7 +73,7 @@ namespace AreaFiller
         public override void OnDisable()
         {
             Filler.CurrentLayer = null;
-            Filler.DoingShit = null;
+            Filler.DoingStuff = null;
         }
     }
 

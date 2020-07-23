@@ -62,18 +62,24 @@ namespace AreaFiller
             if (fillerMacroName.Contains(".macro"))
                 fillerMacroName = fillerMacroName.Replace(".macro", "");
 
-            string fillerId = null;
+            string fillerIdString = null;
             if (!int.TryParse(Setting.At(2).Get<string>(), out var tempFillerId))
             {
                 var blockIdNullable = Blocks.Instance.GetId(Setting.At(2).Get<string>());
-                if (blockIdNullable != null) fillerId = blockIdNullable.ToString();
+                if (blockIdNullable != null) fillerIdString = blockIdNullable.ToString();
             }
             else
-                fillerId = tempFillerId.ToString();
+                fillerIdString = tempFillerId.ToString();
+
+            if (fillerIdString == null)
+            {
+                new PluginResponse(false, "Invalid Building Block ID, please check your plugin settings.")
+                return;
+            }
 
             RegisterTask(new Filler(Setting.At(0).Get<Location>(), Setting.At(1).Get<Location>(),
-                fillerId, fillermacro));
-            RegisterTask(new InventoryMonitor(fillerId, fillerMacroName, fillermacro));
+                fillerIdString, fillermacro));
+            RegisterTask(new InventoryMonitor(fillerIdString, fillerMacroName, fillermacro));
         }
 
         public override void OnDisable()

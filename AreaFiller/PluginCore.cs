@@ -43,7 +43,8 @@ namespace AreaFiller
 
             var debugTest = Blocks.Instance.GetId(Setting.At(2).Get<string>());
             ZerGo0Debugger.Debug("DEBUG", debugTest == null ? "debugTest: null" : $"debugTest: {debugTest}");
-            
+            ZerGo0Debugger.Debug("DEBUG", $"{Setting.At(2).Get<string>().Contains("minecraft:")}");
+
             if (string.IsNullOrWhiteSpace(Setting.At(2).Get<string>()) ||
                 Blocks.Instance.GetId(Setting.At(2).Get<string>()) == null && Setting.At(2).Get<string>().Contains("minecraft:") ||
                 !int.TryParse(Setting.At(2).Get<string>(), out _) && !Setting.At(2).Get<string>().Contains("minecraft:"))

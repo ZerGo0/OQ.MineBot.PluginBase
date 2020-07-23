@@ -63,7 +63,11 @@ namespace AreaFiller
                 fillerMacroName = fillerMacroName.Replace(".macro", "");
 
             if (!int.TryParse(Setting.At(2).Get<string>(), out var tempFillerId))
+            {
                 var blockIdNullable = Blocks.Instance.GetId(Setting.At(2).Get<string>());
+                if (blockIdNullable != null)
+                    blockIdNullable = blockIdNullable.Value.ToString();
+            }
             else
             {
                 var blockIdNullable = tempFillerId.ToString();

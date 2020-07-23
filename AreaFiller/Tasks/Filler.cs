@@ -55,7 +55,7 @@ namespace AreaFiller.Tasks
         {
             try
             {
-                if (_helperFunctions == null) _helperFunctions = new HelperFunctions(Context, Inventory);
+                _helperFunctions ??= new HelperFunctions(Context, Inventory);
 
                 if (CurrentLayer != null && CurrentLayerCount() < 1 && CurrentLayerY > MaxLayerY) return;
 

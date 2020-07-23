@@ -40,21 +40,8 @@ namespace AreaFiller.Tasks
             DoingStuff ??= new List<string>();
 
             var yCoords = new[] { startLoc.Y, endLoc.Y };
-            CurrentLayerY = (int) yCoords.Min();
-            for (var y = ; y <= yCoords.Max(); y++)
-
-
-
-                if (_startLoc.Y <= _endLoc.Y)
-            {
-                CurrentLayerY = (int) startLoc.Y;
-                MaxLayerY = (int) endLoc.Y;
-            }
-            else
-            {
-                CurrentLayerY = (int) _endLoc.Y;
-                MaxLayerY = (int) startLoc.Y;
-            }
+            CurrentLayerY = (int)yCoords.Min();
+            MaxLayerY = (int)yCoords.Max();
         }
 
         public async Task OnTick()

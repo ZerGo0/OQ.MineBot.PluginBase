@@ -62,7 +62,7 @@ namespace AreaFiller
             if (fillerMacroName.Contains(".macro"))
                 fillerMacroName = fillerMacroName.Replace(".macro", "");
 
-            string fillerId;
+            string fillerId = null;
             if (!int.TryParse(Setting.At(2).Get<string>(), out var tempFillerId))
             {
                 var blockIdNullable = Blocks.Instance.GetId(Setting.At(2).Get<string>());
@@ -72,8 +72,8 @@ namespace AreaFiller
                 fillerId = tempFillerId.ToString();
 
             RegisterTask(new Filler(Setting.At(0).Get<Location>(), Setting.At(1).Get<Location>(),
-                Setting.At(2).Get<string>(), fillermacro));
-            RegisterTask(new InventoryMonitor(Setting.At(2).Get<string>(), fillerMacroName, fillermacro));
+                fillerId, fillermacro));
+            RegisterTask(new InventoryMonitor(fillerId, fillerMacroName, fillermacro));
         }
 
         public override void OnDisable()

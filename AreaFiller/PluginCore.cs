@@ -62,8 +62,12 @@ namespace AreaFiller
             if (fillerMacroName.Contains(".macro"))
                 fillerMacroName = fillerMacroName.Replace(".macro", "");
 
-            var blockIdNullable = Blocks.Instance.GetId(Setting.At(2).Get<string>());
-            if 
+            if (!int.TryParse(Setting.At(2).Get<string>(), out var tempFillerId))
+                var blockIdNullable = Blocks.Instance.GetId(Setting.At(2).Get<string>());
+            else
+            {
+                var blockIdNullable = tempFillerId.ToString();
+            }
 
             RegisterTask(new Filler(Setting.At(0).Get<Location>(), Setting.At(1).Get<Location>(),
                 Setting.At(2).Get<string>(), fillermacro));

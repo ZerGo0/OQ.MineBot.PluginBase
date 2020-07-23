@@ -23,7 +23,7 @@ namespace AreaFiller
         {
             Setting.Add(new LocationSetting("Start X Y Z", "Start point of the desired area."));
             Setting.Add(new LocationSetting("End X Y Z", "End point of the desired area."));
-            Setting.Add(new StringSetting("Building Block ID", "The block which is used to fill the area.", ""));
+            Setting.Add(new StringSetting("Building Block ID or Name", "The block which is used to fill the area. (Name must include 'minecraft:'", ""));
             Setting.Add(new StringSetting("Macro if no Filler Block",
                 "Starts the macro when the bots has no building blocks left. (Doesn't need '.macro' included)", ""));
         }

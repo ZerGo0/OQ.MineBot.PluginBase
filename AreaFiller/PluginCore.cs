@@ -41,26 +41,9 @@ namespace AreaFiller
             if (Setting.At(0).Get<Location>() == null || Setting.At(1).Get<Location>() == null)
                 return new PluginResponse(false, "Invalid coordinates, please check your plugin settings.");
 
-            var debugTest = Blocks.Instance.GetId(Setting.At(2).Get<string>());
-            ZerGo0Debugger.Debug("DEBUG", debugTest == null ? "debugTest: null" : $"debugTest: {debugTest}");
-            ZerGo0Debugger.Debug("DEBUG", $"{Setting.At(2).Get<string>().Contains("minecraft:")}");
-
-            if (string.IsNullOrWhiteSpace(Setting.At(2).Get<string>()))
-                return new PluginResponse(false, "1Invalid Building Block ID, please check your plugin settings.");
-
-            if (Blocks.Instance.GetId(Setting.At(2).Get<string>()) == null && Setting.At(2).Get<string>().Contains("minecraft:"))
-                return new PluginResponse(false, "2Invalid Building Block ID, please check your plugin settings.");
-
-            if (!int.TryParse(Setting.At(2).Get<string>(), out _) && !Setting.At(2).Get<string>().Contains("minecraft:"))
-                return new PluginResponse(false, "3Invalid Building Block ID, please check your plugin settings.");
-
-
-            //if (string.IsNullOrWhiteSpace(Setting.At(2).Get<string>()) ||
-            //    Blocks.Instance.GetId(Setting.At(2).Get<string>()) == null && Setting.At(2).Get<string>().Contains("minecraft:") ||
-            //    !int.TryParse(Setting.At(2).Get<string>(), out _) && !Setting.At(2).Get<string>().Contains("minecraft:"))
-            //    return new PluginResponse(false, "Invalid Building Block ID, please check your plugin settings.");
-
-            if (!Setting.At(2).Get<string>().All(char.IsDigit))
+            if (string.IsNullOrWhiteSpace(Setting.At(2).Get<string>()) ||
+                Blocks.Instance.GetId(Setting.At(2).Get<string>()) == null && Setting.At(2).Get<string>().Contains("minecraft:") ||
+                !int.TryParse(Setting.At(2).Get<string>(), out _) && !Setting.At(2).Get<string>().Contains("minecraft:"))
                 return new PluginResponse(false, "Invalid Building Block ID, please check your plugin settings.");
 
             ZerGo0Debugger.PluginSettings = Setting.GetCollection();

@@ -37,7 +37,7 @@ namespace AreaFiller.Tasks
 
             _buildingBlocks = BlocksGlobal.BUILDING_BLOCKS;
 
-            if (DoingShit == null) DoingShit = new List<string>();
+            DoingShit ??= new List<string>();
 
             if (_startLoc.Y <= _endLoc.Y)
             {

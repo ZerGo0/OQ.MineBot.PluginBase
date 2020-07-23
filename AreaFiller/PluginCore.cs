@@ -45,8 +45,8 @@ namespace AreaFiller
             ZerGo0Debugger.Debug("DEBUG", debugTest == null ? "debugTest: null" : $"debugTest: {debugTest}");
             
             if (string.IsNullOrWhiteSpace(Setting.At(2).Get<string>()) ||
-                !int.TryParse(Setting.At(2).Get<string>(), out _) && !Setting.At(2).Get<string>().Contains("minecraft:") ||
-                Blocks.Instance.GetId(Setting.At(2).Get<string>()) == null && Setting.At(2).Get<string>().Contains("minecraft:"))
+                Blocks.Instance.GetId(Setting.At(2).Get<string>()) == null && Setting.At(2).Get<string>().Contains("minecraft:") ||
+                !int.TryParse(Setting.At(2).Get<string>(), out _) && !Setting.At(2).Get<string>().Contains("minecraft:"))
                 return new PluginResponse(false, "Invalid Building Block ID, please check your plugin settings.");
 
             if (!Setting.At(2).Get<string>().All(char.IsDigit))

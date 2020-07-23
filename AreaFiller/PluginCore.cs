@@ -39,7 +39,8 @@ namespace AreaFiller
             if (Setting.At(0).Get<Location>() == null || Setting.At(1).Get<Location>() == null)
                 return new PluginResponse(false, "Invalid coordinates, please check your plugin settings.");
 
-            if (string.IsNullOrWhiteSpace(Setting.At(2).Get<string>()))
+            if (string.IsNullOrWhiteSpace(Setting.At(2).Get<string>()) ||
+                !int.TryParse(Setting.At(2).Get<string>(), out _) && !Setting.At(2).Get<string>().Contains("minecraft:"))
                 return new PluginResponse(false, "Invalid Building Block ID, please check your plugin settings.");
 
             if (!Setting.At(2).Get<string>().All(char.IsDigit))

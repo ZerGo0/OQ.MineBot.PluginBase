@@ -40,7 +40,7 @@ namespace AreaFiller.Tasks
             DoingStuff ??= new List<string>();
 
             var yCoords = new[] { startLoc.Y, endLoc.Y };
-            CurrentLayerY = yCoords.Min();
+            CurrentLayerY = (int) yCoords.Min();
             for (var y = ; y <= yCoords.Max(); y++)
 
 

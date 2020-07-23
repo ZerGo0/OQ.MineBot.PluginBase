@@ -14,9 +14,9 @@ using OQ.MineBot.Protocols.Classes.Base;
 namespace AreaFiller
 {
 #if DEBUG
-    [Plugin(4, "Area Filler", "(DEBUG BUILD)", "https://www.youtube.com/watch?v=ow-QSsbA3p8")]
+    [Plugin(5, "Area Filler", "(DEBUG BUILD)", "https://www.youtube.com/watch?v=ow-QSsbA3p8")]
 #else
-    [Plugin(4, "Area Filler", "Select an area and the bot will fill it.",
+    [Plugin(5, "Area Filler", "Select an area and the bot will fill it.",
         "https://www.youtube.com/watch?v=ow-QSsbA3p8")]
 #endif
     public class PluginCore : IStartPlugin
@@ -73,7 +73,8 @@ namespace AreaFiller
 
             if (fillerIdString == null)
             {
-                new PluginResponse(false, "Invalid Building Block ID, please check your plugin settings.")
+                //Should never happen?
+                new PluginResponse(false, "Invalid Building Block ID, please check your plugin settings.");
                 return;
             }
 

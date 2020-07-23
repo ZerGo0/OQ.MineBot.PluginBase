@@ -14,7 +14,7 @@ namespace AreaFiller.Tasks
     public class Filler : ITask, ITickListener
     {
         public static List<ILocation> CurrentLayer;
-        public static List<string> DoingShit;
+        public static List<string> DoingStuff;
         public static int CurrentLayerY;
         public static int MaxLayerY;
 
@@ -37,7 +37,7 @@ namespace AreaFiller.Tasks
 
             _buildingBlocks = BlocksGlobal.BUILDING_BLOCKS;
 
-            DoingShit ??= new List<string>();
+            DoingStuff ??= new List<string>();
 
             if (_startLoc.Y <= _endLoc.Y)
             {
@@ -59,25 +59,25 @@ namespace AreaFiller.Tasks
 
                 if (CurrentLayer != null && CurrentLayerCount() < 1 && CurrentLayerY > MaxLayerY) return;
 
-                if (CurrentLayer == null || DoingShit?.Count < 1 && CurrentLayerCount() < 1)
+                if (CurrentLayer == null || DoingStuff?.Count < 1 && CurrentLayerCount() < 1)
                     GetNewLayer();
                 if (CurrentLayer == null) return;
 
                 if (CurrentLayer != null && CurrentLayerCount() > 0)
                 {
-                    DoingShit?.Add(Context.Player.GetUsername());
+                    DoingStuff?.Add(Context.Player.GetUsername());
 
                     var currentBlock = GetClosestBlock();
                     if (currentBlock == null) return;
 
                     if (!await _helperFunctions.GoToLocation(currentBlock, HelperFunctions.MAP_OPTIONS_MINE_BUILD))
                     {
-                        DoingShit?.Remove(Context.Player.GetUsername());
+                        DoingStuff?.Remove(Context.Player.GetUsername());
                         return;
                     }
 
                     await PlaceBlocksAround(currentBlock, _fillerId);
-                    DoingShit?.Remove(Context.Player.GetUsername());
+                    DoingStuff?.Remove(Context.Player.GetUsername());
                 }
             }
             catch (Exception e)
@@ -123,7 +123,7 @@ namespace AreaFiller.Tasks
                 }
                 else
                 {
-                    DoingShit?.Remove(Context.Player.GetUsername());
+                    DoingStuff?.Remove(Context.Player.GetUsername());
                     return null;
                 }
             }
@@ -135,7 +135,7 @@ namespace AreaFiller.Tasks
         {
             lock (CURRENTLAYER_LOCK_ONJ)
             {
-                if (CurrentLayer != null && (!(DoingShit?.Count < 1) || CurrentLayerCount() >= 1)) return;
+                if (CurrentLayer != null && (!(DoingStuff?.Count < 1) || CurrentLayerCount() >= 1)) return;
 
                 ZerGo0Debugger.Debug(Context.Player.GetUsername(), "Getting new layer locations!");
                 CurrentLayer = _helperFunctions.LayerOpenSpots(_startLoc, _endLoc, CurrentLayerY);

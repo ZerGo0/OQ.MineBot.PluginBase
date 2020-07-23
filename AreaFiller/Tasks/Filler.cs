@@ -114,7 +114,7 @@ namespace AreaFiller.Tasks
             lock (CURRENTLAYER_LOCK_ONJ)
             {
                 ZerGo0Debugger.Debug(Context.Player.GetUsername(), "Getting Location");
-                currentBlock = CurrentLayer.OrderBy(location => Context.Player.GetLocation().Distance(location))
+                currentBlock = CurrentLayer.Where(location => World.GetBlockId(location) == 0).OrderBy(location => Context.Player.GetLocation().Distance(location))
                     .FirstOrDefault();
                 if (currentBlock != null)
                 {

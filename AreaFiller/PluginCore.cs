@@ -41,6 +41,9 @@ namespace AreaFiller
             if (Setting.At(0).Get<Location>() == null || Setting.At(1).Get<Location>() == null)
                 return new PluginResponse(false, "Invalid coordinates, please check your plugin settings.");
 
+            var debugTest = Blocks.Instance.GetId(Setting.At(2).Get<string>());
+            ZerGo0Debugger.Debug("DEBUG", debugTest == null ? "debugTest: null" : $"debugTest: {debugTest}");
+
             if (string.IsNullOrWhiteSpace(Setting.At(2).Get<string>()) ||
                 !int.TryParse(Setting.At(2).Get<string>(), out _) && !Setting.At(2).Get<string>().Contains("minecraft:") ||
                 Blocks.Instance.GetId(Setting.At(2).Get<string>()) == null && Setting.At(2).Get<string>().Contains("minecraft:"))
